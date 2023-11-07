@@ -96,13 +96,24 @@
                     </div>
                     <span class="nav-link-text ms-1">Kolam</span>
                 </a>
-                <div class="collapse show" id="waterpoolExamples">
+                {{-- <div class="collapse show" id="waterpoolExamples">
                     <ul class="nav ms-4 ps-3">
                         <li class="nav-item {{ $childFolder == 'items' ? 'active' : '' }}">
                             <a class="nav-link {{ $childFolder == 'items' ? 'active' : '' }}"
                                 href="{{ Route('waterpool-index') }}">
                                 <span class="sidenav-mini-icon"> I </span>
                                 <span class="sidenav-normal"> Data Kolam </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div> --}}
+                <div class="collapse show" id="waterpoolExamples">
+                    <ul class="nav ms-4 ps-3">
+                        <li class="nav-item {{ $childFolder == 'items' ? 'active' : '' }}">
+                            <a class="nav-link {{ $childFolder == 'items' ? 'active' : '' }}"
+                                href="{{ Route('sensor-data') }}">
+                                <span class="sidenav-mini-icon"> I </span>
+                                <span class="sidenav-normal"> 5 Data Kolam sensor </span>
                             </a>
                         </li>
                     </ul>

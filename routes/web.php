@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ChangePasswordController;
+use App\Http\Controllers\DataApiController;
 use App\Http\Controllers\ItemsController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RolesController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\TagsController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WaterpoolController;
+use App\Http\Controllers\SensorDataController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -165,7 +167,17 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::get('/get-data-pool', 'WaterpoolController@getDataPool');
 
     // insert DB
-    Route::post('/sensor-data', 'SensorDataController@storeSensor');
+    // Route::post('/sensor-data', 'SensorDataController@storeSensor');
+
+    // show data kolam from db all
+    Route::get('/sensor-data', [SensorDataController::class, 'index'])->name('sensor-data');
+
+    // fetch api insert to db
+    Route::get('/data-pool', [DataApiController::class, 'index']);
+
+    Route::get('/data-kolam', [WaterpoolController::class, 'index'])->name('waterpool-index');
+
+
 });
 
 Route::group(['middleware' => 'guest'], function () {
