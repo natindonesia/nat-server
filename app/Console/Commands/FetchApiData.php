@@ -30,6 +30,8 @@ class FetchApiData extends Command
     
      public function handle()
      {
-        dispatch(new ProcessGetApi() );
+        //dispatch(new ProcessGetApi() );
+	app()->call('App\Http\Controllers\DataApiController@index');
+
      }
 }

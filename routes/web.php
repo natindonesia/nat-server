@@ -158,7 +158,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     // WATERPOOL
-    Route::get('/waterpool-status', [WaterpoolController::class, 'index'])->name('waterpool-index');
+   // Route::get('/waterpool-status', [WaterpoolController::class, 'index'])->name('waterpool-index');
 
 
     Route::get('/get-access-token', [WaterpoolController::class, 'getAccessToken']);
