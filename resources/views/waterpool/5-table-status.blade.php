@@ -43,10 +43,10 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th>ID</th>
-				    <th>Time Stamp</th>
+                                    <th>Time Stamp</th>
                                     <th>temp_current</th>
                                     <th>ph_current</th>
-				    <th>tds_current</th>
+                                    <th>tds_current</th>
                                     <th>ec_current</th>
                                     <th>salinity_current</th>
                                 </tr>
@@ -55,13 +55,8 @@
                                 @if (count($status) > 0)
                                     @foreach ($status as $data)
                                         <tr>
-                                            {{-- 'temp_current',
-                                            'ph_current',
-                                            'tds_current',
-                                            'ec_current',
-                                            'salinity_current', --}}
                                             <td class="text-sm">{{ $data->id }}</td>
-					    <td class="text-sm">{{ $data->created_at }}</td>
+                                            <td class="text-sm">{{ $data->created_at }}</td>
                                             <td class="text-sm">{{ $data->temp_current }}</td>
                                             <td class="text-sm">{{ $data->ph_current }}</td>
                                             <td class="text-sm">{{ $data->tds_current }}</td>

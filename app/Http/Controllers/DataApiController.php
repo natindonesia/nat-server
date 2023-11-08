@@ -29,7 +29,7 @@ class DataApiController extends Controller
     public function index()
     {
         $pertama = $this->pertama();
-	$dataPool = $this->getDataPool();
+        $dataPool = $this->getDataPool();
 
         $data = [
             $pertama, $dataPool
@@ -42,10 +42,10 @@ class DataApiController extends Controller
         // $apiUrl = env('API_TOKEN_URL');
         // $deviceId = env('API_DEVICE_ID');
         $clientId = env('API_CLIENT_ID', "uaamr7n8gka4wackpjn4");
-	//dd($clientId);
-	$clientSecret ="03170d0703ec4a39a68cbacb46162ed5";
+        //dd($clientId);
+        $clientSecret = "03170d0703ec4a39a68cbacb46162ed5";
         //dd($clientSecret);
-	$sign = '';
+        $sign = '';
         $timestamp = $this->getTime();
         Log::info('timestamp -> ' . $timestamp);
         $headers = [
@@ -73,7 +73,7 @@ class DataApiController extends Controller
         }
         $sign = $this->calcSign($clientId, $timestamp, $nonce, $signStr, $secret);
         $easySign = $sign;
-	//dd($easySign);
+        //dd($easySign);
         $finalHeaders = [
             'client_id' => $headers['client_id'],
             'sign' => $easySign,
@@ -82,10 +82,10 @@ class DataApiController extends Controller
             'nonce' => $headers['nonce'],
             'stringToSign' => $headers['stringToSign']
         ];
-	//dd($finalHeaders);
+        //dd($finalHeaders);
         $response = Http::withHeaders($finalHeaders)->get($requestUrl);
-       	//dd($response);
-	Log::info('result => ' . $response);
+        //dd($response);
+        Log::info('result => ' . $response);
         return $response->json();
     }
 
@@ -150,7 +150,7 @@ class DataApiController extends Controller
     public function getDataPool()
     {
         $authResult = $this->pertama();
-	//dd($authResult);
+        //dd($authResult);
         $accessToken = $authResult['result']['access_token'];
         // $refreshToken = $authResult['result']['refresh_token'];
 
