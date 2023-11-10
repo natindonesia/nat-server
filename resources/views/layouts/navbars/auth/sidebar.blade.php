@@ -49,20 +49,10 @@
                                 <span class="sidenav-normal">Summary Dashboard Level 0 </span>
                             </a>
                         </li>
+
                         <li class="nav-item {{ Request::is('dashboard-detailed-dashboard') ? 'active' : '' }}">
                             <a class="nav-link {{ Request::is('dashboard-detailed-dashboard') ? 'active' : '' }}"
                                 href="{{ url('dashboard-detailed-dashboard') }}">
-                        <li class="nav-item {{ Request::is('dashboard-smart-home') ? 'active' : '' }}">
-                            <a class="nav-link {{ Request::is('dashboard-smart-home') ? 'active' : '' }}"
-                                href="{{ url('dashboard-smart-home') }}">
-                                <span class="sidenav-mini-icon"> S </span>
-                                <span class="sidenav-normal">Summary Dashboard Level 1 </span>
-                            </a>
-                        </li>
-                                                
-                        <!-- <li class="nav-item {{ Request::is('dashboard-smart-home') ? 'active' : '' }}">
-                            <a class="nav-link {{ Request::is('dashboard-smart-home') ? 'active' : '' }}"
-                                href="{{ url('dashboard-smart-home') }}">
                                 <span class="sidenav-mini-icon"> S </span>
                                 <span class="sidenav-normal">Detailed Dashboard</span>
                             </a>
