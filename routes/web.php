@@ -62,6 +62,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::view('/dashboard-automative', 'dashboards/automotive');
     Route::view('/dashboard-crm', 'dashboards/crm');
     Route::view('/dashboard-smart-home', 'dashboards/smart-home');
+
+    // Route::get('/get-access-token', [WaterpoolController::class, 'getAccessToken']);
+
+    Route::get('/dashboard-detailed-dashboard', [SensorDataController::class, 'index']);
+    // Route::get('/dashboard-detailed-dashboard', 'dashboards/detailed-dashboard');
     
     Route::view('/dashboard-virtual-default', 'dashboards/vr/vr-default');
     Route::view('/dashboard-virtual-info', 'dashboards/vr/vr-info');
@@ -175,7 +180,7 @@ Route::group(['middleware' => 'auth'], function () {
     // fetch api insert to db
     Route::get('/data-pool', [DataApiController::class, 'index']);
 
-    Route::get('/data-kolam', [WaterpoolController::class, 'index'])->name('waterpool-index');
+    Route::get('/tabel-data', [WaterpoolController::class, 'index'])->name('waterpool-index');
 
 
 });
