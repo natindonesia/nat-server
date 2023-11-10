@@ -28,7 +28,16 @@
       <div class="table-responsive">
         <table class="table align-items-center mb-0">
           <tbody>
+            @foreach ($status as $data) 
             <tr>
+              <td class="text-sm">{{ $data->id }}</td>
+              <td class="text-sm">{{ $data->created_at }}</td>
+              <td class="text-sm">{{ $data->temp_current }}</td>
+              <td class="text-sm">{{ $data->ph_current }}</td>
+              <td class="text-sm">{{ $data->tds_current }}</td>
+              <td class="text-sm">{{ $data->ec_current }}</td>
+              <td class="text-sm">{{ $data->salinity_current }}</td>
+              @endforeach
               <td>
                 <div class="d-flex px-2 py-0">
                   <span class="badge bg-success me-3"> </span>
