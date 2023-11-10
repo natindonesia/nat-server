@@ -168,21 +168,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- @if (count($status) > 0) --}}
-                            @foreach ($status as $data)
-                                <tr>
-                                    <td class="text-sm">{{ $data->id }}</td>
-                                    <td class="text-sm">{{ $data->created_at }}</td>
-                                    <td class="text-sm">{{ $data->temp_current }}</td>
-                                    <td class="text-sm">{{ $data->ph_current }}</td>
-                                    <td class="text-sm">{{ $data->tds_current }}</td>
-                                    <td class="text-sm">{{ $data->ec_current }}</td>
-                                    <td class="text-sm">{{ $data->salinity_current }}</td>
-                                </tr>
-                            @endforeach
-                            {{-- @else --}}
-                            {{-- <tr> no content </tr> --}}
-                            {{-- @endif --}}
+                            @if (count($status) > 0)
+                                @foreach ($status as $data)
+                                    <tr>
+                                        <td class="text-sm">{{ $data->id }}</td>
+                                        <td class="text-sm">{{ $data->created_at }}</td>
+                                        <td class="text-sm">{{ $data->temp_current }}</td>
+                                        <td class="text-sm">{{ $data->ph_current }}</td>
+                                        <td class="text-sm">{{ $data->tds_current }}</td>
+                                        <td class="text-sm">{{ $data->ec_current }}</td>
+                                        <td class="text-sm">{{ $data->salinity_current }}</td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr> no content </tr>
+                            @endif
                         </tbody>
                     </table>
                 </div>
@@ -199,6 +199,41 @@
     <script src="{{ URL::asset('assets/js/plugins/countup.min.js') }}"></script>
     <script src="{{ URL::asset('assets/js/plugins/chartjs.min.js') }}"></script>
     <script src="{{ URL::asset('assets/js/plugins/round-slider.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/plugins/datatables.js') }}"></script>
+
+    <script>
+        if (document.getElementById('items-list')) {
+            const dataTableSearch = new simpleDatatables.DataTable("#items-list", {
+                searchable: true,
+                fixedHeight: false,
+                perPage: 7
+            });
+
+            document.querySelectorAll(".export").forEach(function(el) {
+                el.addEventListener("click", function(e) {
+                    var type = el.dataset.type;
+
+                    var data = {
+                        type: type,
+                        filename: "soft-ui-" + type,
+                    };
+
+                    if (type === "csv") {
+                        data.columnDelimiter = "|";
+                    }
+
+                    dataTableSearch.export(data);
+                });
+            });
+        };
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#alert-success").delay(3000).slideUp(300);
+
+        });
+    </script>
     <script>
         // Rounded slider
         const setValue = function(value, active) {
