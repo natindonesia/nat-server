@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SensorData;
-use App\Models\SensorData;
-use App\Models\SensorData;
+
 use Illuminate\Http\Request;
 
 class SensorDataController extends Controller
