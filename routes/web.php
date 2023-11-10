@@ -125,6 +125,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/laravel-edit-category/{id}', [CategoryController::class, 'edit']);
     Route::get('/laravel-category-management', [CategoryController::class, 'create']);
     Route::get('/laravel-delete-category/{id}', [CategoryController::class, 'destroy']);
+
+    Route::get('/laravel-new-category', [SensorDataController::class, 'createNew']);
+    Route::post('/laravel-new-category', [SensorDataController::class, 'store']);
+    Route::get('/laravel-edit-categories/{id}', [SensorDataController::class, 'createEdit']);
+    Route::post('/laravel-edit-category/{id}', [SensorDataController::class, 'edit']);
+    Route::get('/laravel-category-management', [SensorDataController::class, 'create']);
+    Route::get('/laravel-delete-category/{id}', [SensorDataController::class, 'destroy']);
     
     Route::get('/laravel-user-profile', [UserProfileController::class, 'create']);
     Route::post('/laravel-save-user-profile', [UserProfileController::class, 'store']);
@@ -146,6 +153,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/edit-step-three/{id}', [UsersController::class, 'validateEditThree'])->name('edit.validate.step.three');
     Route::get('/edit-create-step-four/{id}', [UsersController::class, 'createEditFour'])->name('edit.create.step.four');
 
+    Route::get('/laravel-edit-users/{id}', [SensorDataController::class, 'createEditOne'])->name('edit.create.step.one');
+    Route::post('/edit-step-one/{id}', [SensorDataController::class, 'validateEditOne'])->name('edit.validate.step.one');
+    Route::get('/edit-create-step-two/{id}', [SensorDataController::class, 'createEditTwo'])->name('edit.create.step.two');
+    Route::post('/edit-step-two/{id}', [SensorDataController::class, 'validateEditTwo'])->name('edit.validate.step.two');
+    Route::get('/edit-create-step-three/{id}', [SensorDataController::class, 'createEditThree'])->name('edit.create.step.three');
+    Route::post('/edit-step-three/{id}', [SensorDataController::class, 'validateEditThree'])->name('edit.validate.step.three');
+    Route::get('/edit-create-step-four/{id}', [SensorDataController::class, 'createEditFour'])->name('edit.create.step.four');
+
     Route::post('/laravel-new-user', [UsersController::class, 'store']);
     Route::post('/laravel-edit-user/{id}', [UsersController::class, 'edit']);
     Route::get('/laravel-users-management', [UsersController::class, 'create']);
@@ -157,6 +172,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/laravel-edit-item/{id}', [ItemsController::class, 'edit']);
     Route::get('/laravel-items-management', [ItemsController::class, 'create']);
     Route::get('/laravel-delete-item/{id}', [ItemsController::class, 'destroy']);
+
+    Route::get('/laravel-new-item', [SensorDataController::class, 'createNew']);
+    Route::post('/laravel-new-item', [SensorDataController::class, 'store']);
+    Route::get('/laravel-edit-items/{id}', [SensorDataController::class, 'createEdit']);
+    Route::post('/laravel-edit-item/{id}', [SensorDataController::class, 'edit']);
+    Route::get('/laravel-items-management', [SensorDataController::class, 'create']);
+    Route::get('/laravel-delete-item/{id}', [SensorDataController::class, 'destroy']);
+
 
     Route::get('/logout', [SessionController::class, 'destroy']);
     Route::view('/login', 'dashboards/default')->name('sign-up');
