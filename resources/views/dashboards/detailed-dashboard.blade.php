@@ -10,7 +10,8 @@
                             <div class="row">
                                 <div class="col-8 my-auto">
                                     <div class="numbers">
-                                        <p class="text-white text-sm mb-0 text-capitalize font-weight-bold opacity-7">Detail
+                                        <p class="text-white text-sm mb-0 text-capitalize font-weight-bold opacity-7">
+                                            Detail
                                         </p>
                                         <h5 class="text-white font-weight-bolder mb-0">
                                             Kolam 1
@@ -109,16 +110,45 @@
     <div class="row mt-4">
         <div class="col-lg-12">
             <div class="card z-index-2">
-                <div class="card-header pb-0">
-                    <h6>Trend dalam Hari/minggu/bulan</h6>
-                    <p class="text-sm">
-                        <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
-                        <span class="font-weight-bold">4% more</span> in 2021
-                    </p>
+                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6>Trend 8 Jam Terakhir</h6>
+                        <p class="text">
+                            {{ $dataUpdate->created_at->format('D, M Y H:i') }}
+                        </p>
+                    </div>
+                    {{-- <div class="ml-auto">
+                        <label for="filterJam" class="mr-2">Filter Jam:</label>
+                        <select id="filterJam">
+                            <option value="0">00:00 - 08:00</option>
+                            <option value="8">08:00 - 16:00</option>
+                            <option value="16">16:00 - 00:00</option>
+                        </select>
+                        <button onclick="applyFilter()" class="ml-2">Apply</button>
+                    </div> --}}
                 </div>
+
                 <div class="card-body p-3">
                     <div class="chart">
                         <canvas id="chart-line" class="chart-canvas" height="450" width="1389"
+                            style="display: block; box-sizing: border-box; height: 300px; width: 926px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-lg-12">
+            <div class="card z-index-2">
+                <div class="card-header pb-0">
+                    <h6>Trend Seminggu Terakhir</h6>
+                    <p class="text">
+                        {{ $dataUpdate->created_at->format('D, M Y H:i') }}
+                    </p>
+                </div>
+                <div class="card-body p-3">
+                    <div class="chart-week">
+                        <canvas id="chart-line-week" class="chart-canvas" height="450" width="1389"
                             style="display: block; box-sizing: border-box; height: 300px; width: 926px;"></canvas>
                     </div>
                 </div>
@@ -147,7 +177,8 @@
                         </div>
                     @endif
                     @if (session('success'))
-                        <div class="m-3  alert alert-success alert-dismissible fade show" id="alert-success" role="alert">
+                        <div class="m-3  alert alert-success alert-dismissible fade show" id="alert-success"
+                            role="alert">
                             <span class="alert-text text-white">
                                 {{ session('success') }}</span>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -190,17 +221,17 @@
         </div>
     </div>
     <div class="row">
-
     </div>
+
 @endsection
 
 @push('js')
+    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> --}}
     <script src="{{ URL::asset('assets/js/plugins/choices.min.js') }}"></script>
     <script src="{{ URL::asset('assets/js/plugins/countup.min.js') }}"></script>
     <script src="{{ URL::asset('assets/js/plugins/chartjs.min.js') }}"></script>
     <script src="{{ URL::asset('assets/js/plugins/round-slider.min.js') }}"></script>
     <script src="{{ URL::asset('assets/js/plugins/datatables.js') }}"></script>
-
     <script>
         if (document.getElementById('items-list')) {
             const dataTableSearch = new simpleDatatables.DataTable("#items-list", {
@@ -227,7 +258,6 @@
             });
         };
     </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
             $("#alert-success").delay(3000).slideUp(300);
@@ -311,7 +341,8 @@
             }
         }
 
-        //chart line
+
+        //chart line per 8 jam sehari
         var ctx2 = document.getElementById("chart-line").getContext("2d");
 
         var gradientStroke1 = ctx2.createLinearGradient(72, 221, 71, 50);
@@ -406,6 +437,163 @@
                         maxBarThickness: 6,
                     },
                 ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            precision: 2,
+                            display: true,
+                            padding: 10,
+                            color: '#b2b9bf',
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: 'normal',
+                                lineHeight: 2
+                            },
+                        }
+                    },
+                    x: {
+                        grid: {
+                            drawBorder: false,
+                            display: false,
+                            drawOnChartArea: false,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            display: true,
+                            color: '#b2b9bf',
+                            padding: 20,
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: 'normal',
+                                lineHeight: 2
+                            },
+                        }
+                    },
+                },
+            },
+        })
+
+
+        //trend perminggu
+        var ctxWeekly = document.getElementById("chart-line-week").getContext("2d");
+
+        var gradientStroke1 = ctxWeekly.createLinearGradient(72, 221, 71, 50);
+        gradientStroke1.addColorStop(1, 'rgba(72, 221, 71, 100)');
+        gradientStroke1.addColorStop(0.2, 'rgba(72,221,71,0.0)');
+        gradientStroke1.addColorStop(0, 'rgba(203,12,159,0)'); //purple colors
+
+
+        var gradientStroke2 = ctxWeekly.createLinearGradient(0, 230, 0, 50);
+        gradientStroke2.addColorStop(1, 'rgba(215,70,192,100)');
+        gradientStroke2.addColorStop(0.2, 'rgba(215,70,192,0.0)');
+        gradientStroke2.addColorStop(0, 'rgba(20,23,39,0)'); //purple colors
+
+        var gradientStroke3 = ctxWeekly.createLinearGradient(0, 230, 0, 50);
+        gradientStroke2.addColorStop(1, 'rgba(101,140,216,100)');
+        gradientStroke2.addColorStop(0.2, 'rgba(101,140,216,0.0)');
+        gradientStroke2.addColorStop(0, 'rgba(101,140,216,0)'); //purple colors
+
+        var gradientStroke4 = ctxWeekly.createLinearGradient(0, 230, 0, 50);
+        gradientStroke2.addColorStop(1, 'rgba(248,219,71,100)');
+        gradientStroke2.addColorStop(0.2, 'rgba(248,219,71, 0.0)');
+        gradientStroke2.addColorStop(0, 'rgba(248,219,71,0)');
+
+        var gradientStroke5 = ctxWeekly.createLinearGradient(0, 230, 0, 50);
+        gradientStroke2.addColorStop(1, 'rgba(255,69,69,100)');
+        gradientStroke2.addColorStop(0.2, 'rgba(255,69,69,0.0)');
+        gradientStroke2.addColorStop(0, 'rgba(255,69,69,0)'); //purple colors
+
+        new Chart(ctxWeekly, {
+            type: "line",
+            data: {
+                // labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                labels: @json($chartDataWeekly['labels']),
+                datasets: [{
+                        label: "Temperatur",
+                        tension: 0.4,
+                        borderWidth: 0,
+                        pointRadius: 0,
+                        borderColor: "#48DD47",
+                        borderWidth: 3,
+                        backgroundColor: gradientStroke1,
+                        fill: true,
+                        data: @json($chartDataWeekly['temp']),
+                        maxBarThickness: 6,
+                    },
+                    {
+                        label: "pH",
+                        tension: 0.4,
+                        borderWidth: 0,
+                        pointRadius: 0,
+                        borderColor: "#D746C0",
+                        borderWidth: 3,
+                        backgroundColor: gradientStroke2,
+                        fill: true,
+                        data: @json($chartDataWeekly['ph']),
+                        maxBarThickness: 6,
+                    },
+                    {
+                        label: "TDS",
+                        tension: 0.4,
+                        borderWidth: 0,
+                        pointRadius: 0,
+                        borderColor: "#658CD8",
+                        borderWidth: 3,
+                        backgroundColor: gradientStroke3,
+                        fill: true,
+                        data: @json($chartDataWeekly['tds']),
+                        maxBarThickness: 6,
+                    },
+                    {
+                        label: "EC",
+                        tension: 0.4,
+                        borderWidth: 0,
+                        pointRadius: 0,
+                        borderColor: "#F8DB47",
+                        borderWidth: 3,
+                        backgroundColor: gradientStroke4,
+                        fill: true,
+                        data: @json($chartDataWeekly['ec']),
+                        maxBarThickness: 6,
+                    },
+                    {
+                        label: "Salinitas",
+                        tension: 0.4,
+                        borderWidth: 0,
+                        pointRadius: 0,
+                        borderColor: "#FF4545",
+                        borderWidth: 3,
+                        backgroundColor: gradientStroke5,
+                        fill: true,
+                        data: @json($chartDataWeekly['salinity']),
+                        maxBarThickness: 6,
+                    },
+                ],
+
             },
             options: {
                 responsive: true,
