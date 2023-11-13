@@ -39,44 +39,90 @@ class SensorDataController extends Controller
         $dataUpdate->ph_current = $this->convertToPercentage($originalPH);
 
         $chartData = $this->getChartData();
-        //; dd('Before Formatting:', $dataUpdate->toArray());
-        return view('dashboards/detailed-dashboard', compact('status', 'dataUpdate', 'chartData'));
+// <<<<<<< nat-server-dashboard-level1
+//         //; dd('Before Formatting:', $dataUpdate->toArray());
+//         return view('dashboards/detailed-dashboard', compact('status', 'dataUpdate', 'chartData'));
+// =======
+        $chartDataWeekly = $this->getWeeklyChartData();
+        // dd($dataUpdate); //; dd('Before Formatting:', $dataUpdate->toArray());
+        return view('dashboards/detailed-dashboard', compact('status', 'dataUpdate', 'chartData', 'chartDataWeekly'));
+// >>>>>>> master
     }
 
     private function convertToDecimal($value)
     {
-        // Mengonversi nilai temperatur dari format 263 menjadi 26.3
         $intValue = intval($value);
-        $decimalValue = $intValue / 10.0; // Menggunakan 10.0 agar hasilnya berupa bilangan pecahan
+        $decimalValue = $intValue / 10.0;
         return number_format($decimalValue, 1, '.', '');
     }
     private function convertToPercentage($value)
     {
-        // Mengonversi nilai pH dari format 498 menjadi 4.98
         $intValue = intval($value);
-        $decimalValue = $intValue / 100.0; // Menggunakan 100.0 agar hasilnya berupa bilangan pecahan
+        $decimalValue = $intValue / 100.0;
         return number_format($decimalValue, 2, '.', '');
     }
 
     private function getChartData()
     {
-        // Mengambil data historis untuk grafik
+        $now = Carbon::now();
+        $interval = 8; // Jam
+
+        // Hitung waktu mulai untuk interval terakhir
+        $lastIntervalStart = $now->copy()->subHours($interval);
+
+        // dd($lastIntervalStart);
         $chartData = DB::table('sensor_data')
             ->select('created_at', 'temp_current', 'ph_current', 'tds_current', 'ec_current', 'salinity_current')
-            ->whereDate('created_at', Carbon::today())
-            ->latest()
-            ->limit(10)
-            ->get();
+            ->whereBetween('created_at', [$lastIntervalStart, $now])
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get()
+            ->reverse();
 
-        // Formatting data untuk grafik
+
+        // Debugging statements
+        // dd($chartData);
         $formattedChartData = [
-            'labels' => $chartData->pluck('created_at'),
+            'labels' => $chartData->pluck('created_at')->map(function ($timestamp) {
+                return Carbon::parse($timestamp)->format('H:i');
+            }),
             'temp' => $chartData->pluck('temp_current'),
             'ph' => $chartData->pluck('ph_current'),
             'tds' => $chartData->pluck('tds_current'),
             'ec' => $chartData->pluck('ec_current'),
             'salinity' => $chartData->pluck('salinity_current'),
         ];
+
         return $formattedChartData;
+    }
+
+    private function getWeeklyChartData()
+    {
+        $now = Carbon::now();
+        $lastSevenDays = $now->subDays(7);
+
+
+        $chartDataWeekly = DB::table('sensor_data')
+            ->selectRaw('DATE(created_at) as date, AVG(temp_current) as temp_avg, AVG(ph_current) as ph_avg, AVG(tds_current) as tds_avg, AVG(ec_current) as ec_avg, AVG(salinity_current) as salinity_avg')
+            ->where('created_at', '>=', $lastSevenDays)
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->get();
+
+        // dd($chartDataWeekly);
+
+
+        $formattedChartDataWeekly = [
+            'labels' => $chartDataWeekly->pluck('date')->map(function ($date) {
+                return Carbon::parse($date)->format('D, M d');
+            }),
+            'temp' => $chartDataWeekly->pluck('temp_avg'),
+            'ph' => $chartDataWeekly->pluck('ph_avg'),
+            'tds' => $chartDataWeekly->pluck('tds_avg'),
+            'ec' => $chartDataWeekly->pluck('ec_avg'),
+            'salinity' => $chartDataWeekly->pluck('salinity_avg'),
+        ];
+
+        return $formattedChartDataWeekly;
     }
 }
