@@ -12,16 +12,34 @@ class SensorDataController extends Controller
     public function index()
     {
         $status = SensorData::latest()->get();
-    
+
         $dataUpdate = SensorData::latest()->first();
-        $dataUpdate->temp_current = $this->convertToDecimal($dataUpdate->temp_current);
+        if ($dataUpdate !== null) {
+
+            $dataUpdate->temp_current = $this->convertToDecimal($dataUpdate->temp_current);
+
+            // dd($dataUpdate);
+        } else {
+
+            $defaultTemp = 0; // Set a default value or adjust as needed
+            \Illuminate\Support\Facades\Log::info('No data found in sensor_data table.');
+
+
+            $dataUpdate = new SensorData();
+            $dataUpdate->temp_current = $defaultTemp;
+
+            // dd($dataUpdate);
+        }
+
+
+        // $dataUpdate->temp_current = $this->convertToDecimal($dataUpdate->temp_current);
+        // dd($dataUpdate);
 
         $originalPH = $dataUpdate->ph_current;
         $dataUpdate->ph_current = $this->convertToPercentage($originalPH);
 
-
         $chartData = $this->getChartData();
-        // dd($dataUpdate); //; dd('Before Formatting:', $dataUpdate->toArray());
+        //; dd('Before Formatting:', $dataUpdate->toArray());
         return view('dashboards/detailed-dashboard', compact('status', 'dataUpdate', 'chartData'));
     }
 
