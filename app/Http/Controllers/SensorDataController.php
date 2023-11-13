@@ -14,16 +14,39 @@ class SensorDataController extends Controller
         $status = SensorData::latest()->get();
 
         $dataUpdate = SensorData::latest()->first();
-        $dataUpdate->temp_current = $this->convertToDecimal($dataUpdate->temp_current);
+        if ($dataUpdate !== null) {
+
+            $dataUpdate->temp_current = $this->convertToDecimal($dataUpdate->temp_current);
+
+            // dd($dataUpdate);
+        } else {
+
+            $defaultTemp = 0; // Set a default value or adjust as needed
+            \Illuminate\Support\Facades\Log::info('No data found in sensor_data table.');
+
+
+            $dataUpdate = new SensorData();
+            $dataUpdate->temp_current = $defaultTemp;
+
+            // dd($dataUpdate);
+        }
+
+
+        // $dataUpdate->temp_current = $this->convertToDecimal($dataUpdate->temp_current);
+        // dd($dataUpdate);
 
         $originalPH = $dataUpdate->ph_current;
         $dataUpdate->ph_current = $this->convertToPercentage($originalPH);
 
-
         $chartData = $this->getChartData();
+// <<<<<<< nat-server-dashboard-level1
+//         //; dd('Before Formatting:', $dataUpdate->toArray());
+//         return view('dashboards/detailed-dashboard', compact('status', 'dataUpdate', 'chartData'));
+// =======
         $chartDataWeekly = $this->getWeeklyChartData();
         // dd($dataUpdate); //; dd('Before Formatting:', $dataUpdate->toArray());
         return view('dashboards/detailed-dashboard', compact('status', 'dataUpdate', 'chartData', 'chartDataWeekly'));
+// >>>>>>> master
     }
 
     private function convertToDecimal($value)
@@ -38,7 +61,6 @@ class SensorDataController extends Controller
         $decimalValue = $intValue / 100.0;
         return number_format($decimalValue, 2, '.', '');
     }
-
 
     private function getChartData()
     {

@@ -32,7 +32,7 @@
   --bs-secondary: #8392AB;
   --bs-success: #82d616;
   --bs-info: #17c1e8;
-  --bs-warning: #fbcf33;
+  --bs-warning: #ffff00;
   --bs-danger: #ea0606;
   --bs-light: #e9ecef;
   --bs-dark: #344767;
@@ -9412,7 +9412,7 @@ textarea.form-control-lg {
 }
 
 .text-body {
-  color: #67748e !important;
+  /* color: #67748e !important; */
 }
 
 .text-muted {
@@ -18330,7 +18330,7 @@ textarea.form-control-lg {
 }
 
 .badge.bg-success {
-  background: #82d616;
+  background: #30C873 !important;
 }
 
 .badge.bg-info {
@@ -18338,7 +18338,7 @@ textarea.form-control-lg {
 }
 
 .badge.bg-warning {
-  background: #fbcf33;
+  background: #ffff00 !important;
 }
 
 .badge.bg-danger {
