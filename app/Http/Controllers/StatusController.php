@@ -2,38 +2,71 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Status;
-use App\Models\SensorData;
 use App\Models\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\State;
+use App\Models\StateMeta;
 
 class StatusController extends Controller
 {
-    public function index()
-    {
-        $latestStatus = Status::latest()->first();
-        $latestStatus = $latestStatus ?? new Status();
 
-        // $sensorListData = $latestStatus->sensor_list ? json_decode($latestStatus->sensor_list, true) : [];
+    // allow for multiple devices
+    protected function getState($deviceName = 'natwave')
+    {
+        $sensors = [
+            'ec', // Conductivity
+            'humid', // Salt
+            'orp', // Sanitation
+            'ph', // pH acidity
+            'tds', // TDS
+            'temp' // Temperature
+        ];
+
+        // Required for converting entity_id to attributes_id
+        $entityIds = [];
+        // e.g sensor.natwave_ec
+        foreach ($sensors as $sensor) {
+            $entityIds[] = "sensor.{$deviceName}_{$sensor}";
+        }
+
+        // Required for querying states table
+        $metadataToEntityIds = [];
+        $metadatas = StateMeta::whereIn('entity_id', $entityIds)->get()->toArray();
+        $metadataIds = [];
+        foreach ($metadatas as $metadata) {
+            $metadataToEntityIds[$metadata['metadata_id']] = $metadata['entity_id'];
+            $metadataIds[] = $metadata['metadata_id'];
+        }
+
+        // Get latest states for each metadata
+        $latestStates = [];
+
+        // Laravel mad, we do one by one
+        foreach ($metadataIds as $metadataId) {
+            // Get latest state
+            $state = State::where('metadata_id', $metadataId)->orderBy('last_updated_ts', 'desc')->first();
+            if (empty($state)) continue;
+            $latestStates[$metadataToEntityIds[$metadataId]] = $state->toArray();
+        }
+
+
 
         // Ambil data suhu (Temperature)
-        $temperature = $this->formatTemperature($latestStatus->temp_current ?? 0);
+        $temperature = $this->formatTemperature(floatval($latestStates["sensor.{$deviceName}_temp"]['state'] ?? 0));
 
         // Ambil data pH
-        $ph = $this->formatPH($latestStatus->ph_current ?? 0);
+        $ph = $this->formatPH(floatval($latestStates["sensor.{$deviceName}_ph"]['state'] ?? 0));
 
         // Ambil data (Salt)
-        $salt = $this->formatSalt($latestStatus->salinity_current ?? 0);
+        $salt = $this->formatSalt(floatval($latestStates["sensor.{$deviceName}_humid"]['state'] ?? 0));
 
         // Ambil data ORP (Sanitation)
-        $orp = $this->formatORP($latestStatus->orp_current ?? 0);
+        $orp = $this->formatORP(floatval($latestStates["sensor.{$deviceName}_orp"]['state'] ?? 0));
 
         // Ambil data konduktivitas (Conductivity)
-        $conductivity = $this->formatConductivity($latestStatus->ec_current ?? 0);
+        $conductivity = $this->formatConductivity(floatval($latestStates["sensor.{$deviceName}_ec"]['state'] ?? 0));
 
         // Ambil data TDS
-        $tds = $this->formatTDS($latestStatus->tds_current ?? 0);
+        $tds = $this->formatTDS(floatval($latestStates["sensor.{$deviceName}_tds"]['state'] ?? 0));
 
         $data = [
             'temperature' => $temperature,
@@ -43,7 +76,13 @@ class StatusController extends Controller
             'conductivity' => $conductivity,
             'tds' => $tds,
         ];
+        return $data;
+    }
 
+    public function index()
+    {
+
+        $data = $this->getState();
         return view('dashboards.smart-home', $data);
     }
 
