@@ -2,375 +2,98 @@
 
 @section('content')
     <div class="row mt-4">
-        <div class="col-lg-6 ms-auto">
-            <div class="card">
-                <div class="card-header pb-0 p-3">
-                    <div class="d-flex align-items-center">
-                        <h6 class="mb-0">Consumption by Adult's
-                            Pool</h6>
-                        <button type="button"
-                            class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex
+
+
+        @foreach($devices as $device)
+            <div class="" id="{{$device['name']}}">
+                <div class="card m-2">
+                    <div class="card-header pb-0 p-3">
+                        <div class="d-flex align-items-center">
+                            <h6 class="mb-0">Consumption by {{$device['display_name']}}</h6>
+                            <button type="button"
+                                    class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex
                             align-items-center justify-content-center ms-auto"
-                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat kelayakan kolam">
-                            <i class="fas fa-info"></i> </button>
+                                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat kelayakan kolam">
+                                <i class="fas fa-info"></i></button>
+                        </div>
                     </div>
-                </div>
-                <div class="card-body p-3">
-                    <div class="row">
-                        <div class="col-5 text-center">
-                            <div class="chart">
-                                <canvas id="chart-consumption" cslass="chart-canvas" height="197"></canvas>
-                            </div>
-                            <h4 class="font-weight-bold mt-n8">
-                                <img src="{{ asset('images/good.jpg') }}" alt="baik">
-                                <h6 class="d-block text-sm">
-                                    <span class="highlight-background" style="background-color: #d2fcd2; display: inline-block; padding: 5px; border-radius: 5px;">
+                    <div class="card-body p-3">
+                        <div class="row">
+                            <div class="col-5 text-center">
+                                <div class="chart">
+                                    <canvas id="chart-consumption" cslass="chart-canvas" height="197"></canvas>
+                                </div>
+                                <h4 class="font-weight-bold mt-n8">
+                                    @if($device['final_score'] > $finalScoreDisplay['green'])
+                                        <img src="{{ asset('images/good.jpg') }}" alt="baik">
+                                        <h6 class="d-block text-sm">
+                                    <span class="highlight-background"
+                                          style="background-color: #d2fcd2; display: inline-block; padding: 5px; border-radius: 5px;">
                                         <span class="text-sm bold" style="color: #30C873;">Good</span>
                                     </span>
-                                </h6>
-                            </h4>
-                        </div>
-                        <div class="col-7">
-                            <div class="table-responsive">
-                                <table class="table align-items-center mb-0">
-                                    <tbody>
-                                        <td>
-                                            <div class="d-flex px-2 py-0">
-                                                <span class="badge bg-success me-3"> </span>
-
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">Temperature</h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="align-right text-end text-sm">
-                                            <span class="text-xs font-weight-bold">{{ $temperature['value'] }} {{ $temperature['unit'] }}</span>
-                                        </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">PH</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $ph['value'] }} {{ $ph['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">Salt</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $salt['value'] }} {{ $salt['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">Sanitation (ORP)</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $orp['value'] }} {{ $orp['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">Conductivity</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $conductivity['value'] }} {{ $conductivity['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">TDS</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $tds['value'] }} {{ $tds['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-6 ms-auto">
-            <div class="card">
-                <div class="card-header pb-0 p-3">
-                    <div class="d-flex align-items-center">
-                        <h6 class="mb-0">Consumption by Children's Pool</h6>
-                        <button type="button"
-                            class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex
-                            align-items-center justify-content-center ms-auto"
-                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat
-                            kelayakan kolam">
-                            <i class="fas fa-info"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body p-3">
-                    <div class="row">
-                        <div class="col-5 text-center">
-                            <div class="chart">
-                                <canvas id="chart-consumption" class="chart-canvas" height="197"></canvas>
-                            </div>
-                            <h4 class="font-weight-bold mt-n8">
-                                <img src="{{ asset('images/good.jpg') }}" alt="baik">
-                                <h6 class="d-block text-sm">
-                                    <span class="highlight-background" style="background-color: #d2fcd2; display: inline-block; padding: 5px; border-radius: 5px;">
-                                        <span class="text-sm bold" style="color: #30C873;">Good</span>
-                                    </span>
-                                </h6>
-                            </h4>
-                        </div>
-                        <div class="col-7">
-                            <div class="table-responsive">
-                                <table class="table align-items-center mb-0">
-                                    <tbody>
-                                        <td>
-                                            <div class="d-flex px-2 py-0">
-                                                <span class="badge bg-success me-3"> </span>
-
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">Temperature</h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="align-right text-end text-sm">
-                                            <span class="text-xs font-weight-bold">{{ $temperature['value'] }} {{ $temperature['unit'] }}</span>
-                                        </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">PH</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $ph['value'] }} {{ $ph['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">Salt</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $salt['value'] }} {{ $salt['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">Sanitation (ORP)</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $orp['value'] }} {{ $orp['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">Conductivity</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $conductivity['value'] }} {{ $conductivity['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">TDS</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $tds['value'] }} {{ $tds['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="row mt-4">
-        <div class="col-lg-6 ms-auto">
-            <div class="card">
-                <div class="card-header pb-0 p-3">
-                    <div class="d-flex align-items-center">
-                        <h6 class="mb-0">Consumption by Jacuzzi</h6>
-                        <button type="button"
-                            class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex
-                            align-items-center justify-content-center ms-auto"
-                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat
-                             kelayakan kolam">
-                            <i class="fas fa-info"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body p-3">
-                    <div class="row">
-                        <div class="col-5 text-center">
-                            <div class="chart">
-                                <canvas id="chart-consumption" class="chart-canvas" height="197"></canvas>
-                            </div>
-                            <h4 class="font-weight-bold mt-n8 text-center">
-                                <img src="{{ asset('images/caution.png') }}" alt="caution">
-                                <h6 class="d-block text-sm">
-                                    <span class="highlight-background" style="background-color: #FFFF00; display: inline-block; padding: 5px; border-radius: 5px;">
+                                        </h6>
+                                    @elseif($device['final_score'] > $finalScoreDisplay['yellow'])
+                                        <img src="{{ asset('images/caution.png') }}" alt="caution">
+                                        <h6 class="d-block text-sm">
+                                    <span class="highlight-background"
+                                          style="background-color: #FFFF00; display: inline-block; padding: 5px; border-radius: 5px;">
                                         <span class="text-sm" style="color: #DAA520;">Caution</span>
                                     </span>
-                                </h6>
-                                {{-- <span class="d-block text-body text-sm" style="background-color: #FFFF00; color: #DAA520; border-radius: 5px; padding: 3px; max-width: 150px;  display: inline-block; text-align: center;">Caution</span> --}}
-                            </h4>
-                        </div>
-                        <div class="col-7">
-                            <div class="table-responsive">
-                                <table class="table align-items-center mb-0">
-                                    <tbody>
-                                        <td>
-                                            <div class="d-flex px-2 py-0">
-                                                <span class="badge bg-warning me-3"> </span>
+                                        </h6>
+                                    @else
+                                        <img src="{{ asset('images/caution.png') }}" alt="bad">
+                                        <h6 class="d-block text-sm">
+                                    <span class="highlight-background"
+                                          style="background-color: #ffa1a1; display: inline-block; padding: 5px; border-radius: 5px;">
+                                        <span class="text-sm" style="color: #FF0000;">Bad</span>
+                                    </span>
+                                        </h6>
+                                    @endif
 
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">Temperature</h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="align-right text-end text-sm">
-                                            <span class="text-xs font-weight-bold">{{ $temperature['value'] }} {{ $temperature['unit'] }}</span>
-                                        </td>
-                                        </tr>
-                                        <tr>
+                                    {{ intval($device['final_score'] * 100) }}%
+
+                                </h4>
+                            </div>
+                            <div class="col-7">
+                                <div class="table-responsive">
+                                    <table class="table align-items-center mb-0">
+                                        <tbody>
+                                        @foreach($device['state'] as $sensor => $state)
                                             <td>
                                                 <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-warning me-3"> </span>
+
+                                                    @if($device['scores'][$sensor] > $parameterThresholdDisplay['green'])
+                                                        <span class="badge bg-success me-3"> </span>
+                                                    @elseif($device['scores'][$sensor] > $parameterThresholdDisplay['yellow'])
+                                                        <span class="badge bg-warning me-3"> </span>
+                                                    @else
+                                                        <span class="badge bg-danger me-3"> </span>
+                                                    @endif
+
                                                     <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">PH</h6>
+                                                        <h6 class="mb-0 text-sm">{{ $state['label'] }}</h6>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $ph['value'] }} {{ $ph['unit'] }}</span>
+                                                <span
+                                                    class="text-xs font-weight-bold">{{ $state['value'] }} {{ $state['unit'] }}</span>
                                             </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">Salt</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $salt['value'] }} {{ $salt['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">Sanitation (ORP)</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $orp['value'] }} {{ $orp['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">Conductivity</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $conductivity['value'] }} {{ $conductivity['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-                                                    <span class="badge bg-success me-3"> </span>
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">TDS</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                <span class="text-xs font-weight-bold">{{ $tds['value'] }} {{ $tds['unit'] }}</span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                            <tr/>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-6 ms-auto">
-        </div>
+        @endforeach
+
+
     </div>
-    <hr class="horizontal dark my-5">
-    <div class="row">
-        <!-- ruang kosong -->
-    </div>
+
 @endsection
 
 @push('js')
@@ -380,8 +103,8 @@
     <script src="{{ URL::asset('assets/js/plugins/round-slider.min.js') }}"></script>
     <script>
         // Rounded slider
-        const setValue = function(value, active) {
-            document.querySelectorAll("round-slider").forEach(function(el) {
+        const setValue = function (value, active) {
+            document.querySelectorAll("round-slider").forEach(function (el) {
                 if (el.value === undefined) return;
                 el.value = value;
             });
@@ -393,8 +116,8 @@
                 span.style.color = 'black';
         }
 
-        document.querySelectorAll("round-slider").forEach(function(el) {
-            el.addEventListener('value-changed', function(ev) {
+        document.querySelectorAll("round-slider").forEach(function (el) {
+            el.addEventListener('value-changed', function (ev) {
                 if (ev.detail.value !== undefined)
                     setValue(ev.detail.value, false);
                 else if (ev.detail.low !== undefined)
@@ -403,7 +126,7 @@
                     setHigh(ev.detail.high, false);
             });
 
-            el.addEventListener('value-changing', function(ev) {
+            el.addEventListener('value-changing', function (ev) {
                 if (ev.detail.value !== undefined)
                     setValue(ev.detail.value, true);
                 else if (ev.detail.low !== undefined)
@@ -545,7 +268,7 @@
                     backgroundColor: "#3A416F",
                     data: [150, 230, 380, 220, 420, 200, 70],
                     maxBarThickness: 6
-                }, ],
+                },],
             },
             options: {
                 responsive: true,

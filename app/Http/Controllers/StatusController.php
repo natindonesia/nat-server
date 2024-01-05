@@ -9,17 +9,181 @@ use App\Models\StateMeta;
 class StatusController extends Controller
 {
 
-    // allow for multiple devices
+
+    protected static $sensors = [
+        'ec', // Conductivity
+        'humid', // Salt
+        'orp', // Sanitation
+        'ph', // pH acidity
+        'tds', // TDS
+        'temp' // Temperature
+    ];
+
+    // Threshold for each parameter
+    // Example sensor 1
+    // if range of 28< or >20 get score 1
+    // else if range of 30< or >19 get score 0.7
+    // else 0.5
+
+    // Evaluated from top to bottom
+    public static $parametersThreshold = [
+        [
+            'sensor' => 'temp',
+            'min' => 20,
+            'max' => 29,
+            'score' => 1.0
+        ],
+        [
+            'sensor' => 'temp',
+            'min' => 16,
+            'max' => 32,
+            'score' => 0.6
+        ],
+        [
+            'sensor' => 'ph',
+            'min' => 7.2,
+            'max' => 7.8,
+            'score' => 1.0
+        ],
+        [
+            'sensor' => 'ph',
+            'min' => 7.0,
+            'max' => 8.0,
+            'score' => 0.7
+        ],
+        [
+            'sensor' => 'ph',
+            'min' => 6.8,
+            'max' => 8.2,
+            'score' => 0.5
+        ],
+        [
+            'sensor' => 'orp',
+            'min' => 650,
+            'max' => 750,
+            'score' => 1.0
+        ],
+        [
+            'sensor' => 'orp',
+            'min' => 600,
+            'max' => 800,
+            'score' => 0.7
+        ],
+        [
+            'sensor' => 'orp',
+            'min' => 550,
+            'max' => 850,
+            'score' => 0.5
+        ],
+        [
+            'sensor' => 'humid',
+            'min' => 0,
+            'max' => 60,
+            'score' => 1.0
+        ],
+        [
+            'sensor' => 'humid',
+            'min' => 0,
+            'max' => 120,
+            'score' => 0.7
+        ],
+        [
+            'sensor' => 'humid',
+            'min' => 0,
+            'max' => 150,
+            'score' => 0.5
+        ],
+        [
+            'sensor' => 'ec',
+            'min' => 0,
+            'max' => 1000,
+            'score' => 1.0
+        ],
+        [
+            'sensor' => 'ec',
+            'min' => 0,
+            'max' => 1200,
+            'score' => 0.7
+        ],
+        [
+            'sensor' => 'ec',
+            'min' => 0,
+            'max' => 1500,
+            'score' => 0.5
+        ],
+        [
+            'sensor' => 'tds',
+            'min' => 0,
+            'max' => 500,
+            'score' => 1.0
+        ],
+        [
+            'sensor' => 'tds',
+            'min' => 0,
+            'max' => 600,
+            'score' => 0.7
+        ],
+        [
+            'sensor' => 'tds',
+            'min' => 0,
+            'max' => 750,
+            'score' => 0.5
+        ],
+
+    ];
+
+
+    public static $parameterThresholdDisplay = [
+        'green' => 0.7,
+        'yellow' => 0.45,
+    ];
+    public static $finalScoreDisplay = [
+        'green' => 0.7,
+        'yellow' => 0.5,
+    ];
+
+    public function index()
+    {
+
+
+        // internal name => display name
+        $devices = [
+            'natwave' => 'Adult Pool',
+        ];
+
+        $data = [
+            'devices' => [
+            ]
+        ];
+
+        foreach ($devices as $deviceName => $deviceDisplayName) {
+            $device = [
+                'name' => $deviceName,
+                'display_name' => $deviceDisplayName,
+                'state' => $this->getState($deviceName),
+            ];
+            $device['scores'] = $this->calculateScore($device['state']);
+            $device['final_score'] = $this->calculateFinalScore($device['scores']);
+            $data['devices'][] = $device;
+        }
+
+
+        // add state to data
+        foreach ($data['devices'] as $device) {
+            foreach ($device['state'] as $sensor => $value) {
+                $data[$sensor] = $value;
+            }
+        }
+
+        $data['parameterThresholdDisplay'] = self::$parameterThresholdDisplay;
+        $data['finalScoreDisplay'] = self::$finalScoreDisplay;
+
+        return view('dashboards.smart-home', $data);
+    }
+
     protected function getState($deviceName = 'natwave')
     {
-        $sensors = [
-            'ec', // Conductivity
-            'humid', // Salt
-            'orp', // Sanitation
-            'ph', // pH acidity
-            'tds', // TDS
-            'temp' // Temperature
-        ];
+        $sensors = self::$sensors;
 
         // Required for converting entity_id to attributes_id
         $entityIds = [];
@@ -49,7 +213,6 @@ class StatusController extends Controller
         }
 
 
-
         // Ambil data suhu (Temperature)
         $temperature = $this->formatTemperature(floatval($latestStates["sensor.{$deviceName}_temp"]['state'] ?? 0));
 
@@ -69,21 +232,14 @@ class StatusController extends Controller
         $tds = $this->formatTDS(floatval($latestStates["sensor.{$deviceName}_tds"]['state'] ?? 0));
 
         $data = [
-            'temperature' => $temperature,
+            'temp' => $temperature,
             'ph' => $ph,
-            'salt' => $salt,
+            'humid' => $salt,
             'orp' => $orp,
-            'conductivity' => $conductivity,
+            'ec' => $conductivity,
             'tds' => $tds,
         ];
         return $data;
-    }
-
-    public function index()
-    {
-
-        $data = $this->getState();
-        return view('dashboards.smart-home', $data);
     }
 
     private function formatTemperature($value)
@@ -93,6 +249,7 @@ class StatusController extends Controller
         return [
             'value' => $formattedValue,
             'unit' => '°C',
+            'label' => 'Temperature',
         ];
     }
 
@@ -101,14 +258,18 @@ class StatusController extends Controller
         return [
             'value' => $value,
             'unit' => 'pH',
+            'label' => 'PH',
         ];
     }
+
+    // allow for multiple devices
 
     private function formatSalt($value)
     {
         return [
             'value' => $value,
             'unit' => 'mg/l',
+            'label' => 'Salt',
         ];
     }
 
@@ -117,6 +278,7 @@ class StatusController extends Controller
         return [
             'value' => $value,
             'unit' => 'mV',
+            'label' => 'Sanitation (ORP)',
         ];
     }
 
@@ -125,6 +287,7 @@ class StatusController extends Controller
         return [
             'value' => $value,
             'unit' => 'μS/cm',
+            'label' => 'Conductivity',
         ];
     }
 
@@ -133,6 +296,65 @@ class StatusController extends Controller
         return [
             'value' => $value,
             'unit' => 'ppm',
+            'label' => 'TDS',
         ];
     }
+
+    /**
+     * Calculate final score from all parameters
+     * @param array $scores
+     * @return float
+     */
+    protected function calculateFinalScore(array $scores): float
+    {
+        $finalScore = 0;
+        foreach ($scores as $score) {
+            $finalScore += $score;
+        }
+        $finalScore = $finalScore / count($scores);
+        return $finalScore;
+    }
+
+    /**
+     * Calculate score for each parameter
+     * @param array<string, array> $state // e.g ['temperature' => ['value' => 30.0, 'unit' => '°C']]
+     * @return array<string, float> $scores // e.g ['temperature' => 1.0]
+     */
+    protected function calculateScore(array $state): array
+    {
+        $scores = [];
+        foreach ($state as $sensor => $value) {
+            $value = floatval($value['value'] ?? 0);
+            $scores[$sensor] = self::calculateScoreFor($sensor, $value);
+        }
+
+        return $scores;
+    }
+
+    /**
+     * Calculate score for sensor
+     * @param string $sensor entity name of sensor
+     * @param float $value any value
+     * @return float 0.0 - 1.0
+     */
+    public static function calculateScoreFor(string $sensor, float $value): float
+    {
+        $score = 0.0;
+        $found = false;
+        foreach (self::$parametersThreshold as $parameterThreshold) {
+            if ($parameterThreshold['sensor'] !== $sensor) continue;
+            $found = true;
+            if ($value >= $parameterThreshold['min'] && $value <= $parameterThreshold['max']) {
+
+                $score = $parameterThreshold['score'];
+                break;
+            }
+        }
+        if (!$found) {
+            throw new \Exception("Sensor $sensor not found");
+        }
+        return $score;
+    }
+
+
 }
