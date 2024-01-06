@@ -29,51 +29,39 @@ class StatusController extends Controller
     public static $parametersThreshold = [
         [
             'sensor' => 'temp',
-            'min' => 20,
-            'max' => 29,
+            'min' => 22,
+            'max' => 26,
             'score' => 1.0
         ],
         [
             'sensor' => 'temp',
-            'min' => 16,
-            'max' => 32,
-            'score' => 0.6
+            'min' => 18,
+            'max' => 29,
+            'score' => 0.55
         ],
         [
             'sensor' => 'ph',
             'min' => 7.2,
-            'max' => 7.8,
+            'max' => 8.0,
             'score' => 1.0
         ],
         [
             'sensor' => 'ph',
-            'min' => 7.0,
-            'max' => 8.0,
-            'score' => 0.7
-        ],
-        [
-            'sensor' => 'ph',
-            'min' => 6.8,
-            'max' => 8.2,
-            'score' => 0.5
+            'min' => 6.5,
+            'max' => 8.6,
+            'score' => 0.4
         ],
         [
             'sensor' => 'orp',
-            'min' => 650,
+            'min' => 700,
             'max' => 750,
             'score' => 1.0
         ],
         [
             'sensor' => 'orp',
-            'min' => 600,
-            'max' => 800,
-            'score' => 0.7
-        ],
-        [
-            'sensor' => 'orp',
-            'min' => 550,
-            'max' => 850,
-            'score' => 0.5
+            'min' => 650,
+            'max' => 700,
+            'score' => 0.58
         ],
         [
             'sensor' => 'humid',
@@ -95,21 +83,15 @@ class StatusController extends Controller
         ],
         [
             'sensor' => 'ec',
-            'min' => 0,
-            'max' => 1000,
+            'min' => 2.5,
+            'max' => 3.0,
             'score' => 1.0
         ],
         [
             'sensor' => 'ec',
-            'min' => 0,
-            'max' => 1200,
+            'min' => 2.0,
+            'max' => 2.5,
             'score' => 0.7
-        ],
-        [
-            'sensor' => 'ec',
-            'min' => 0,
-            'max' => 1500,
-            'score' => 0.5
         ],
         [
             'sensor' => 'tds',
@@ -134,8 +116,8 @@ class StatusController extends Controller
 
 
     public static $parameterThresholdDisplay = [
-        'green' => 0.7,
-        'yellow' => 0.45,
+        'green' => 0.7, // above 70%
+        'yellow' => 0.4, // above 60%
     ];
     public static $finalScoreDisplay = [
         'green' => 0.7,
