@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class SessionController extends Controller
@@ -16,7 +15,7 @@ class SessionController extends Controller
     {
         $attributes = request()->validate([
             'email'=>'required|email',
-            'password'=>'required' 
+            'password' => 'required'
         ]);
 
         if(Auth::attempt($attributes))
@@ -27,7 +26,7 @@ class SessionController extends Controller
 
         return back()->withErrors(['msgError' => 'These credentials do not match our records.']);
     }
-    
+
     public function destroy()
     {
 
