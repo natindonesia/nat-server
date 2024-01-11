@@ -2,22 +2,71 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Http;
-use App\Models\Waterpool;
-use App\Models\SensorData;
+use App\Models\State;
+use App\Models\StateMeta;
 use Illuminate\Http\Request;
-use GuzzleHttp\Client;
 
 class WaterpoolController extends Controller
-{   
+{
+
+
+    public static function getStates(string $deviceName = 'natwave'): array
+    {
+        $sensors = StateMeta::$sensors;
+        // Required for converting entity_id to attributes_id
+        $entityIds = [];
+        // e.g sensor.natwave_ec
+        foreach ($sensors as $sensor) {
+            $entityIds[] = "sensor.{$deviceName}_{$sensor}";
+        }
+
+        // Required for querying states table
+        $metadataToEntityIds = [];
+        $metadatas = StateMeta::whereIn('entity_id', $entityIds)->get()->toArray();
+        $metadataIds = [];
+        foreach ($metadatas as $metadata) {
+            $metadataToEntityIds[$metadata['metadata_id']] = $metadata['entity_id'];
+            $metadataIds[] = $metadata['metadata_id'];
+        }
+
+        // Get states for each metadata
+        $sensors = [
+            // sensor => [data => [...]
+        ];
+
+        // Laravel mad, we do one by one
+
+        for ($i = 0; $i < 15; $i++) { // 15 items
+
+            $sensor = [];
+            $timestamp = [
+                // 1703656360.509
+            ];
+            foreach ($metadataIds as $metadataId) {
+                // Get latest state
+                $state = State::where('metadata_id', $metadataId)->orderBy('last_updated_ts', 'desc')->limit(1)->offset($i)->first();
+                if (empty($state)) continue;
+                $sensor[$state->metadata->entity_id] = $state->state;
+                $timestamp[$state->metadata->entity_id] = $state->last_updated_ts;
+            }
+            // average timestamp
+            $sensor['timestamp'] = array_sum($timestamp) / count($timestamp);
+            $sensors[] = $sensor;
+
+        }
+
+
+        return $sensors;
+    }
 
     public function index()
     {
 
-        $status = SensorData::all();
+
+        $status = $this->getStates();
         return view('waterpool/5-table-status', compact('status'));
     }
-    
+
     /**
      * Show the form for creating a new resource.
      *
@@ -83,5 +132,5 @@ class WaterpoolController extends Controller
     {
         //
     }
-   
+
 }

@@ -42,26 +42,23 @@
                         <table class="table table-flush" id="items-list">
                             <thead class="thead-light">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Time Stamp</th>
-                                    <th>temp_current</th>
-                                    <th>ph_current</th>
-                                    <th>tds_current</th>
-                                    <th>ec_current</th>
-                                    <th>salinity_current</th>
+                                    @foreach($status[0] as $key => $value)
+                                        <th class="text-sm">{{ $key }}</th>
+                                    @endforeach
                                 </tr>
                             </thead>
                             <tbody>
                                 @if (count($status) > 0)
                                     @foreach ($status as $data)
                                         <tr>
-                                            <td class="text-sm">{{ $data->id }}</td>
-                                            <td class="text-sm">{{ $data->created_at }}</td>
-                                            <td class="text-sm">{{ $data->temp_current }}</td>
-                                            <td class="text-sm">{{ $data->ph_current }}</td>
-                                            <td class="text-sm">{{ $data->tds_current }}</td>
-                                            <td class="text-sm">{{ $data->ec_current }}</td>
-                                            <td class="text-sm">{{ $data->salinity_current }}</td>
+                                            @foreach($data as $key => $value)
+                                                @if($key == 'timestamp')
+                                                    @php
+                                                        $value = date('Y-m-d H:i:s', $value);
+                                                    @endphp
+                                                @endif
+                                                <td class="text-sm">{{ $value }}</td>
+                                            @endforeach
                                         </tr>
                                     @endforeach
                                 @else

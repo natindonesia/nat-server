@@ -163,9 +163,10 @@ class StatusController extends Controller
         return view('dashboards.smart-home', $data);
     }
 
+
     protected function getState($deviceName = 'natwave')
     {
-        $sensors = self::$sensors;
+        $sensors = StateMeta::$sensors;
 
         // Required for converting entity_id to attributes_id
         $entityIds = [];
