@@ -386,7 +386,11 @@
   </div>
 @endsection
 
-@push('js')  
+@push('js')
+    <script>
+        // redirect
+        window.location.href = '/';
+    </script>
   <script src="{{ URL::asset('assets/js/plugins/chartjs.min.js') }}"></script>
   <script src="{{ URL::asset('assets/js/plugins/threejs.js') }}"></script>
   <script src="{{ URL::asset('assets/js/plugins/orbit-controls.js') }}"></script>
