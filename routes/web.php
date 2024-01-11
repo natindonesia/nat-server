@@ -6,13 +6,13 @@ use App\Http\Controllers\DataApiController;
 use App\Http\Controllers\ItemsController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RolesController;
+use App\Http\Controllers\SensorDataController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\StatusController;
 use App\Http\Controllers\TagsController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WaterpoolController;
-use App\Http\Controllers\SensorDataController;
-use App\Http\Controllers\StatusController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -59,7 +59,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::view('/authentication-verification-cover', 'authentication/verification/cover');
     Route::view('/authentication-verification-illustration', 'authentication/verification/illustration');
 
-    Route::view('/dashboard-default', 'dashboards/default');
+    Route::redirect('/dashboard-default', '/dashboard-smart-home');
     Route::view('/dashboard-automative', 'dashboards/automotive');
     Route::view('/dashboard-crm', 'dashboards/crm');
     Route::view('/dashboard-smart-home', 'dashboards/smart-home');
