@@ -25,7 +25,8 @@
                                 </div>
                                 <h4 class="font-weight-bold mt-n8">
                                     @if($device['final_score'] > $finalScoreDisplay['green'])
-                                        <img src="{{ asset('images/good.jpg') }}" alt="baik">
+                                        <img src="{{ asset('images/green.png') }}" alt="baik"
+                                             style="width: 70px; height: 70px; border-radius: 50%;">
                                         <h6 class="d-block text-sm">
                                     <span class="highlight-background"
                                           style="background-color: #d2fcd2; display: inline-block; padding: 5px; border-radius: 5px;">
@@ -33,7 +34,9 @@
                                     </span>
                                         </h6>
                                     @elseif($device['final_score'] > $finalScoreDisplay['yellow'])
-                                        <img src="{{ asset('images/caution.png') }}" alt="caution">
+                                        <img src="{{ asset('images/yellow.png') }}" alt="waspada"
+                                             style="width: 70px; height: 70px; border-radius: 50%;"
+                                        >
                                         <h6 class="d-block text-sm">
                                     <span class="highlight-background"
                                           style="background-color: #FFFF00; display: inline-block; padding: 5px; border-radius: 5px;">
@@ -41,7 +44,8 @@
                                     </span>
                                         </h6>
                                     @else
-                                        <img src="{{ asset('images/caution.png') }}" alt="bad">
+                                        <img src="{{ asset('images/red.png') }}" alt="buruk"
+                                             style="width: 70px; height: 70px; border-radius: 50%;">
                                         <h6 class="d-block text-sm">
                                     <span class="highlight-background"
                                           style="background-color: #ffa1a1; display: inline-block; padding: 5px; border-radius: 5px;">
