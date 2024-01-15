@@ -59,6 +59,41 @@ class WaterpoolController extends Controller
         return $sensors;
     }
 
+    public static function formatStates(array $states): array
+    {
+        $formattedStates = [];
+        foreach ($states as $state) {
+            $formattedState = [];
+            foreach ($state as $sensor => $value) {
+                $formattedState[$sensor] = self::formatSensor($sensor, $value);
+            }
+            $formattedStates[] = $formattedState;
+        }
+        return $formattedStates;
+    }
+
+    public static function formatSensor(string $sensor, $value)
+    {
+        if ($sensor == 'timestamp') return date('Y-m-d H:i:s', $value);
+        $sensor_name = explode('_', $sensor)[1];
+        switch ($sensor_name) {
+            case 'ec':
+                return StatusController::formatConductivity($value);
+            case 'humid':
+                return StatusController::formatSalt($value);
+            case 'orp':
+                return StatusController::formatORP($value);
+            case 'ph':
+                return StatusController::formatPH($value);
+            case 'tds':
+                return StatusController::formatTDS($value);
+            case 'temp':
+                return StatusController::formatTemperature(floatval($value));
+            default:
+                throw new \Exception("Unknown sensor: {$sensor_name}");
+        }
+    }
+
     public function index()
     {
 

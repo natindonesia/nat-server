@@ -14,11 +14,12 @@
                                             Detail
                                         </p>
                                         <h5 class="text-white font-weight-bolder mb-0">
-                                            Kolam 1
+                                            {{ $deviceName }}
                                         </h5>
+
                                         <div class="col-8 md-3 ml-auto">
                                             <h5 class="text-white font-weight-bolder mb-0">
-                                                <span>{{ $dataUpdate->created_at }}</span>
+                                                <span>{{ $formatted_state['timestamp'] }}</span>
                                             </h5>
                                         </div>
                                     </div>
@@ -29,132 +30,51 @@
                 </div>
             </div>
             <div class="row mt-4">
+
+                @php
+                    unset($formatted_state['timestamp']);
+                @endphp
+                @foreach($formatted_state as $key => $state)
+
                 <div class="col-md-2 mt-md-0 mt-4 ">
                     <div class="card">
                         <div class="card-body text-center">
                             <h1 class="text-gradient text-primary">
-                                <span id="status1" countto="{{ $dataUpdate->temp_current }}" hidden>
-                                    {{ str_replace('°C', '', $dataUpdate->temp_current) }}
+                                <span id="{{$key}}_state">
+                                    {{ $state['value'] }}
                                 </span>
-                                {{ str_replace('°C', '', $dataUpdate->temp_current) }}
-                                <span class="text-lg ms-n2">°C</span>
+
+                                <span class="text-lg ms-n2">{{$state['unit']}}</span>
                             </h1>
-                            <h6 class="mb-0 font-weight-bolder">Termperature</h6>
+                            <h6 class="mb-0 font-weight-bolder">{{$state['label']}}</h6>
 
                         </div>
                     </div>
                 </div>
-                <div class="col-md-2  mt-md-0 mt-4">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <h1 class="text-gradient text-primary">
-                                <span id="status2" countto="{{ $dataUpdate->ph_current }}" hidden>
-                                    {{ $dataUpdate->ph_current }}
-                                </span>
-                                {{ $dataUpdate->ph_current }}
-                                <span class="text-lg ms-n2">pH</span>
-                            </h1>
-                            <h6 class="mb-0 font-weight-bolder">pH</h6>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2  mt-md-0 mt-4 ">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <h1 class="text-gradient text-primary">
-                                <span id="status3" countto="{{ $dataUpdate->tds_current }}" hidden>
-                                    {{ $dataUpdate->tds_current }}
-                                </span>
-                                {{ $dataUpdate->tds_current }}
-                                <span class="text-lg ms-n2">ppm</span>
-                            </h1>
-                            <h6 class="mb-0 font-weight-bolder">TDS</h6>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2  mt-md-0 mt-4">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <h1 class="text-gradient text-primary">
-                                <span id="status4" countto="{{ $dataUpdate->ec_current }}" hidden>
-                                    {{ $dataUpdate->ec_current }}
-                                </span>
-                                {{ $dataUpdate->ec_current }}
-                                <span class="text-lg ms-n1">μS/cm</span>
-                            </h1>
-                            <h6 class="mb-0 font-weight-bolder">EC</h6>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2  mt-md-0 mt-4">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <h1 class="text-gradient text-primary">
-                                <span id="status5" countto="{{ $dataUpdate->salinity_current }}" hidden>
-                                    {{ $dataUpdate->salinity_current }}
-                                </span>
-                                {{ $dataUpdate->salinity_current }}
-                                <span class="text-lg ms-n1">mg/l</span>
-                            </h1>
-                            <h6 class="mb-0 font-weight-bolder">Salinity</h6>
-
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>
-    <div class="row mt-4">
-        <div class="col-lg-12">
-            <div class="card z-index-2">
-                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6>Trend 8 Jam Terakhir</h6>
-                        <p class="text">
-                            {{ $dataUpdate->created_at->format('D, M Y H:i') }}
-                        </p>
-                    </div>
-                    {{-- <div class="ml-auto">
-                        <label for="filterJam" class="mr-2">Filter Jam:</label>
-                        <select id="filterJam">
-                            <option value="0">00:00 - 08:00</option>
-                            <option value="8">08:00 - 16:00</option>
-                            <option value="16">16:00 - 00:00</option>
-                        </select>
-                        <button onclick="applyFilter()" class="ml-2">Apply</button>
-                    </div> --}}
-                </div>
-
-                <div class="card-body p-3">
-                    <div class="chart">
-                        <canvas id="chart-line" class="chart-canvas" height="450" width="1389"
-                            style="display: block; box-sizing: border-box; height: 300px; width: 926px;"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    @foreach($stats as $key => $stat)
     <div class="row mt-4">
         <div class="col-lg-12">
             <div class="card z-index-2">
                 <div class="card-header pb-0">
-                    <h6>Trend Seminggu Terakhir</h6>
+                    <h6>{{$key}}</h6>
                     <p class="text">
-                        {{ $dataUpdate->created_at->format('D, M Y H:i') }}
+                        {{ $stat['timestamp'][0]}}
                     </p>
                 </div>
                 <div class="card-body p-3">
                     <div class="chart-week">
-                        <canvas id="chart-line-week" class="chart-canvas" height="450" width="1389"
+                        <canvas id="{{$key}}" class="chart-canvas" height="450" width="1389"
                             style="display: block; box-sizing: border-box; height: 300px; width: 926px;"></canvas>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    @endforeach
     <hr class="horizontal dark my-5">
     <div class="row mt-4">
         <div class="col-12">
@@ -189,27 +109,28 @@
                     <table class="table table-flush" id="items-list">
                         <thead class="thead-light">
                             <tr>
-                                <th>ID</th>
-                                <th>Time Stamp</th>
-                                <th>temp_current</th>
-                                <th>ph_current</th>
-                                <th>tds_current</th>
-                                <th>ec_current</th>
-                                <th>salinity_current</th>
+
+                                @foreach($formatted_state as $key => $value)
+                                    <th class="text-sm">{{ $key }}</th>
+                                @endforeach
+                                <th class="text-sm">Timestamp</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if (count($status) > 0)
-                                @foreach ($status as $data)
+                        @if (count($formatted_states) > 0)
+                            @foreach ($formatted_states as $state)
+
                                     <tr>
-                                        <td class="text-sm">{{ $data->id }}</td>
-                                        <td class="text-sm">{{ $data->created_at }}</td>
-                                        <td class="text-sm">{{ $data->temp_current }}</td>
-                                        <td class="text-sm">{{ $data->ph_current }}</td>
-                                        <td class="text-sm">{{ $data->tds_current }}</td>
-                                        <td class="text-sm">{{ $data->ec_current }}</td>
-                                        <td class="text-sm">{{ $data->salinity_current }}</td>
+                                        @foreach($state as $key => $sta)
+
+                                            @if($key == 'timestamp')
+                                                <td class="text-sm">{{ $sta }}</td>
+                                            @else
+                                                <td class="text-sm">{{ $sta['value'] }}</td>
+                                            @endif
+                                        @endforeach
                                     </tr>
+
                                 @endforeach
                             @else
                                 <tr> no content </tr>
@@ -343,7 +264,9 @@
 
 
         //chart line per 8 jam sehari
-        var ctx2 = document.getElementById("chart-line").getContext("2d");
+
+        @foreach($stats as $key => $stat)
+        var ctx2 = document.getElementById("{{$key}}").getContext("2d");
 
         var gradientStroke1 = ctx2.createLinearGradient(72, 221, 71, 50);
         gradientStroke1.addColorStop(1, 'rgba(72, 221, 71, 100)');
@@ -375,65 +298,15 @@
             type: "line",
             data: {
                 // labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                labels: @json($chartData['labels']),
+                labels: @json($stat['timestamp']),
                 datasets: [{
-                        label: "Temperatur",
+                    label: "{{$stat['format']['label']}}",
                         tension: 0.4,
-                        borderWidth: 0,
-                        pointRadius: 0,
                         borderColor: "#48DD47",
                         borderWidth: 3,
                         backgroundColor: gradientStroke1,
-                        fill: true,
-                        data: @json($chartData['temp']),
-                        maxBarThickness: 6,
-                    },
-                    {
-                        label: "pH",
-                        tension: 0.4,
-                        borderWidth: 0,
-                        pointRadius: 0,
-                        borderColor: "#D746C0",
-                        borderWidth: 3,
-                        backgroundColor: gradientStroke2,
-                        fill: true,
-                        data: @json($chartData['ph']),
-                        maxBarThickness: 6,
-                    },
-                    {
-                        label: "TDS",
-                        tension: 0.4,
-                        borderWidth: 0,
-                        pointRadius: 0,
-                        borderColor: "#658CD8",
-                        borderWidth: 3,
-                        backgroundColor: gradientStroke3,
-                        fill: true,
-                        data: @json($chartData['tds']),
-                        maxBarThickness: 6,
-                    },
-                    {
-                        label: "EC",
-                        tension: 0.4,
-                        borderWidth: 0,
-                        pointRadius: 0,
-                        borderColor: "#F8DB47",
-                        borderWidth: 3,
-                        backgroundColor: gradientStroke4,
-                        fill: true,
-                        data: @json($chartData['ec']),
-                        maxBarThickness: 6,
-                    },
-                    {
-                        label: "Salinitas",
-                        tension: 0.4,
-                        borderWidth: 0,
-                        pointRadius: 0,
-                        borderColor: "#FF4545",
-                        borderWidth: 3,
-                        backgroundColor: gradientStroke5,
-                        fill: true,
-                        data: @json($chartData['salinity']),
+
+                    data: @json($stat['data']),
                         maxBarThickness: 6,
                     },
                 ],
@@ -496,7 +369,7 @@
                 },
             },
         })
-
+        @endforeach
 
         //trend perminggu
         var ctxWeekly = document.getElementById("chart-line-week").getContext("2d");

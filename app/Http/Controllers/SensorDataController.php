@@ -3,14 +3,84 @@
 namespace App\Http\Controllers;
 
 use App\Models\SensorData;
+use App\Models\State;
+use App\Models\StateMeta;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SensorDataController extends Controller
 {
+
+    public static function getStats(string $deviceName = "natwave", int $limit = 15): array
+    {
+        $sensors = StateMeta::$sensors;
+        // Required for converting entity_id to attributes_id
+        $entityIds = [];
+        // e.g sensor.natwave_ec
+        foreach ($sensors as $sensor) {
+            $entityIds[] = "sensor.{$deviceName}_{$sensor}";
+        }
+
+        // Required for querying states table
+        $metadataToEntityIds = [];
+        $metadatas = StateMeta::whereIn('entity_id', $entityIds)->get()->toArray();
+        $metadataIds = [];
+        foreach ($metadatas as $metadata) {
+            $metadataToEntityIds[$metadata['metadata_id']] = $metadata['entity_id'];
+            $metadataIds[] = $metadata['metadata_id'];
+        }
+
+        // Get stats for each metadata
+        $sensors = [
+            /**
+             * sensor_1 => [
+             *  data => [...]
+             *  timestamp => [...]
+             */
+        ];
+
+
+        // Laravel mad, we do one by one
+
+
+        foreach ($metadataIds as $metadataId) {
+            // Get latest state
+            $state = State::where('metadata_id', $metadataId)->orderBy('last_updated_ts', 'desc')->limit($limit)->get();
+
+            if (empty($state)) continue;
+            $data = [];
+            $timestamp = [];
+            foreach ($state as $item) {
+                $data[] = $item->state;
+                $timestamp[] = date('Y-m-d H:i:s', $item->last_updated_ts);
+            }
+
+            $sensors[$state->first()->metadata->entity_id] = [
+                'data' => $data,
+                'timestamp' => $timestamp,
+                'format' => WaterpoolController::formatSensor($state->first()->metadata->entity_id, 0.0)
+            ];
+        }
+
+
+        return $sensors;
+    }
+
     public function index()
     {
+        $deviceName = 'natwave';
+        //yes this is duplicate query, have problem ?
+        $states = WaterpoolController::getStates($deviceName, 30);
+        $stats = SensorDataController::getStats($deviceName, 30);
+
+        $data = [
+            'formatted_states' => WaterpoolController::formatStates($states),
+            'stats' => $stats,
+            'deviceName' => $deviceName,
+        ];
+        $data['formatted_state'] = $data['formatted_states'][0];
+
+
         $status = SensorData::latest()->get();
 
         $dataUpdate = SensorData::latest()->first();
@@ -39,14 +109,13 @@ class SensorDataController extends Controller
         $dataUpdate->ph_current = $this->convertToPercentage($originalPH);
 
         $chartData = $this->getChartData();
-// <<<<<<< nat-server-dashboard-level1
-//         //; dd('Before Formatting:', $dataUpdate->toArray());
-//         return view('dashboards/detailed-dashboard', compact('status', 'dataUpdate', 'chartData'));
-// =======
+
         $chartDataWeekly = $this->getWeeklyChartData();
-        // dd($dataUpdate); //; dd('Before Formatting:', $dataUpdate->toArray());
-        return view('dashboards/detailed-dashboard', compact('status', 'dataUpdate', 'chartData', 'chartDataWeekly'));
-// >>>>>>> master
+        $data['chartData'] = $chartData;
+        $data['chartDataWeekly'] = $chartDataWeekly;
+        $data['dataUpdate'] = $dataUpdate;
+        $data['status'] = $status;
+        return view('dashboards/detailed-dashboard', $data);
     }
 
     private function convertToDecimal($value)
@@ -55,6 +124,7 @@ class SensorDataController extends Controller
         $decimalValue = $intValue / 10.0;
         return number_format($decimalValue, 1, '.', '');
     }
+
     private function convertToPercentage($value)
     {
         $intValue = intval($value);
