@@ -127,7 +127,6 @@ class StatusController extends Controller
     public function index()
     {
 
-
         // internal name => display name
         $devices = [
             'natwave' => 'Adult Pool',
@@ -146,6 +145,8 @@ class StatusController extends Controller
             ];
             $device['scores'] = $this->calculateScore($device['state']);
             $device['final_score'] = $this->calculateFinalScore($device['scores']);
+            $states = WaterpoolController::getStates($deviceName, 1);
+            $device['😎'] = $states[0];
             $data['devices'][] = $device;
         }
 
@@ -164,7 +165,7 @@ class StatusController extends Controller
     }
 
 
-    protected function getState($deviceName = 'natwave')
+    protected static function getState($deviceName = 'natwave')
     {
         $sensors = StateMeta::$sensors;
 
@@ -197,22 +198,22 @@ class StatusController extends Controller
 
 
         // Ambil data suhu (Temperature)
-        $temperature = $this->formatTemperature(floatval($latestStates["sensor.{$deviceName}_temp"]['state'] ?? 0));
+        $temperature = self::formatTemperature(floatval($latestStates["sensor.{$deviceName}_temp"]['state'] ?? 0));
 
         // Ambil data pH
-        $ph = $this->formatPH(floatval($latestStates["sensor.{$deviceName}_ph"]['state'] ?? 0));
+        $ph = self::formatPH(floatval($latestStates["sensor.{$deviceName}_ph"]['state'] ?? 0));
 
         // Ambil data (Salt)
-        $salt = $this->formatSalt(floatval($latestStates["sensor.{$deviceName}_humid"]['state'] ?? 0));
+        $salt = self::formatSalt(floatval($latestStates["sensor.{$deviceName}_humid"]['state'] ?? 0));
 
         // Ambil data ORP (Sanitation)
-        $orp = $this->formatORP(floatval($latestStates["sensor.{$deviceName}_orp"]['state'] ?? 0));
+        $orp = self::formatORP(floatval($latestStates["sensor.{$deviceName}_orp"]['state'] ?? 0));
 
         // Ambil data konduktivitas (Conductivity)
-        $conductivity = $this->formatConductivity(floatval($latestStates["sensor.{$deviceName}_ec"]['state'] ?? 0));
+        $conductivity = self::formatConductivity(floatval($latestStates["sensor.{$deviceName}_ec"]['state'] ?? 0));
 
         // Ambil data TDS
-        $tds = $this->formatTDS(floatval($latestStates["sensor.{$deviceName}_tds"]['state'] ?? 0));
+        $tds = self::formatTDS(floatval($latestStates["sensor.{$deviceName}_tds"]['state'] ?? 0));
 
         $data = [
             'temp' => $temperature,
@@ -225,7 +226,7 @@ class StatusController extends Controller
         return $data;
     }
 
-    private function formatTemperature($value)
+    public static function formatTemperature($value)
     {
         $formattedValue = number_format($value, 2, '.', '');
 
@@ -236,7 +237,7 @@ class StatusController extends Controller
         ];
     }
 
-    private function formatPH($value)
+    public static function formatPH($value)
     {
         return [
             'value' => $value,
@@ -247,7 +248,7 @@ class StatusController extends Controller
 
     // allow for multiple devices
 
-    private function formatSalt($value)
+    public static function formatSalt($value)
     {
         return [
             'value' => $value,
@@ -256,7 +257,7 @@ class StatusController extends Controller
         ];
     }
 
-    private function formatORP($value)
+    public static function formatORP($value)
     {
         return [
             'value' => $value,
@@ -265,7 +266,7 @@ class StatusController extends Controller
         ];
     }
 
-    private function formatConductivity($value)
+    public static function formatConductivity($value)
     {
         return [
             'value' => $value,
@@ -274,7 +275,7 @@ class StatusController extends Controller
         ];
     }
 
-    private function formatTDS($value)
+    public static function formatTDS($value)
     {
         return [
             'value' => $value,
@@ -288,7 +289,7 @@ class StatusController extends Controller
      * @param array $scores
      * @return float
      */
-    protected function calculateFinalScore(array $scores): float
+    public static function calculateFinalScore(array $scores): float
     {
         $finalScore = 0;
         foreach ($scores as $score) {
@@ -303,7 +304,7 @@ class StatusController extends Controller
      * @param array<string, array> $state // e.g ['temperature' => ['value' => 30.0, 'unit' => '°C']]
      * @return array<string, float> $scores // e.g ['temperature' => 1.0]
      */
-    protected function calculateScore(array $state): array
+    public static function calculateScore(array $state): array
     {
         $scores = [];
         foreach ($state as $sensor => $value) {

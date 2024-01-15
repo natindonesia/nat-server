@@ -10,10 +10,13 @@
                     <div class="card-header pb-0 p-3">
                         <div class="d-flex align-items-center">
                             <h6 class="mb-0">Consumption by {{$device['display_name']}}</h6>
+
                             <button type="button"
                                     class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex
                             align-items-center justify-content-center ms-auto"
-                                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat kelayakan kolam">
+
+                                    data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                    title="{{date('d M Y H:00:00', $device["😎"]['timestamp'])}}">
                                 <i class="fas fa-info"></i></button>
                         </div>
                     </div>

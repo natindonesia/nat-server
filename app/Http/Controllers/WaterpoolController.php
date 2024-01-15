@@ -10,7 +10,7 @@ class WaterpoolController extends Controller
 {
 
 
-    public static function getStates(string $deviceName = 'natwave'): array
+    public static function getStates(string $deviceName = 'natwave', int $limit = 15): array
     {
         $sensors = StateMeta::$sensors;
         // Required for converting entity_id to attributes_id
@@ -36,7 +36,7 @@ class WaterpoolController extends Controller
 
         // Laravel mad, we do one by one
 
-        for ($i = 0; $i < 15; $i++) { // 15 items
+        for ($i = 0; $i < $limit; $i++) { // 15 items
 
             $sensor = [];
             $timestamp = [
