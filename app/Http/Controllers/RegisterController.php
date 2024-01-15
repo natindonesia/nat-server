@@ -35,6 +35,6 @@ class RegisterController extends Controller
 
         session()->flash('success', 'Your account has been created.');
         Auth::login($insertUser);
-        return view('dashboards/default');
+        return redirect('/');
     }
 }
