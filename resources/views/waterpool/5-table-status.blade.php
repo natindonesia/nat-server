@@ -1,4 +1,4 @@
-@extends('user_type.auth', ['parentFolder' => 'laravel', 'childFolder' => 'items'])
+@extends('user_type.auth', ['parentFolder' => 'waterpool', 'childFolder' => 'items'])
 
 @section('content')
     <div class="row">

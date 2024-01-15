@@ -19,7 +19,7 @@
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center d-flex align-items-center justify-content-center  me-2">
                         <svg width="12px" height="12px" viewBox="0 0 45 40" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            xmlns="http://www.w3.org/2000/svg">
                             <title>shop </title>
                             <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                 <g transform="translate(-1716.000000, -439.000000)" fill="#FFFFFF" fill-rule="nonzero">
@@ -73,7 +73,7 @@
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <svg width="1rem" height="1rem" viewBox="0 0 512 512" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            xmlns="http://www.w3.org/2000/svg">
                             <title>Data Kolam </title>
                             <g id="Basic-Elements" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                 <g id="Rounded-Icons" transform="translate(-1716.000000, -439.000000)" fill="#FFFFFF"
@@ -100,7 +100,7 @@
                             <a class="nav-link {{ $childFolder == 'items' ? 'active' : '' }}"
                                 href="{{ Route('waterpool-index') }}">
                                 <span class="sidenav-mini-icon"> I </span>
-                                <span class="sidenav-normal"> 5 Data Kolam sensor </span>
+                                <span class="sidenav-normal"> Data Kolam sensor </span>
                             </a>
                         </li>
                     </ul>
@@ -117,7 +117,7 @@
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <svg width="1rem" height="1rem" viewBox="0 0 512 512" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                             xmlns="http://www.w3.org/2000/svg">
                             <title>laravel </title>
                             <g id="Basic-Elements" stroke="none" stroke-width="1" fill="none"
                                 fill-rule="evenodd">
