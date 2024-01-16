@@ -208,6 +208,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/tabel-data', [WaterpoolController::class, 'index'])->name('waterpool-index');
 
+    Route::get('/app-settings', [\App\Http\Controllers\AppSettingsController::class, 'index'])->name('app-settings');
+    Route::post('/app-settings', [\App\Http\Controllers\AppSettingsController::class, 'store'])->name('app-settings');
 
 });
 

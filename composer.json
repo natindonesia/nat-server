@@ -10,7 +10,8 @@
         "guzzlehttp/guzzle": "^7.8",
         "laravel/framework": "^9.0",
         "laravel/sanctum": "^2.15",
-        "laravel/tinker": "^2.6"
+        "laravel/tinker": "^2.6",
+        "ext-json": "*"
     },
     "require-dev": {
         "spatie/laravel-ignition": "^1.0",

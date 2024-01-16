@@ -43,7 +43,7 @@
                 </div>
             </li>
 
-            {{-- WATERPOOLL --}}
+            {{-- WATERPOOL --}}
 
 
             <li class="nav-item">
@@ -66,7 +66,26 @@
                 </div>
             </li>
 
+            {{-- Setting --}}
 
+            <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#appSettings"
+                   class="nav-link {{ $parentFolder == 'appSettings' ? ' active' : '' }}"
+                   aria-controls="applicationsExamples" role="button" aria-expanded="true">
+
+                    <span class="nav-link-text ms-1">Settings</span>
+                </a>
+                <div class="collapse show" id="appSettings">
+                    <ul class="nav ms-4 ps-3">
+                        <li class="nav-item {{ $childFolder == 'items' ? 'active' : '' }}">
+                            <a class="nav-link {{ $childFolder == 'items' ? 'active' : '' }}"
+                               href="{{ route('app-settings') }}">
+                                <span class="sidenav-normal"> Settings </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
 
         </ul>
     </div>

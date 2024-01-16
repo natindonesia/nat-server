@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AppSettings;
 use App\Models\Carbon;
 use App\Models\State;
 use App\Models\StateMeta;
@@ -129,8 +130,11 @@ class StatusController extends Controller
 
         // internal name => display name
         $devices = [
-            'natwave' => 'Adult Pool',
+
         ];
+        foreach (AppSettings::getDevicesName()->value as $id => $name) {
+            $devices[$id] = $name;
+        }
 
         $data = [
             'devices' => [
