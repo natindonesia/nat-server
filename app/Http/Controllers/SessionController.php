@@ -15,10 +15,12 @@ class SessionController extends Controller
     {
         $attributes = request()->validate([
             'email'=>'required|email',
-            'password' => 'required'
+            'password' => 'required',
+            'remember' => 'string',
         ]);
 
-        if(Auth::attempt($attributes))
+        $remember = $attributes['remember'] === 'on';
+        if (Auth::attempt($attributes, $remember))
         {
             session()->regenerate();
             return redirect('/');

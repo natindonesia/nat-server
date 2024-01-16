@@ -15,10 +15,10 @@
                     <ol class="text-white">
                         <li>Username <b>admin@softui.com</b> and Password <b>secret</b>
                         </li>
-                        <li>Username 
+                        <li>Username
                             <b>creator@softui.com</b> and Password <b>secret</b>
                         </li>
-                        <li>Username 
+                        <li>Username
                             <b>member@softui.com</b> and Password <b>secret</b>
                         </li>
                     </ol>
@@ -106,7 +106,7 @@
                     @enderror
                     </div>
                     <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="rememberMe">
+                        <input class="form-check-input" type="checkbox" name="remember" id="rememberMe">
                     <label class="form-check-label" for="rememberMe">Remember me</label>
                     </div>
                     <div class="text-center">
@@ -120,7 +120,7 @@
                     <div class="text-center">
                     <a href="/register" class="btn bg-gradient-dark w-100 mt-2 mb-4">Sign up</a>
                     </div>
-                    <p class="text-sm mt-3 mb-0">Forgot your password? Reset your password 
+                    <p class="text-sm mt-3 mb-0">Forgot your password? Reset your password
                         <a href="/login/forgot-password" class="text-dark font-weight-bolder">here</a>
                     </p>
                 </form>
