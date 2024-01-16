@@ -20,6 +20,7 @@ class SessionController extends Controller
         ]);
 
         $remember = $attributes['remember'] === 'on';
+        unset($attributes['remember']);
         if (Auth::attempt($attributes, $remember))
         {
             session()->regenerate();
