@@ -87,6 +87,12 @@
                     </p>
                 </div>
                 <div class="table-responsive">
+                    <div class="m-3">
+                        <a href="{{route('detailed-dashboard.export')}}" class="btn bg-gradient-primary btn-sm mb-0"
+                           type="button">Export Excel</a>
+                        <a href="{{route('detailed-dashboard.export', ['isPdf=1'])}}"
+                           class="btn bg-gradient-primary btn-sm mb-0" type="button">Export PDF</a>
+                    </div>
                     @if ($errors->get('msgError'))
                         <div class="m-3  alert alert-warning alert-dismissible fade show" role="alert">
                             <span class="alert-text text-white">

@@ -211,6 +211,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/app-settings', [\App\Http\Controllers\AppSettingsController::class, 'index'])->name('app-settings');
     Route::post('/app-settings', [\App\Http\Controllers\AppSettingsController::class, 'store'])->name('app-settings');
 
+    Route::get('/dashboard-detailed-dashboard/export', [SensorDataController::class, 'export'])->name('detailed-dashboard.export');
+
 });
 
 Route::group(['middleware' => 'guest'], function () {

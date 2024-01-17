@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\SensorDataExport;
+use App\Models\AppSettings;
 use App\Models\SensorData;
 use App\Models\State;
 use App\Models\StateMeta;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SensorDataController extends Controller
 {
@@ -63,6 +66,7 @@ class SensorDataController extends Controller
         }
 
 
+
         return $sensors;
     }
 
@@ -116,6 +120,23 @@ class SensorDataController extends Controller
         $data['dataUpdate'] = $dataUpdate;
         $data['status'] = $status;
         return view('dashboards/detailed-dashboard', $data);
+    }
+
+
+    public function export()
+    {
+        $isPdf = request()->get('isPdf', false);
+
+        $deviceName = request()->get('deviceName', AppSettings::$natwaveDevices[0]);
+        // check if device name is valid
+        if (!in_array($deviceName, AppSettings::$natwaveDevices)) {
+            abort(404);
+        }
+
+        if ($isPdf) {
+            return Excel::download(new SensorDataExport($deviceName), "sensor_data_{$deviceName}.pdf", \Maatwebsite\Excel\Excel::TCPDF);
+        }
+        return Excel::download(new SensorDataExport($deviceName), "sensor_data_{$deviceName}.xlsx");
     }
 
     private function convertToDecimal($value)
