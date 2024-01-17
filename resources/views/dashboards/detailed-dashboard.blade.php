@@ -78,74 +78,7 @@
     <hr class="horizontal dark my-5">
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card">
-                <!-- Card header -->
-                <div class="card-header">
-                    <h5 class="mb-0">Detail data yang diterima</h5>
-                    <p class="text-sm mb-0">
-                        Data yang diterima secara periodik
-                    </p>
-                </div>
-                <div class="table-responsive">
-                    <div class="m-3">
-                        <a href="{{route('detailed-dashboard.export')}}" class="btn bg-gradient-primary btn-sm mb-0"
-                           type="button">Export Excel</a>
-                        <a href="{{route('detailed-dashboard.export', ['isPdf=1'])}}"
-                           class="btn bg-gradient-primary btn-sm mb-0" type="button">Export PDF</a>
-                    </div>
-                    @if ($errors->get('msgError'))
-                        <div class="m-3  alert alert-warning alert-dismissible fade show" role="alert">
-                            <span class="alert-text text-white">
-                                {{ $errors->first() }}</span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                                <i class="fa fa-close" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                    @endif
-                    @if (session('success'))
-                        <div class="m-3  alert alert-success alert-dismissible fade show" id="alert-success"
-                            role="alert">
-                            <span class="alert-text text-white">
-                                {{ session('success') }}</span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                                <i class="fa fa-close" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                    @endif
-                    <table class="table table-flush" id="items-list">
-                        <thead class="thead-light">
-                            <tr>
-
-                                @foreach($formatted_state as $key => $value)
-
-                                    <th class="text-sm">{{ \App\Models\AppSettings::translateSensorKey($key) }}</th>
-                                @endforeach
-                                <th class="text-sm">Timestamp</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @if (count($formatted_states) > 0)
-                            @foreach ($formatted_states as $state)
-
-                                    <tr>
-                                        @foreach($state as $key => $sta)
-
-                                            @if($key == 'timestamp')
-                                                <td class="text-sm">{{ $sta }}</td>
-                                            @else
-                                                <td class="text-sm">{{ $sta['value'] }}</td>
-                                            @endif
-                                        @endforeach
-                                    </tr>
-
-                                @endforeach
-                            @else
-                                <tr> no content </tr>
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <x-detail-table :device-name=$deviceName/>
         </div>
     </div>
     <div class="row">

@@ -85,7 +85,6 @@ class SensorDataController extends Controller
         $data['formatted_state'] = $data['formatted_states'][0];
 
 
-        $status = SensorData::latest()->get();
 
         $dataUpdate = SensorData::latest()->first();
         if ($dataUpdate !== null) {
@@ -118,7 +117,6 @@ class SensorDataController extends Controller
         $data['chartData'] = $chartData;
         $data['chartDataWeekly'] = $chartDataWeekly;
         $data['dataUpdate'] = $dataUpdate;
-        $data['status'] = $status;
         return view('dashboards/detailed-dashboard', $data);
     }
 
