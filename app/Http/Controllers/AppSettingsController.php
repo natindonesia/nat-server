@@ -19,6 +19,7 @@ class AppSettingsController extends Controller
 
         $data = [
             'generalSettings' => $generalSettings,
+            'translation' => AppSettings::getTranslation(),
         ];
 
         if (session('message')) {
@@ -37,11 +38,19 @@ class AppSettingsController extends Controller
      */
     public function store(Request $request)
     {
+        // Trusting user input here...
         if (is_array($request->devices_name)) {
             AppSettings::updateOrCreate([
                 'key' => 'devices_name',
             ], [
                 'value' => $request->devices_name,
+            ]);
+        }
+        if (is_array($request->translation)) {
+            AppSettings::updateOrCreate([
+                'key' => 'translation',
+            ], [
+                'value' => $request->translation,
             ]);
         }
         return redirect()->route('app-settings')->with('message', 'Settings saved');

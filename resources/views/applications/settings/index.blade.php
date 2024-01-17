@@ -11,7 +11,9 @@
     <div class="container-fluid py-4">
         <div class="card">
             <div class="card-header pb-0 px-3">
-                <h6 class="mb-0">Profile Information</h6>
+                <h6 class="mb-0">
+                    <Information></Information>
+                </h6>
             </div>
             <div class="card-body pt-4 p-3">
                 <form action="{{route('app-settings')}}" method="POST" role="form text-left">
@@ -33,26 +35,23 @@
 
 
                     </div>
-                    <div hidden class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="user.phone" class="form-control-label">Phone</label>
-                                <div class="">
-                                    <input class="form-control" type="tel" placeholder="40770888444" id="number"
-                                           name="phone" value="" onfocus="focused(this)" onfocusout="defocused(this)">
+                    <div class="row">
+                        @foreach($translation['value'] as $key => $value)
+                            @php
+                                $name = 'translation['.$key.']';
+                            @endphp
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{$name}}" class="form-control-label">{{$key}}</label>
+                                    <div class="">
+                                        <input class="form-control" type="tel" id="{{$name}}"
+                                               name="{{$name}}" value="{{$value}}" onfocus="focused(this)"
+                                               onfocusout="defocused(this)">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="user.location" class="form-control-label">Location</label>
-                                <div class="">
-                                    <input class="form-control" type="text" placeholder="Location" id="name"
-                                           name="location" value="" onfocus="focused(this)"
-                                           onfocusout="defocused(this)">
-                                </div>
-                            </div>
-                        </div>
+                        @endforeach
+
                     </div>
                     <div hidden class="form-group">
                         <label for="about">About Me</label>

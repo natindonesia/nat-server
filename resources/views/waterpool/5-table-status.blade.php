@@ -43,7 +43,10 @@
                             <thead class="thead-light">
                                 <tr>
                                     @foreach($status[0] as $key => $value)
-                                        <th class="text-sm">{{ $key }}</th>
+                                        @php
+                                            $name = \App\Models\AppSettings::translateSensorKey($key)
+                                        @endphp
+                                        <th class="text-sm">{{ $name }}</th>
                                     @endforeach
                                 </tr>
                             </thead>

@@ -14,7 +14,7 @@
                                             Detail
                                         </p>
                                         <h5 class="text-white font-weight-bolder mb-0">
-                                            {{ $deviceName }}
+                                            {{ \App\Models\AppSettings::translateDeviceName($deviceName) }}
                                         </h5>
 
                                         <div class="col-8 md-3 ml-auto">
@@ -60,7 +60,7 @@
         <div class="col-lg-12">
             <div class="card z-index-2">
                 <div class="card-header pb-0">
-                    <h6>{{$key}}</h6>
+                    <h6>{{\App\Models\AppSettings::translateSensorKey($key)}}</h6>
                     <p class="text">
                         {{ $stat['timestamp'][0]}}
                     </p>
@@ -117,7 +117,8 @@
                             <tr>
 
                                 @foreach($formatted_state as $key => $value)
-                                    <th class="text-sm">{{ $key }}</th>
+
+                                    <th class="text-sm">{{ \App\Models\AppSettings::translateSensorKey($key) }}</th>
                                 @endforeach
                                 <th class="text-sm">Timestamp</th>
                             </tr>

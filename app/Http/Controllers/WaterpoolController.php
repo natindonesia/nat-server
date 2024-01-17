@@ -72,6 +72,7 @@ class WaterpoolController extends Controller
         return $formattedStates;
     }
 
+
     public static function formatSensor(string $sensor, $value)
     {
         if ($sensor == 'timestamp') return date('Y-m-d H:i:s', $value);

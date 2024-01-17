@@ -27,7 +27,7 @@ class StatusController extends Controller
     // else 0.5
 
     // Evaluated from top to bottom
-    public static $parametersThreshold = [
+    public static $parametersThresholdInternational = [
         [
             'sensor' => 'temp',
             'min' => 22,
@@ -238,7 +238,7 @@ class StatusController extends Controller
         return [
             'value' => $formattedValue,
             'unit' => '°C',
-            'label' => 'Temperature',
+            'label' => __('translation.temp'),
         ];
     }
 
@@ -247,7 +247,7 @@ class StatusController extends Controller
         return [
             'value' => $value,
             'unit' => 'pH',
-            'label' => 'PH',
+            'label' => __('translation.ph'),
         ];
     }
 
@@ -258,7 +258,7 @@ class StatusController extends Controller
         return [
             'value' => $value,
             'unit' => 'mg/l',
-            'label' => 'Salt',
+            'label' => __('translation.humid'),
         ];
     }
 
@@ -267,7 +267,7 @@ class StatusController extends Controller
         return [
             'value' => $value,
             'unit' => 'mV',
-            'label' => 'Sanitation (ORP)',
+            'label' => __('translation.orp'),
         ];
     }
 
@@ -276,7 +276,7 @@ class StatusController extends Controller
         return [
             'value' => $value,
             'unit' => 'μS/cm',
-            'label' => 'Conductivity',
+            'label' => __('translation.ec'),
         ];
     }
 
@@ -285,7 +285,7 @@ class StatusController extends Controller
         return [
             'value' => $value,
             'unit' => 'ppm',
-            'label' => 'TDS',
+            'label' => __('translation.tds'),
         ];
     }
 
@@ -330,7 +330,7 @@ class StatusController extends Controller
     {
         $score = 0.0;
         $found = false;
-        foreach (self::$parametersThreshold as $parameterThreshold) {
+        foreach (self::$parametersThresholdInternational as $parameterThreshold) {
             if ($parameterThreshold['sensor'] !== $sensor) continue;
             $found = true;
             if ($value >= $parameterThreshold['min'] && $value <= $parameterThreshold['max']) {

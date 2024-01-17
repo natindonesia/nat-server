@@ -77,8 +77,8 @@
                 </a>
                 <div class="collapse show" id="appSettings">
                     <ul class="nav ms-4 ps-3">
-                        <li class="nav-item {{ $childFolder == 'items' ? 'active' : '' }}">
-                            <a class="nav-link {{ $childFolder == 'items' ? 'active' : '' }}"
+                        <li class="nav-item {{ Request::is('app-settings') ? 'active' : '' }}">
+                            <a class="nav-link {{ Request::is('app-settings') ? 'active' : '' }}"
                                href="{{ route('app-settings') }}">
                                 <span class="sidenav-normal"> Settings </span>
                             </a>

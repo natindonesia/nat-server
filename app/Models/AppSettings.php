@@ -54,4 +54,54 @@ class AppSettings extends Model
         $devicesName->value = $devicesNameValue;
         return $devicesName;
     }
+
+    public static function translateDeviceName($id)
+    {
+        return __('devices_name.' . $id);
+    }
+
+    public static function translateSensorKey(string $sensor): string
+    {
+        // check if has _ in it
+        if (strpos($sensor, '_') === false) return __('translation.' . $sensor);
+        $sensor_name = explode('_', $sensor)[1];
+        return __('translation.' . $sensor_name);
+    }
+
+    public static function getTranslation()
+    {
+        $translation = self::where('key', 'translation')->first();
+        $default = [
+            'ec' => 'Conductivity',
+            'humid' => 'Salt',
+            'orp' => 'Sanitation (ORP)',
+            'ph' => 'PH',
+            'tds' => 'TDS',
+            'temp' => 'Temperature',
+            'timestamp' => 'Timestamp'
+        ];
+
+        if (!$translation) {
+            $translation = self::create([
+                'key' => 'translation',
+                'value' => $default,
+            ]);
+        }
+        // check if lacking
+        $translationValue = $translation->value;
+        foreach ($default as $id => $name) {
+            if (!isset($translationValue[$id])) {
+                $translationValue[$id] = $name;
+            }
+        }
+        // check if more
+        foreach ($translationValue as $id => $name) {
+            if (!in_array($id, array_keys($default))) {
+                unset($translationValue[$id]);
+            }
+        }
+        $translation->value = $translationValue;
+
+        return $translation;
+    }
 }
