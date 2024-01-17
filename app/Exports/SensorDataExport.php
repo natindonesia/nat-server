@@ -6,8 +6,10 @@ use App\Http\Controllers\WaterpoolController;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class SensorDataExport implements FromCollection
+
+class SensorDataExport implements FromCollection, ShouldAutoSize
 {
 
     protected $deviceName;
@@ -23,8 +25,8 @@ class SensorDataExport implements FromCollection
      */
     public function collection()
     {
-        $states = Cache::remember('states', 60 * 15, function () {
-            return WaterpoolController::getStates($this->deviceName, 1000);
+        $states = Cache::remember(SensorDataExport::class . 'states', 60 * 15, function () {
+            return WaterpoolController::getStates($this->deviceName, 600);
         });
         $collection = new Collection();
         if (empty($states)) return $collection;
@@ -37,6 +39,7 @@ class SensorDataExport implements FromCollection
         }
         $row[] = 'Timestamp';
         $collection->push($row);
+
 
         foreach ($states as $state) {
             $values = [];
@@ -52,4 +55,6 @@ class SensorDataExport implements FromCollection
         }
         return $collection;
     }
+
+
 }
