@@ -38,20 +38,8 @@ class AppSettings extends Model
                 'value' => $default,
             ]);
         }
-        // check if lacking
-        $devicesNameValue = $devicesName->value;
-        foreach (self::$natwaveDevices as $id) {
-            if (!isset($devicesNameValue[$id])) {
-                $devicesNameValue[$id] = $id;
-            }
-        }
 
-        // check if more
-        foreach ($devicesNameValue as $id => $name) {
-            if (!in_array($id, self::$natwaveDevices)) {
-                unset($devicesNameValue[$id]);
-            }
-        }
+        $devicesNameValue = self::syncWithDefault(self::$natwaveDevices, $devicesName->value);
         $devicesName->value = $devicesNameValue;
         return $devicesName;
     }
@@ -89,18 +77,7 @@ class AppSettings extends Model
             ]);
         }
         // check if lacking
-        $translationValue = $translation->value;
-        foreach ($default as $id => $name) {
-            if (!isset($translationValue[$id])) {
-                $translationValue[$id] = $name;
-            }
-        }
-        // check if more
-        foreach ($translationValue as $id => $name) {
-            if (!in_array($id, array_keys($default))) {
-                unset($translationValue[$id]);
-            }
-        }
+        $translationValue = self::syncWithDefault($default, $translation->value);
         $translation->value = $translationValue;
 
         return $translation;
@@ -139,7 +116,34 @@ class AppSettings extends Model
             ]);
         }
 
-        $parameterProfile->value = self::syncWithDefault($default, $parameterProfile->value, true, false);
-        return $parameterProfile->value;
+        if (!is_array($parameterProfile->value)) {
+            $parameterProfile->value = $default;
+        }
+        $value = $parameterProfile->value;
+        $value['Internasional'] = $default['Internasional']; // don't change this lol
+        return $value;
+    }
+
+    public static function getPoolProfileParameter(): array
+    {
+        $poolProfileParameter = self::where('key', 'pool_profile_parameter')->first();
+        $default = [
+
+        ];
+        foreach (self::$natwaveDevices as $id) {
+            $default[$id] = "Internasional";
+        }
+        if (!$poolProfileParameter) {
+            $poolProfileParameter = self::create([
+                'key' => 'pool_profile_parameter',
+                'value' => $default,
+            ]);
+        }
+
+        if (!is_array($poolProfileParameter->value)) {
+            $poolProfileParameter->value = $default;
+        }
+        $value = self::syncWithDefault($default, $poolProfileParameter->value);
+        return $value;
     }
 }

@@ -213,6 +213,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/settings-parameter', [\App\Http\Controllers\ParameterController::class, 'index'])->name('settings.parameter');
     Route::post('/settings-parameter', [\App\Http\Controllers\ParameterController::class, 'store'])->name('settings.parameter');
+    Route::get('/settings-parameter-livewire', \App\Livewire\SettingsParameter::class)->name('settings.parameter.livewire');
     Route::get('/dashboard-detailed-dashboard/export', [SensorDataController::class, 'export'])->name('detailed-dashboard.export');
 
 });

@@ -11,7 +11,7 @@ class StatusController extends Controller
 {
 
 
-    protected static $sensors = [
+    public static $sensors = [
         'ec', // Conductivity
         'humid', // Salt
         'orp', // Sanitation
