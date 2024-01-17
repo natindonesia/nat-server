@@ -114,9 +114,7 @@ class SensorDataController extends Controller
         $chartData = $this->getChartData();
 
         $chartDataWeekly = $this->getWeeklyChartData();
-        $data['chartData'] = $chartData;
-        $data['chartDataWeekly'] = $chartDataWeekly;
-        $data['dataUpdate'] = $dataUpdate;
+
         return view('dashboards/detailed-dashboard', $data);
     }
 
