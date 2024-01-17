@@ -32,7 +32,7 @@ class SettingsParameter extends Component implements HasForms
 
         foreach (AppSettings::getPoolProfileParameter() as $key => $value) {
             $pool_profile_parameter[] = [
-                'name' => $key,
+                'nama' => $key,
                 'value' => $value,
             ];
         }
@@ -78,10 +78,9 @@ class SettingsParameter extends Component implements HasForms
                         ->addable(false)
                         ->deletable(false)
                         ->schema([
-                            TextInput::make('name')
-                                ->required()
+                            TextInput::make('nama')
                                 ->disabled()
-                                ->placeholder('Name'),
+                                ->required(),
                             Select::make('value')
                                 ->options($this->getParameters())
                         ])
@@ -119,6 +118,18 @@ class SettingsParameter extends Component implements HasForms
             'key' => 'parameter_profile',
         ], [
             'value' => $parameter_profile,
+        ]);
+        $pool_profile_parameter = [];
+
+        $keys_for_pool_profile_parameter = array_keys(AppSettings::getPoolProfileParameter()); // what you mean i can't use disabled field as key
+        foreach ($state['pool_profile_parameter'] as $key => $value) {
+            $pool_profile_parameter[$keys_for_pool_profile_parameter[$key]] = $value['value'];
+        }
+
+        AppSettings::updateOrInsert([
+            'key' => 'pool_profile_parameter',
+        ], [
+            'value' => $pool_profile_parameter,
         ]);
         \Filament\Notifications\Notification::make()->title('Parameter profile updated successfully.')->success()->send();
     }

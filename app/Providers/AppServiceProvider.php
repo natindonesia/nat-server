@@ -33,10 +33,12 @@ class AppServiceProvider extends ServiceProvider
 
         $devices_name = AppSettings::getDevicesName();
         foreach ($devices_name->value as $id => $name) {
+
             app('translator')->addLines([
                 'devices_name.' . $id => $name,
             ], 'id');
         }
+
 
         $translation = AppSettings::getTranslation();
         foreach ($translation->value as $key => $value) {

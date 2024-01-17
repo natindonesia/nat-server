@@ -6,6 +6,7 @@ use App\Models\AppSettings;
 use App\Models\Carbon;
 use App\Models\State;
 use App\Models\StateMeta;
+use Illuminate\Support\Facades\Log;
 
 class StatusController extends Controller
 {
@@ -134,6 +135,7 @@ class StatusController extends Controller
         ];
         foreach (AppSettings::getDevicesName()->value as $id => $name) {
             $devices[$id] = $name;
+
         }
 
         $data = [
@@ -147,7 +149,8 @@ class StatusController extends Controller
                 'display_name' => $deviceDisplayName,
                 'state' => $this->getState($deviceName),
             ];
-            $device['scores'] = $this->calculateScore($device['state']);
+
+            $device['scores'] = $this->calculateScore($device['state'], $deviceName);
             $device['final_score'] = $this->calculateFinalScore($device['scores']);
             $states = WaterpoolController::getStates($deviceName, 1);
             $device['😎'] = $states[0];
@@ -309,12 +312,12 @@ class StatusController extends Controller
      * @param array<string, array> $state // e.g ['temperature' => ['value' => 30.0, 'unit' => '°C']]
      * @return array<string, float> $scores // e.g ['temperature' => 1.0]
      */
-    public static function calculateScore(array $state): array
+    public static function calculateScore(array $state, string $deviceName): array
     {
         $scores = [];
         foreach ($state as $sensor => $value) {
             $value = floatval($value['value'] ?? 0);
-            $scores[$sensor] = self::calculateScoreFor($sensor, $value);
+            $scores[$sensor] = self::calculateScoreFor($sensor, $value, $deviceName);
         }
 
         return $scores;
@@ -326,11 +329,14 @@ class StatusController extends Controller
      * @param float $value any value
      * @return float 0.0 - 1.0
      */
-    public static function calculateScoreFor(string $sensor, float $value): float
+    public static function calculateScoreFor(string $sensor, float $value, string $deviceName): float
     {
         $score = 0.0;
         $found = false;
-        foreach (self::$parametersThresholdInternational as $parameterThreshold) {
+        $parameterName = AppSettings::getPoolProfileParameter()[$deviceName];
+        $parameterThreshold = AppSettings::getParameterProfile()[$parameterName];
+
+        foreach ($parameterThreshold as $parameterThreshold) {
             if ($parameterThreshold['sensor'] !== $sensor) continue;
             $found = true;
             if ($value >= $parameterThreshold['min'] && $value <= $parameterThreshold['max']) {
@@ -340,7 +346,8 @@ class StatusController extends Controller
             }
         }
         if (!$found) {
-            throw new \Exception("Sensor $sensor not found");
+            Log::warning("Sensor $sensor not found with parameter $parameterName");
+            $score = 0.0;
         }
         return $score;
     }

@@ -28,18 +28,19 @@ class AppSettings extends Model
     public static function getDevicesName()
     {
         $devicesName = self::where('key', 'devices_name')->first();
+        $default = [];
+        foreach (self::$natwaveDevices as $id) {
+            $default[$id] = $id;
+        }
         if (!$devicesName) {
-            $default = [];
-            foreach (self::$natwaveDevices as $id) {
-                $default[$id] = $id;
-            }
+
             $devicesName = self::create([
                 'key' => 'devices_name',
                 'value' => $default,
             ]);
         }
 
-        $devicesNameValue = self::syncWithDefault(self::$natwaveDevices, $devicesName->value);
+        $devicesNameValue = self::syncWithDefault($default, $devicesName->value);
         $devicesName->value = $devicesNameValue;
         return $devicesName;
     }
@@ -103,6 +104,7 @@ class AppSettings extends Model
         return $value;
     }
 
+    // each profile has different parameter
     public static function getParameterProfile(): array
     {
         $parameterProfile = self::where('key', 'parameter_profile')->first();
@@ -124,6 +126,7 @@ class AppSettings extends Model
         return $value;
     }
 
+    // each pool has different profile
     public static function getPoolProfileParameter(): array
     {
         $poolProfileParameter = self::where('key', 'pool_profile_parameter')->first();
@@ -143,6 +146,7 @@ class AppSettings extends Model
         if (!is_array($poolProfileParameter->value)) {
             $poolProfileParameter->value = $default;
         }
+
         $value = self::syncWithDefault($default, $poolProfileParameter->value);
         return $value;
     }
