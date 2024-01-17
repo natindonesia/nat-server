@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\StatusController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -103,5 +104,42 @@ class AppSettings extends Model
         $translation->value = $translationValue;
 
         return $translation;
+    }
+
+
+    protected static function syncWithDefault(array $default, array $value, bool $doAdd = true, $doRemove = true): array
+    {
+        // check if lacking
+        if ($doAdd)
+            foreach ($default as $id => $name) {
+                if (!isset($value[$id])) {
+                    $value[$id] = $name;
+                }
+            }
+        // check if more
+        if ($doRemove)
+            foreach ($value as $id => $name) {
+                if (!in_array($id, array_keys($default))) {
+                    unset($value[$id]);
+                }
+            }
+        return $value;
+    }
+
+    public static function getParameterProfile(): array
+    {
+        $parameterProfile = self::where('key', 'parameter_profile')->first();
+        $default = [
+            'Internasional' => StatusController::$parametersThresholdInternational
+        ];
+        if (!$parameterProfile) {
+            $parameterProfile = self::create([
+                'key' => 'parameter_profile',
+                'value' => $default,
+            ]);
+        }
+
+        $parameterProfile->value = self::syncWithDefault($default, $parameterProfile->value, true, false);
+        return $parameterProfile->value;
     }
 }
