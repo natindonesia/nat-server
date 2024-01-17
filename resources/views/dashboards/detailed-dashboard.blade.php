@@ -52,6 +52,24 @@
                     </div>
                 </div>
                 @endforeach
+
+            </div>
+
+            <div class="row mt-4">
+
+                <div class="col-md-2 mt-md-0 mt-4 ">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <form method="GET">
+                                <input type="date" name="date" id="date" class="form-control"
+                                       value="{{isset($_GET['date']) ? $_GET['date'] : ''}}"
+                                       max="{{$date_filter['max']}}" min="{{$date_filter['min']}}"
+                                       onchange="this.form.submit()"
+                                />
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -78,7 +96,7 @@
     <hr class="horizontal dark my-5">
     <div class="row mt-4">
         <div class="col-12">
-            <x-detail-table :device-name=$deviceName/>
+            <x-detail-table :device-name='$deviceName'/>
         </div>
     </div>
     <div class="row">

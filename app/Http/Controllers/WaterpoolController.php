@@ -35,7 +35,13 @@ class WaterpoolController extends Controller
         ];
 
         // Laravel mad, we do one by one
-
+        $startTimestamp = null;
+        $endTimestamp = null;
+        if (request()->has('date')) {
+            $date = request()->get('date');
+            $startTimestamp = strtotime($date);
+            $endTimestamp = strtotime($date . ' +1 day');
+        }
         for ($i = 0; $i < $limit; $i++) { // 15 items
 
             $sensor = [];
@@ -44,7 +50,13 @@ class WaterpoolController extends Controller
             ];
             foreach ($metadataIds as $metadataId) {
                 // Get latest state
-                $state = State::where('metadata_id', $metadataId)->orderBy('last_updated_ts', 'desc')->limit(1)->offset($i)->first();
+                $state = State::where('metadata_id', $metadataId)->orderBy('last_updated_ts', 'desc');
+                if ($startTimestamp !== null) {
+                    $state = $state->where('last_updated_ts', '>=', $startTimestamp);
+                    $state = $state->where('last_updated_ts', '<', $endTimestamp);
+                }
+                $state = $state->limit(1)->offset($i)->first();
+
                 if (empty($state)) continue;
                 $sensor[$state->metadata->entity_id] = $state->state;
                 $timestamp[$state->metadata->entity_id] = $state->last_updated_ts;

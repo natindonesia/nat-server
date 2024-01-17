@@ -42,14 +42,27 @@ class SensorDataController extends Controller
              */
         ];
 
-
+        $startTimestamp = null;
+        $endTimestamp = null;
+        if (request()->has('date')) {
+            $date = request()->get('date');
+            $startTimestamp = strtotime($date);
+            $endTimestamp = strtotime($date . ' +1 day');
+        }
         // Laravel mad, we do one by one
+
 
 
         foreach ($metadataIds as $metadataId) {
             // Get latest state
-            $state = State::where('metadata_id', $metadataId)->orderBy('last_updated_ts', 'desc')->limit($limit)->get();
+            $state = State::where('metadata_id', $metadataId);
+            if ($startTimestamp !== null) {
+                $state = $state->where('last_updated_ts', '>=', $startTimestamp);
+                $state = $state->where('last_updated_ts', '<', $endTimestamp);
+            }
 
+            $state = $state->orderBy('last_updated_ts', 'desc')->limit($limit);
+            $state = $state->get();
             if (empty($state)) continue;
             $data = [];
             $timestamp = [];
@@ -111,9 +124,13 @@ class SensorDataController extends Controller
         $originalPH = $dataUpdate->ph_current;
         $dataUpdate->ph_current = $this->convertToPercentage($originalPH);
 
-        $chartData = $this->getChartData();
+        $max_date = State::max('last_updated_ts');
+        $min_date = State::min('last_updated_ts');
+        $data['date_filter'] = [
+            'max' => date('Y-m-d', $max_date),
+            'min' => date('Y-m-d', $min_date),
+        ];
 
-        $chartDataWeekly = $this->getWeeklyChartData();
 
         return view('dashboards/detailed-dashboard', $data);
     }
