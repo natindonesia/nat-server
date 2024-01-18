@@ -19,7 +19,7 @@ class SessionController extends Controller
             'remember' => 'string',
         ]);
 
-        $remember = $attributes['remember'] === 'on';
+        $remember = isset($attributes['remember']) && $attributes['remember'] == 'on';
         unset($attributes['remember']);
         if (Auth::attempt($attributes, $remember))
         {
