@@ -5,9 +5,10 @@ namespace App\Models;
 use App\Http\Controllers\StatusController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 // Cool stuff here
-class AppSettings extends Model
+class   AppSettings extends Model
 {
     use HasFactory;
 
@@ -20,10 +21,12 @@ class AppSettings extends Model
     ];
 
     public static $sensors = [
-        'cf', // Conductivity
+        'cf', // Chlorophyll
         'humid', // Salt
-        'orp', // Sanitation
-        'orp_2', // pH acidity
+        'orp', // Sanitation (ORP)
+        'ph', // PH
+        'tds', // TDS
+        'temp', // Temperature
     ];
 
     // Used by all
@@ -77,7 +80,7 @@ class AppSettings extends Model
             'timestamp' => 'Timestamp'
         ];
         foreach (self::$sensors as $sensor) {
-            if (!isset($default[$sensor])) $default[$sensor] = $sensor;
+            if (!isset($default[$sensor])) $default[$sensor] = Str::upper($sensor);
         }
 
         if (!$translation) {
