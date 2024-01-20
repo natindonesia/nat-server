@@ -6,6 +6,7 @@ use App\Models\AppSettings;
 use App\Models\State;
 use App\Models\StateMeta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class WaterpoolController extends Controller
 {
@@ -109,7 +110,9 @@ class WaterpoolController extends Controller
             case 'temp':
                 return StatusController::formatTemperature(floatval($value));
             default:
-                throw new \Exception("Unknown sensor: {$sensor_name}");
+                //throw new \Exception("Unknown sensor: {$sensor_name}");
+                Log::warning("Unknown sensor: {$sensor_name}");
+                return $value;
         }
     }
 
