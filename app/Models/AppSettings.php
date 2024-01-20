@@ -34,6 +34,11 @@ class   AppSettings extends Model
         'value' => 'json',
     ];
 
+    public static function entityToSensorName(string $entity): string
+    {
+        return explode('_', $entity)[1];
+    }
+
     public static function getDevicesName()
     {
         $devicesName = self::where('key', 'devices_name')->first();

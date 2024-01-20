@@ -14,8 +14,11 @@ use Maatwebsite\Excel\Facades\Excel;
 class SensorDataController extends Controller
 {
 
-    public static function getStats(string $deviceName = "natwave", int $limit = 15): array
+    public static function getStats(string $deviceName, int $limit = 15): array
     {
+        if ($deviceName == null) {
+            $deviceName = AppSettings::$natwaveDevices[0];
+        }
         $sensors = AppSettings::$sensors;
         // Required for converting entity_id to attributes_id
         $entityIds = [];
@@ -70,11 +73,11 @@ class SensorDataController extends Controller
                 $data[] = $item->state;
                 $timestamp[] = date('Y-m-d H:i:s', $item->last_updated_ts);
             }
-
+            $stateValue = $data[0] ?? 0.0;
             $sensors[$state->first()->metadata->entity_id] = [
                 'data' => $data,
                 'timestamp' => $timestamp,
-                'format' => WaterpoolController::formatSensor($state->first()->metadata->entity_id, 0.0)
+                'format' => WaterpoolController::formatSensor($state->first()->metadata->entity_id, $stateValue),
             ];
         }
 

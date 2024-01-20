@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\AppSettings;
 use App\Models\Carbon;
-use App\Models\State;
-use App\Models\StateMeta;
 use Illuminate\Support\Facades\Log;
 
 class StatusController extends Controller
@@ -141,6 +139,7 @@ class StatusController extends Controller
                 'state' => $this->getState($deviceName),
             ];
 
+
             $device['scores'] = $this->calculateScore($device['state'], $deviceName);
             $device['final_score'] = $this->calculateFinalScore($device['scores']);
             $states = WaterpoolController::getStates($deviceName, 1);
@@ -163,65 +162,16 @@ class StatusController extends Controller
     }
 
 
-    protected static function getState($deviceName = 'natwave')
+    protected static function getState($deviceName)
     {
-        $sensors = AppSettings::$sensors;
+        $data = SensorDataController::getStats($deviceName, 1);
+        $result = [];
+        foreach ($data as $key => $value) {
+            $sensorName = AppSettings::entityToSensorName($key);
+            $result[$sensorName] = $value['format'];
 
-        // Required for converting entity_id to attributes_id
-        $entityIds = [];
-        // e.g sensor.natwave_ec
-        foreach ($sensors as $sensor) {
-            $entityIds[] = "sensor.{$deviceName}_{$sensor}";
         }
-
-        // Required for querying states table
-        $metadataToEntityIds = [];
-        $metadatas = StateMeta::whereIn('entity_id', $entityIds)->get()->toArray();
-        $metadataIds = [];
-        foreach ($metadatas as $metadata) {
-            $metadataToEntityIds[$metadata['metadata_id']] = $metadata['entity_id'];
-            $metadataIds[] = $metadata['metadata_id'];
-        }
-
-        // Get latest states for each metadata
-        $latestStates = [];
-
-        // Laravel mad, we do one by one
-        foreach ($metadataIds as $metadataId) {
-            // Get latest state
-            $state = State::where('metadata_id', $metadataId)->orderBy('last_updated_ts', 'desc')->first();
-            if (empty($state)) continue;
-            $latestStates[$metadataToEntityIds[$metadataId]] = $state->toArray();
-        }
-
-
-        // Ambil data suhu (Temperature)
-        $temperature = self::formatTemperature(floatval($latestStates["sensor.{$deviceName}_temp"]['state'] ?? 0));
-
-        // Ambil data pH
-        $ph = self::formatPH(floatval($latestStates["sensor.{$deviceName}_ph"]['state'] ?? 0));
-
-        // Ambil data (Salt)
-        $salt = self::formatSalt(floatval($latestStates["sensor.{$deviceName}_humid"]['state'] ?? 0));
-
-        // Ambil data ORP (Sanitation)
-        $orp = self::formatORP(floatval($latestStates["sensor.{$deviceName}_orp"]['state'] ?? 0));
-
-        // Ambil data konduktivitas (Conductivity)
-        $conductivity = self::formatConductivity(floatval($latestStates["sensor.{$deviceName}_ec"]['state'] ?? 0));
-
-        // Ambil data TDS
-        $tds = self::formatTDS(floatval($latestStates["sensor.{$deviceName}_tds"]['state'] ?? 0));
-
-        $data = [
-            'temp' => $temperature,
-            'ph' => $ph,
-            'humid' => $salt,
-            'orp' => $orp,
-            'ec' => $conductivity,
-            'tds' => $tds,
-        ];
-        return $data;
+        return $result;
     }
 
     public static function formatTemperature($value)

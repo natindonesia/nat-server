@@ -95,6 +95,7 @@ class WaterpoolController extends Controller
     public static function formatSensor(string $sensor, $value)
     {
         if ($sensor == 'timestamp') return date('Y-m-d H:i:s', $value);
+
         $sensor_name = explode('_', $sensor)[1];
         switch ($sensor_name) {
             case 'ec':
@@ -115,7 +116,7 @@ class WaterpoolController extends Controller
                 return [
                     'value' => $value,
                     'unit' => '',
-                    'label' => $sensor_name,
+                    'label' => __('translation.' . $sensor_name),
                 ];
         }
     }
