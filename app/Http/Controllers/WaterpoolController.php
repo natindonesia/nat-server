@@ -10,7 +10,7 @@ class WaterpoolController extends Controller
 {
 
 
-    public static function getStates(string $deviceName = 'natwave', int $limit = 15): array
+    public static function getStates(string $deviceName, int $limit = 15): array
     {
         $sensors = StateMeta::$sensors;
         // Required for converting entity_id to attributes_id
