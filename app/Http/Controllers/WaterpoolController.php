@@ -112,7 +112,11 @@ class WaterpoolController extends Controller
             default:
                 //throw new \Exception("Unknown sensor: {$sensor_name}");
                 Log::warning("Unknown sensor: {$sensor_name}");
-                return $value;
+                return [
+                    'value' => $value,
+                    'unit' => '',
+                    'label' => $sensor_name,
+                ];
         }
     }
 
