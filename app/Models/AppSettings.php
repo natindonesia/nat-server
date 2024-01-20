@@ -12,7 +12,7 @@ class AppSettings extends Model
     use HasFactory;
 
     public static $natwaveDevices = [
-        'natwave'
+        'natwave01'
     ];
     protected $fillable = [
         'key',
@@ -20,12 +20,10 @@ class AppSettings extends Model
     ];
 
     public static $sensors = [
-        'ec', // Conductivity
+        'cf', // Conductivity
         'humid', // Salt
         'orp', // Sanitation
-        'ph', // pH acidity
-        'tds', // TDS
-        'temp' // Temperature
+        'orp_2', // pH acidity
     ];
 
     // Used by all
@@ -78,6 +76,9 @@ class AppSettings extends Model
             'temp' => 'Temperature',
             'timestamp' => 'Timestamp'
         ];
+        foreach (self::$sensors as $sensor) {
+            if (!isset($default[$sensor])) $default[$sensor] = $sensor;
+        }
 
         if (!$translation) {
             $translation = self::create([
