@@ -62,7 +62,9 @@ class WaterpoolController extends Controller
                 $timestamp[$state->metadata->entity_id] = $state->last_updated_ts;
             }
             // average timestamp
-            $sensor['timestamp'] = array_sum($timestamp) / count($timestamp);
+            if (count($timestamp) > 0)
+                $sensor['timestamp'] = array_sum($timestamp) / count($timestamp);
+
             $sensors[] = $sensor;
 
         }
