@@ -16,7 +16,7 @@ class WaterpoolController extends Controller
         if ($deviceName == null) {
             $deviceName = AppSettings::$natwaveDevices[0];
         }
-        $sensors = StateMeta::$sensors;
+        $sensors = AppSettings::$sensors;
         // Required for converting entity_id to attributes_id
         $entityIds = [];
         // e.g sensor.natwave_ec

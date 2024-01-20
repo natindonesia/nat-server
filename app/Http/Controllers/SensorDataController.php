@@ -16,7 +16,7 @@ class SensorDataController extends Controller
 
     public static function getStats(string $deviceName = "natwave", int $limit = 15): array
     {
-        $sensors = StateMeta::$sensors;
+        $sensors = AppSettings::$sensors;
         // Required for converting entity_id to attributes_id
         $entityIds = [];
         // e.g sensor.natwave_ec

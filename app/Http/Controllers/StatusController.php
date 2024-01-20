@@ -165,7 +165,7 @@ class StatusController extends Controller
 
     protected static function getState($deviceName = 'natwave')
     {
-        $sensors = StateMeta::$sensors;
+        $sensors = AppSettings::$sensors;
 
         // Required for converting entity_id to attributes_id
         $entityIds = [];
