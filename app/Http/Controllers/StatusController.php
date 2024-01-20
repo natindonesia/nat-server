@@ -12,15 +12,6 @@ class StatusController extends Controller
 {
 
 
-    public static $sensors = [
-        'ec', // Conductivity
-        'humid', // Salt
-        'orp', // Sanitation
-        'ph', // pH acidity
-        'tds', // TDS
-        'temp' // Temperature
-    ];
-
     // Threshold for each parameter
     // Example sensor 1
     // if range of 28< or >20 get score 1

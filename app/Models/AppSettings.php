@@ -19,6 +19,14 @@ class AppSettings extends Model
         'value',
     ];
 
+    public static $sensors = [
+        'ec', // Conductivity
+        'humid', // Salt
+        'orp', // Sanitation
+        'ph', // pH acidity
+        'tds', // TDS
+        'temp' // Temperature
+    ];
 
     // Used by all
     protected $casts = [
@@ -84,7 +92,20 @@ class AppSettings extends Model
         return $translation;
     }
 
-
+    /**
+     * Synchronizes the provided value array with the default array.
+     *
+     * This function checks if the value array is lacking any keys present in the default array.
+     * If it finds any, it adds them to the value array with the corresponding default value.
+     * It also checks if the value array has any extra keys not present in the default array.
+     * If it finds any, it removes them from the value array.
+     *
+     * @param array $default The default array to synchronize with.
+     * @param array $value The array to be synchronized.
+     * @param bool $doAdd Whether to add missing keys to the value array. Default is true.
+     * @param bool $doRemove Whether to remove extra keys from the value array. Default is true.
+     * @return array The synchronized array.
+     */
     protected static function syncWithDefault(array $default, array $value, bool $doAdd = true, $doRemove = true): array
     {
         // check if lacking
@@ -147,6 +168,27 @@ class AppSettings extends Model
             $poolProfileParameter->value = $default;
         }
 
+        $value = self::syncWithDefault($default, $poolProfileParameter->value);
+        return $value;
+    }
+
+    public static function getSensorsScoreMultiplier(): array
+    {
+        $poolProfileParameter = self::where('key', 'sensors_score_multiplier')->first();
+        $default = [];
+        $sensorsMultiplierDefault = [];
+        foreach (self::$sensors as $sensor) {
+            $sensorsMultiplierDefault[$sensor] = 1;
+        }
+        foreach (self::$natwaveDevices as $id) {
+            $default[$id] = $sensorsMultiplierDefault;
+        }
+        if (!$poolProfileParameter) {
+            $poolProfileParameter = self::create([
+                'key' => 'sensors_score_multiplier',
+                'value' => $default,
+            ]);
+        }
         $value = self::syncWithDefault($default, $poolProfileParameter->value);
         return $value;
     }

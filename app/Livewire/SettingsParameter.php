@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Http\Controllers\StatusController;
 use App\Models\AppSettings;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -19,10 +18,69 @@ class SettingsParameter extends Component implements HasForms
 
     public ?array $data = [];
 
+    /**
+     * Checks if the provided array has string keys.
+     *
+     * This function counts the number of keys in the array that are strings.
+     * If the count is greater than 0, it returns true, indicating that the array has string keys.
+     * Otherwise, it returns false.
+     *
+     * @param array $array The array to check for string keys.
+     * @return bool True if the array has string keys, false otherwise.
+     */
+    public function has_string_keys(array $array): bool
+    {
+        return count(array_filter(array_keys($array), 'is_string')) > 0;
+    }
+
+    public static function kvToArray($kv)
+    {
+        if (!self::has_string_keys($kv)) {
+            return $kv;
+        }
+        $array = [];
+        foreach ($kv as $key => $value) {
+            // check if value is Key Value
+            if (is_array($value)) {
+                $array[] = [
+                    'name' => $key,
+                    'value' => self::kvToArray($value),
+                ];
+                continue;
+            }
+            $array[] = [
+                'name' => $key,
+                'value' => $value,
+            ];
+        }
+
+        return $array;
+    }
+
+    public static function arrayToKv($array)
+    {
+        if (self::has_string_keys($array)) {
+            return $array;
+        }
+        $kv = [];
+        foreach ($array as $key => $value) {
+            // check if value is Key Value
+            if (is_array($value)) {
+                $kv[$value['name']] = self::arrayToKv($value['value']);
+                continue;
+            }
+            $kv[$value['name']] = $value['value'];
+        }
+
+        return $kv;
+    }
+
     public function mount(): void
     {
         $parameter_profile = [];
         $pool_profile_parameter = [];
+        $sensors_score_multiplier = [];
+
         foreach (AppSettings::getParameterProfile() as $key => $value) {
             $parameter_profile[] = [
                 'name' => $key,
@@ -32,6 +90,13 @@ class SettingsParameter extends Component implements HasForms
 
         foreach (AppSettings::getPoolProfileParameter() as $key => $value) {
             $pool_profile_parameter[] = [
+                'nama' => $key,
+                'value' => $value,
+            ];
+        }
+
+        foreach (AppSettings::getSensorsScoreMultiplier() as $key => $value) {
+            $sensors_score_multiplier[] = [
                 'nama' => $key,
                 'value' => $value,
             ];
@@ -47,6 +112,30 @@ class SettingsParameter extends Component implements HasForms
     {
         return $form
             ->schema([
+                Section::make('Pool Parameter')->schema(([
+                    Repeater::make('pool_profile_parameter')
+                        ->addable(false)
+                        ->deletable(false)
+                        ->schema([
+                            TextInput::make('nama')
+                                ->disabled()
+                                ->required(),
+                            Select::make('value')
+                                ->options($this->getParameters())
+                        ])
+                ])),
+                Section::make('Pool Sensors Score Multiplier')->schema(([
+                    Repeater::make('sensors_score_multiplier')
+                        ->addable(false)
+                        ->deletable(false)
+                        ->schema([
+                            TextInput::make('nama')
+                                ->disabled()
+                                ->required(),
+                            Select::make('value')
+                                ->options($this->getParameters())
+                        ])
+                ])),
                 Section::make('Parameter Profile')->schema([
 
                 Repeater::make('parameter_profile')
@@ -73,18 +162,7 @@ class SettingsParameter extends Component implements HasForms
                             ])->columns(4)
                     ])->reorderable(false)->collapsible()->collapsed()
                 ]),
-                Section::make('Pool Parameter')->schema(([
-                    Repeater::make('pool_profile_parameter')
-                        ->addable(false)
-                        ->deletable(false)
-                        ->schema([
-                            TextInput::make('nama')
-                                ->disabled()
-                                ->required(),
-                            Select::make('value')
-                                ->options($this->getParameters())
-                        ])
-                ]))
+
             ])
             ->statePath('data');
     }
@@ -92,7 +170,7 @@ class SettingsParameter extends Component implements HasForms
     public function getSensors()
     {
         $sensors = [];
-        foreach (StatusController::$sensors as $sensor) {
+        foreach (AppSettings::$sensors as $sensor) {
             $sensors[$sensor] = __('translation.' . $sensor);
         }
         return $sensors;
