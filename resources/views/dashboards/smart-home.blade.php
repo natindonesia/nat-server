@@ -16,7 +16,7 @@
                             align-items-center justify-content-center ms-auto"
 
                                     data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                    title="{{date('d M Y H:00:00', $device["😎"]['timestamp'])}}">
+                                    title="{{date('d M Y H:00:00', isset($device["😎"]['timestamp']) ? $device["😎"]['timestamp'] : 0)}}"/>
                                 <i class="fas fa-info"></i></button>
                         </div>
                     </div>

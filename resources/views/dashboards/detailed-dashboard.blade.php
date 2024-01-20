@@ -19,7 +19,9 @@
 
                                         <div class="col-8 md-3 ml-auto">
                                             <h5 class="text-white font-weight-bolder mb-0">
-                                                <span>{{ $formatted_state['timestamp'] }}</span>
+                                                @if(isset($formatted_state['timestamp']))
+                                                    <span>{{ $formatted_state['timestamp'] }}</span>
+                                                @endif
                                             </h5>
                                         </div>
                                     </div>

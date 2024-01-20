@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AppSettings;
 use App\Models\State;
 use App\Models\StateMeta;
 use Illuminate\Http\Request;
@@ -10,8 +11,11 @@ class WaterpoolController extends Controller
 {
 
 
-    public static function getStates(string $deviceName, int $limit = 15): array
+    public static function getStates(string $deviceName = null, int $limit = 15): array
     {
+        if ($deviceName == null) {
+            $deviceName = AppSettings::$natwaveDevices[0];
+        }
         $sensors = StateMeta::$sensors;
         // Required for converting entity_id to attributes_id
         $entityIds = [];
@@ -111,7 +115,6 @@ class WaterpoolController extends Controller
 
     public function index()
     {
-
 
         $status = $this->getStates();
         return view('waterpool/5-table-status', compact('status'));
