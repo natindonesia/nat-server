@@ -36,6 +36,8 @@ class   AppSettings extends Model
 
     public static function entityToSensorName(string $entity): string
     {
+        // check if it has _ in it
+        if (!str_contains($entity, '_')) return $entity;
         return explode('_', $entity)[1];
     }
 
@@ -66,10 +68,8 @@ class   AppSettings extends Model
 
     public static function translateSensorKey(string $sensor): string
     {
-        // check if has _ in it
-        if (strpos($sensor, '_') === false) return __('translation.' . $sensor);
-        $sensor_name = explode('_', $sensor)[1];
-        return __('translation.' . $sensor_name);
+        $sensor = self::entityToSensorName($sensor);
+        return __('translation.' . $sensor);
     }
 
     public static function getTranslation()
