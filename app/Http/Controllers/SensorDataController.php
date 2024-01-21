@@ -119,7 +119,6 @@ class SensorDataController extends Controller
             'min' => date('Y-m-d', $min_date),
         ];
 
-        dd($data, $states);
 
 
         return view('dashboards/detailed-dashboard', $data);
