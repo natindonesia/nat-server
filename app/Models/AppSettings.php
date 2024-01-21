@@ -21,11 +21,11 @@ class   AppSettings extends Model
     ];
 
     public static $sensors = [
-        'cf', // Chlorophyll
-        'humid', // Salt
-        'orp', // Sanitation (ORP)
+        //'cf', // Chlorophyll
         'ph', // PH
+        'orp', // Sanitation (ORP)
         'tds', // TDS
+        'humid', // Salt
         'temp', // Temperature
     ];
 
