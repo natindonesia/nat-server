@@ -166,6 +166,7 @@ class StatusController extends Controller
     {
         $data = SensorDataController::getStats($deviceName, 1);
         $result = [];
+
         foreach ($data as $key => $value) {
             $sensorName = AppSettings::entityToSensorName($key);
             $result[$sensorName] = $value['format'];

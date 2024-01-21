@@ -16,25 +16,10 @@ class SensorDataController extends Controller
 
     public static function getStats(string $deviceName, int $limit = 15): array
     {
-        if ($deviceName == null) {
-            $deviceName = AppSettings::$natwaveDevices[0];
-        }
-        $sensors = AppSettings::$sensors;
-        // Required for converting entity_id to attributes_id
-        $entityIds = [];
-        // e.g sensor.natwave_ec
-        foreach ($sensors as $sensor) {
-            $entityIds[] = "sensor.{$deviceName}_{$sensor}";
-        }
+        $metadata = StateMeta::getMetadata($deviceName);
 
-        // Required for querying states table
-        $metadataToEntityIds = [];
-        $metadatas = StateMeta::whereIn('entity_id', $entityIds)->get()->toArray();
-        $metadataIds = [];
-        foreach ($metadatas as $metadata) {
-            $metadataToEntityIds[$metadata['metadata_id']] = $metadata['entity_id'];
-            $metadataIds[] = $metadata['metadata_id'];
-        }
+        $metadataIds = $metadata['metadataIds'];
+
 
         // Get stats for each metadata
         $sensors = [
@@ -133,6 +118,8 @@ class SensorDataController extends Controller
             'max' => date('Y-m-d', $max_date),
             'min' => date('Y-m-d', $min_date),
         ];
+
+        dd($data, $states);
 
 
         return view('dashboards/detailed-dashboard', $data);

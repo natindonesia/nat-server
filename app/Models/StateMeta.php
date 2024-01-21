@@ -13,4 +13,32 @@ class StateMeta extends Model
     {
         return $this->belongsTo(State::class, 'metadata_id', 'metadata_id');
     }
+
+    public static function getMetadata($deviceName)
+    {
+        if ($deviceName == null) {
+            $deviceName = AppSettings::$natwaveDevices[0];
+        }
+        $sensors = AppSettings::$sensors;
+        // Required for converting entity_id to attributes_id
+        $entityIds = [];
+        // e.g sensor.natwave_ec
+        foreach ($sensors as $sensor) {
+            $entityIds[] = "sensor.{$deviceName}_{$sensor}";
+        }
+
+        // Required for querying states table
+        $metadataToEntityIds = [];
+        //$metadatas = StateMeta::whereIn('entity_id', $entityIds)->get()->toArray();
+        $metadataIds = [];
+        foreach ($entityIds as $entityId) {
+            $metadata = StateMeta::where('entity_id', $entityId)->first();
+            $metadataToEntityIds[$metadata['metadata_id']] = $metadata['entity_id'];
+            $metadataIds[] = $metadata['metadata_id'];
+        }
+        return [
+            'metadataToEntityIds' => $metadataToEntityIds,
+            'metadataIds' => $metadataIds
+        ];
+    }
 }

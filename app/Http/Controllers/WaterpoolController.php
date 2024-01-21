@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AppSettings;
 use App\Models\State;
 use App\Models\StateMeta;
 use Illuminate\Http\Request;
@@ -14,25 +13,12 @@ class WaterpoolController extends Controller
 
     public static function getStates(string $deviceName = null, int $limit = 15): array
     {
-        if ($deviceName == null) {
-            $deviceName = AppSettings::$natwaveDevices[0];
-        }
-        $sensors = AppSettings::$sensors;
-        // Required for converting entity_id to attributes_id
-        $entityIds = [];
-        // e.g sensor.natwave_ec
-        foreach ($sensors as $sensor) {
-            $entityIds[] = "sensor.{$deviceName}_{$sensor}";
-        }
 
-        // Required for querying states table
-        $metadataToEntityIds = [];
-        $metadatas = StateMeta::whereIn('entity_id', $entityIds)->get()->toArray();
-        $metadataIds = [];
-        foreach ($metadatas as $metadata) {
-            $metadataToEntityIds[$metadata['metadata_id']] = $metadata['entity_id'];
-            $metadataIds[] = $metadata['metadata_id'];
-        }
+        $metadata = StateMeta::getMetadata($deviceName);
+        $metadataToEntityIds = $metadata['metadataToEntityIds'];
+
+        $metadataIds = $metadata['metadataIds'];
+
 
         // Get states for each metadata
         $sensors = [
