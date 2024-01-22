@@ -28,7 +28,7 @@ class SettingsParameter extends Component implements HasForms
      * @param array $array The array to check for string keys.
      * @return bool True if the array has string keys, false otherwise.
      */
-    public function has_string_keys(array $array): bool
+    public static function has_string_keys(array $array): bool
     {
         return count(array_filter(array_keys($array), 'is_string')) > 0;
     }
@@ -57,55 +57,37 @@ class SettingsParameter extends Component implements HasForms
         return $array;
     }
 
-    public static function arrayToKv($array)
+    public static function arrayToKv($input)
     {
-        if (self::has_string_keys($array)) {
-            return $array;
-        }
-        $kv = [];
-        foreach ($array as $key => $value) {
-            // check if value is Key Value
-            if (is_array($value)) {
-                $kv[$value['name']] = self::arrayToKv($value['value']);
-                continue;
+        $output = [];
+
+        if (isset($input['name']) && isset($input['value'])) {
+            $output[$input['name']] = $input['value'];
+        } else {
+            foreach ($input as $item) {
+                if (!isset($item['name']) || !isset($item['value'])) {
+                    $output[] = $item;
+                } else if (is_array($item['value'])) {
+                    $output[$item['name']] = self::arrayToKv($item['value']);
+                } else {
+                    $output[$item['name']] = $item['value'];
+                }
             }
-            $kv[$value['name']] = $value['value'];
         }
 
-        return $kv;
+        return $output;
     }
 
     public function mount(): void
     {
-        $parameter_profile = [];
-        $pool_profile_parameter = [];
-        $sensors_score_multiplier = [];
 
-        foreach (AppSettings::getParameterProfile() as $key => $value) {
-            $parameter_profile[] = [
-                'name' => $key,
-                'value' => $value,
-            ];
-        }
-
-        foreach (AppSettings::getPoolProfileParameter() as $key => $value) {
-            $pool_profile_parameter[] = [
-                'nama' => $key,
-                'value' => $value,
-            ];
-        }
-
-        foreach (AppSettings::getSensorsScoreMultiplier() as $key => $value) {
-            $sensors_score_multiplier[] = [
-                'nama' => $key,
-                'value' => $value,
-            ];
-        }
 
         $this->form->fill([
-            'parameter_profile' => $parameter_profile,
-            'pool_profile_parameter' => $pool_profile_parameter,
+            'parameter_profile' => self::kvToArray(AppSettings::getParameterProfile()),
+            'pool_profile_parameter' => self::kvToArray(AppSettings::getPoolProfileParameter()),
+            'sensors_score_multiplier' => self::kvToArray(AppSettings::getSensorsScoreMultiplier()),
         ]);
+
     }
 
     public function form(Form $form): Form
@@ -114,36 +96,63 @@ class SettingsParameter extends Component implements HasForms
             ->schema([
                 Section::make('Pool Parameter')->schema(([
                     Repeater::make('pool_profile_parameter')
+                        ->hiddenLabel()
+                        ->reorderableWithDragAndDrop(false)
                         ->addable(false)
                         ->deletable(false)
                         ->schema([
-                            TextInput::make('nama')
-                                ->disabled()
+                            TextInput::make('name')
+                                ->label('Pool Name')
                                 ->required(),
                             Select::make('value')
+                                ->label('Parameter Profile')
                                 ->options($this->getParameters())
                         ])
                 ])),
                 Section::make('Pool Sensors Score Multiplier')->schema(([
                     Repeater::make('sensors_score_multiplier')
+                        ->hiddenLabel()
+                        ->reorderableWithDragAndDrop(false)
                         ->addable(false)
                         ->deletable(false)
+                        ->collapsed()
+                        ->collapsible()
                         ->schema([
-                            TextInput::make('nama')
-                                ->disabled()
+                            TextInput::make('name')
+                                ->label('Pool Name')
                                 ->required(),
-                            Select::make('value')
-                                ->options($this->getParameters())
+                            Repeater::make('value')
+                                ->label("Sensor")
+                                ->hiddenLabel()
+                                ->columns(2)
+                                ->reorderableWithDragAndDrop(false)
+                                ->addable(false)
+                                ->deletable(false)
+                                ->schema([
+                                    TextInput::make('name')
+                                        ->label('Sensor')
+                                        ->required(),
+                                    TextInput::make('value')
+                                        ->label('Multiplier')
+                                        ->required()
+                                        ->numeric()
+                                        ->minValue(0)
+                                        ->maxValue(1),
+                                ])
                         ])
                 ])),
                 Section::make('Parameter Profile')->schema([
 
                 Repeater::make('parameter_profile')
+                    ->hiddenLabel()
+                    ->reorderableWithDragAndDrop(false)
                     ->schema([
                         TextInput::make('name')
                             ->required()
                             ->placeholder('Name'),
                         Repeater::make('value')
+                            ->label("Parameter")
+                            ->columns(4)
                             ->schema([
                                 Select::make('sensor')->options($this->getSensors()),
                                 TextInput::make('min')
@@ -159,7 +168,7 @@ class SettingsParameter extends Component implements HasForms
                                     ->numeric()
                                     ->minValue(0)
                                     ->maxValue(1),
-                            ])->columns(4)
+                            ])
                     ])->reorderable(false)->collapsible()->collapsed()
                 ]),
 
@@ -188,27 +197,18 @@ class SettingsParameter extends Component implements HasForms
     public function create(): void
     {
         $state = $this->form->getState();
-        $parameter_profile = [];
-        foreach ($state['parameter_profile'] as $key => $value) {
-            $parameter_profile[$value['name']] = $value['value'];
-        }
-        AppSettings::updateOrInsert([
-            'key' => 'parameter_profile',
-        ], [
-            'value' => $parameter_profile,
-        ]);
-        $pool_profile_parameter = [];
-
-        $keys_for_pool_profile_parameter = array_keys(AppSettings::getPoolProfileParameter()); // what you mean i can't use disabled field as key
-        foreach ($state['pool_profile_parameter'] as $key => $value) {
-            $pool_profile_parameter[$keys_for_pool_profile_parameter[$key]] = $value['value'];
+        $stateArrayed = [];
+        foreach ($state as $key => $value) {
+            $stateArrayed[$key] = self::arrayToKv($value);
         }
 
-        AppSettings::updateOrInsert([
-            'key' => 'pool_profile_parameter',
-        ], [
-            'value' => $pool_profile_parameter,
-        ]);
+        foreach ($stateArrayed as $key => $value) {
+            AppSettings::updateOrCreate([
+                'key' => $key,
+            ], [
+                'value' => $value,
+            ]);
+        }
         \Filament\Notifications\Notification::make()->title('Parameter profile updated successfully.')->success()->send();
     }
 

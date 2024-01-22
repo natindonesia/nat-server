@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 // Cool stuff here
-class   AppSettings extends Model
+class AppSettings extends Model
 {
     use HasFactory;
 
