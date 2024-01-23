@@ -12,6 +12,9 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Livewire\Component;
 
+/**
+ * @property Form form
+ */
 class SettingsParameter extends Component implements HasForms
 {
     use InteractsWithForms;
@@ -137,7 +140,7 @@ class SettingsParameter extends Component implements HasForms
                                         ->required()
                                         ->numeric()
                                         ->minValue(0)
-                                        ->maxValue(1),
+                                        ->maxValue(100),
                                 ])
                         ])
                 ])),
@@ -210,6 +213,9 @@ class SettingsParameter extends Component implements HasForms
             ]);
         }
         \Filament\Notifications\Notification::make()->title('Parameter profile updated successfully.')->success()->send();
+        // tell to reload
+        if (request()->hasHeader('Referer'))
+            redirect(request()->header('Referer'));
     }
 
     public function render()

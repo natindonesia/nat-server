@@ -141,7 +141,8 @@ class StatusController extends Controller
 
 
             $device['scores'] = $this->calculateScore($device['state'], $deviceName);
-            $device['final_score'] = $this->calculateFinalScore($device['scores']);
+
+            $device['final_score'] = $this->calculateFinalScore($device['scores'], $deviceName);
             $states = WaterpoolController::getStates($deviceName, 1);
             $device['😎'] = $states[0];
             $data['devices'][] = $device;
@@ -239,13 +240,18 @@ class StatusController extends Controller
      * @param array $scores
      * @return float
      */
-    public static function calculateFinalScore(array $scores): float
+    public static function calculateFinalScore(array $scores, string $deviceName): float
     {
         $finalScore = 0;
-        foreach ($scores as $score) {
-            $finalScore += $score;
+        $scoreMultipliers = AppSettings::getSensorsScoreMultiplier()[$deviceName];
+        $totalMultiplier = 0;
+
+        foreach ($scores as $sensor => $score) {
+            $scoreMultiplier = $scoreMultipliers[$sensor] ?? 1.0;
+            $totalMultiplier += $scoreMultiplier;
+            $finalScore += $score * $scoreMultiplier;
         }
-        $finalScore = $finalScore / count($scores);
+        $finalScore = $finalScore / $totalMultiplier;
         return $finalScore;
     }
 

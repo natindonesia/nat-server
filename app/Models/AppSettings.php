@@ -199,6 +199,9 @@ class AppSettings extends Model
             ]);
         }
         $value = self::syncWithDefault($default, $poolProfileParameter->value);
+        foreach ($value as $id => $sensorsMultiplier) {
+            $value[$id] = self::syncWithDefault($sensorsMultiplierDefault, $sensorsMultiplier);
+        }
         return $value;
     }
 }
