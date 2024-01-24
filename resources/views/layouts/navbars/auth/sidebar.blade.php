@@ -31,14 +31,20 @@
                                 <span class="sidenav-normal">Summary Dashboard Level 0 </span>
                             </a>
                         </li>
-
-                        <li class="nav-item {{ Request::is('dashboard-detailed-dashboard') ? 'active' : '' }}">
-                            <a class="nav-link {{ Request::is('dashboard-detailed-dashboard') ? 'active' : '' }}"
-                                href="{{ url('dashboard-detailed-dashboard') }}">
+                        @foreach(\App\Models\AppSettings::$natwaveDevices as $device)
+                            <li class="nav-item {{ Request::is('dashboard-detailed-dashboard') && request()->query('device') == $device
+? 'active' : '' }}">
+                                <a class="nav-link {{ Request::is('dashboard-detailed-dashboard') && request()->query('device') == $device
+? 'active' : '' }}"
+                                   href="{{ route('dashboard-detailed-dashboard', [
+                                'device' => $device
+                                ]) }}">
                                 <span class="sidenav-mini-icon"> S </span>
-                                <span class="sidenav-normal">Detailed Dashboard</span>
+                                    <span
+                                        class="sidenav-normal">Detailed Dashboard {{__('devices_name.' . $device)}}</span>
                             </a>
                         </li>
+                        @endforeach
                     </ul>
                 </div>
             </li>

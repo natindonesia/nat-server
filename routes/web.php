@@ -66,7 +66,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Route::get('/get-access-token', [WaterpoolController::class, 'getAccessToken']);
 
-    Route::get('/dashboard-detailed-dashboard', [SensorDataController::class, 'index']);
+    Route::get('/dashboard-detailed-dashboard', [SensorDataController::class, 'index'])->name('dashboard-detailed-dashboard');
     Route::get('/dashboard-smart-home', [StatusController::class, 'index']);
     Route::get('/fetch-latest-data', [SensorDataController::class, 'fetchLatestData'])->name('fetch.latest.data');
     // Route::get('/dashboard-detailed-dashboard', 'dashboards/detailed-dashboard');

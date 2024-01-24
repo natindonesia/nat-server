@@ -117,7 +117,7 @@ class SensorDataController extends Controller
 
     public function index()
     {
-        $deviceName = request()->get('deviceName', AppSettings::$natwaveDevices[0]);
+        $deviceName = request()->get('device', AppSettings::$natwaveDevices[0]);
         //yes this is duplicate query, have problem ?
         $states = WaterpoolController::getStates($deviceName, 30);
         $stats = SensorDataController::getStats($deviceName, 30);
@@ -128,7 +128,9 @@ class SensorDataController extends Controller
             'stats' => $stats,
             'deviceName' => $deviceName,
         ];
+        if (count($data['formatted_states']) !== 0)
         $data['formatted_state'] = $data['formatted_states'][0];
+        else $data['formatted_state'] = [];
 
 
 
