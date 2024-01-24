@@ -35,11 +35,17 @@ class AppSettings extends Model
         'value' => 'json',
     ];
 
+    /**
+     * @param string $entity e.g sensor.natwave_ec
+     * @return string e.g ec
+     */
     public static function entityToSensorName(string $entity): string
     {
         // check if it has _ in it
         if (!str_contains($entity, '_')) return $entity;
-        return explode('_', $entity)[1];
+        // get the last part as sensor name
+        $parts = explode('_', $entity);
+        return $parts[count($parts) - 1];
     }
 
     public static function getDevicesName()

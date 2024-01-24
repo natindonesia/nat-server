@@ -20,14 +20,20 @@ class WaterpoolController extends Controller
             $averageTimestamp = 0;
 
             foreach ($datas as $sensor => $data) {
-                $state[$sensor] = $data['data'][$i];
-                $averageTimestamp += strtotime($data['timestamp'][$i]);
+                if (!isset($data['data'][$i])) {
+                    $state[$sensor] = 0.0;
+                } else {
+                    $state[$sensor] = $data['data'][$i];
+                }
+
+                $averageTimestamp += isset($data['timestamp'][$i]) ? strtotime($data['timestamp'][$i]) : 0;
             }
             if (count($datas) == 0) continue;
             $averageTimestamp /= count($datas);
             $state['timestamp'] = $averageTimestamp;
             $sensors[] = $state;
         }
+
         return $sensors;
     }
 
@@ -49,7 +55,8 @@ class WaterpoolController extends Controller
     {
         if ($sensor == 'timestamp') return date('Y-m-d H:i:s', $value);
 
-        $sensor_name = explode('_', $sensor)[1];
+        $sensor_name = AppSettings::entityToSensorName($sensor);
+
         switch ($sensor_name) {
             case 'ec':
                 return StatusController::formatConductivity($value);
