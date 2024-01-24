@@ -144,7 +144,9 @@ class StatusController extends Controller
 
             $device['final_score'] = $this->calculateFinalScore($device['scores'], $deviceName);
             $states = WaterpoolController::getStates($deviceName, 1);
-            $device['😎'] = $states[0];
+            if (count($states) != 0) {
+                $device['😎'] = $states[0];
+            }
             $data['devices'][] = $device;
         }
 
@@ -251,6 +253,7 @@ class StatusController extends Controller
             $totalMultiplier += $scoreMultiplier;
             $finalScore += $score * $scoreMultiplier;
         }
+        if ($totalMultiplier == 0) return 0.0;
         $finalScore = $finalScore / $totalMultiplier;
         return $finalScore;
     }

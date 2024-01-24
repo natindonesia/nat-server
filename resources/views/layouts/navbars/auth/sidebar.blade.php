@@ -53,17 +53,21 @@
 
                 <span class="nav-link-text ms-1">Kolam</span>
                 </a>
+                @foreach(\App\Models\AppSettings::$natwaveDevices as $device)
                 <div class="collapse show" id="waterpoolExamples">
                     <ul class="nav ms-4 ps-3">
-                        <li class="nav-item {{ $childFolder == 'items' ? 'active' : '' }}">
-                            <a class="nav-link {{ $childFolder == 'items' ? 'active' : '' }}"
-                                href="{{ Route('waterpool-index') }}">
+                        <li class="nav-item {{ $childFolder == 'items' && request()->query('device') == $device
+ ? 'active' : '' }}">
+                            <a class="nav-link {{ $childFolder == 'items' && request()->query('device') == $device ?
+'active' : '' }}"
+                               href="{{ route('waterpool-index', ['device' => $device]) }}">
                                 <span class="sidenav-mini-icon"> I </span>
-                                <span class="sidenav-normal"> Data Kolam sensor </span>
+                                <span class="sidenav-normal"> {{__('devices_name.'.$device)}} </span>
                             </a>
                         </li>
                     </ul>
                 </div>
+                @endforeach
             </li>
 
             {{-- Setting --}}

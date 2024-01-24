@@ -29,6 +29,7 @@ class SensorDataController extends Controller
     {
         $metadata = StateMeta::getMetadata($deviceName);
 
+
         $metadataIds = $metadata['metadataIds'];
 
 
@@ -109,7 +110,6 @@ class SensorDataController extends Controller
                 'format' => WaterpoolController::formatSensor($state->first()->metadata->entity_id, $stateValue),
             ];
         }
-
 
 
         return $sensors;

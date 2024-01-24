@@ -33,6 +33,7 @@ class StateMeta extends Model
         $metadataIds = [];
         foreach ($entityIds as $entityId) {
             $metadata = StateMeta::where('entity_id', $entityId)->first();
+            if (!$metadata) continue;
             $metadataToEntityIds[$metadata['metadata_id']] = $metadata['entity_id'];
             $metadataIds[] = $metadata['metadata_id'];
         }

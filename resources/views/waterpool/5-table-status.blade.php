@@ -3,7 +3,7 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <x-detail-table :device-name=\App\Models\AppSettings::$natwaveDevices[0]/>
+            <x-detail-table :device-name=$deviceName/>
         </div>
     </div>
 @endsection

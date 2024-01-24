@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AppSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -11,6 +12,7 @@ class WaterpoolController extends Controller
 
     public static function getStates(string $deviceName = null, int $limit = 15): array
     {
+        if ($deviceName == null) $deviceName = AppSettings::$natwaveDevices[0];
         $datas = SensorDataController::getStats($deviceName, $limit);
         $sensors = [];
         for ($i = 0; $i < $limit; $i++) {
@@ -21,6 +23,7 @@ class WaterpoolController extends Controller
                 $state[$sensor] = $data['data'][$i];
                 $averageTimestamp += strtotime($data['timestamp'][$i]);
             }
+            if (count($datas) == 0) continue;
             $averageTimestamp /= count($datas);
             $state['timestamp'] = $averageTimestamp;
             $sensors[] = $state;
@@ -73,9 +76,13 @@ class WaterpoolController extends Controller
 
     public function index()
     {
+        $deviceName = request()->query('device');
+        if (!$deviceName) $deviceName = AppSettings::$natwaveDevices[0];
 
-        $status = $this->getStates();
-        return view('waterpool/5-table-status', compact('status'));
+
+        return view('waterpool/5-table-status', [
+            'deviceName' => $deviceName,
+        ]);
     }
 
     /**
