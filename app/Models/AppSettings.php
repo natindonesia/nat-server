@@ -28,6 +28,8 @@ class AppSettings extends Model
         'tds', // TDS
         'humid', // Salt
         'temp', // Temperature
+        'ec', // Conductivity
+        'batterydevice', // Battery
     ];
 
     // Used by all
