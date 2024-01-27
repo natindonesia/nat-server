@@ -14,7 +14,7 @@ class AppSettings extends Model
 
     public static $natwaveDevices = [
         'natwave01',
-        'natwave_02_natwave02'
+        'natwave_02_02'
     ];
     protected $fillable = [
         'key',

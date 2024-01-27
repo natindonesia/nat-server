@@ -88,6 +88,7 @@ class SensorDataController extends Controller
                 $state = $state->where('last_updated_ts', '>=', $startTimestamp);
                 $state = $state->where('last_updated_ts', '<', $endTimestamp);
             }
+            $state->where('state', '!=', 'unavailable');
 
             if ($interval !== null) {
                 $state = $state->groupBy(DB::raw('FLOOR(last_updated_ts / ' . $interval . ')'));
