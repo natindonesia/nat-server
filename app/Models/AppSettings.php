@@ -27,8 +27,8 @@ class AppSettings extends Model
         'orp', // Sanitation (ORP)
         'tds', // TDS
         'humid', // Salt
-        'temp', // Temperature
         'ec', // Conductivity
+        'temp', // Temperature
         'batterydevice', // Battery
     ];
 
