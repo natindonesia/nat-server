@@ -17,17 +17,34 @@
 
                                     data-bs-toggle="tooltip" data-bs-placement="bottom"
                                     title="{{date('d M Y H:00:00', isset($device["😎"]['timestamp']) ? $device["😎"]['timestamp'] : 0)}}"/>
-                                <i class="fas fa-info"></i></button>
+                            <i class="fas fa-info"></i></button>
                         </div>
                     </div>
                     <div class="card-body p-3">
                         <div class="row">
                             <div class="col-5 text-center">
+                                @if(isset($device['state']['batterydevice']))
+                                    @php
+                                        // Green
+                                        $valueBattery = $device['state']['batterydevice']['value'];
+                                        $valueBattery = intval($valueBattery);
+                                        $color = '#30C873';
+                                        if($valueBattery < 20){
+                                            $color = '#FF0000';
+                                        }else if($valueBattery < 50){
+                                            $color = '#DAA520';
+                                        }
+
+                                    @endphp
+                                    <span class="text-sm my-4" style="color: {{$color}};">Battery: {{$device['state']['batterydevice']['value']}}%</span>
+                                @endif
                                 <div class="chart">
                                     <canvas id="chart-consumption" cslass="chart-canvas" height="197"></canvas>
                                 </div>
-                                <h4 class="font-weight-bold mt-n8">
-                                    @if($device['final_score'] > $finalScoreDisplay['green'])
+
+                                <h4 class="font-weight-bold mt-n10">
+
+                                @if($device['final_score'] > $finalScoreDisplay['green'])
                                         <img src="{{ asset('images/green.png') }}" alt="baik"
                                              style="width: 70px; height: 70px; border-radius: 50%;">
                                         <h6 class="d-block text-sm">
@@ -66,6 +83,9 @@
                                     <table class="table align-items-center mb-0">
                                         <tbody>
                                         @foreach($device['state'] as $sensor => $state)
+                                            @if($sensor == 'batterydevice')
+                                                @continue
+                                            @endif
                                             <td>
                                                 <div class="d-flex px-2 py-0">
 
