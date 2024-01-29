@@ -298,7 +298,7 @@ class StatusController extends Controller
         }
         if (!$found) {
             Log::warning("Sensor $sensor not found with parameter $parameterName");
-            $score = 0.0;
+            $score = 1;
         }
         return $score;
     }
