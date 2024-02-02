@@ -13,9 +13,9 @@ class AppSettings extends Model
     use HasFactory;
 
     public static $natwaveDevices = [
-        'natwave_01_1',
-        'natwave_02_1',
-        'natwave_02_2_2',
+        'nat_01_1',
+        'nat_02_1',
+        'nat_02_2_2',
     ];
     protected $fillable = [
         'key',
