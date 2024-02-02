@@ -32,6 +32,8 @@ class AppSettings extends Model
         'batterydevice', // Battery
     ];
 
+    // ph orp tds humid ec temp batterydevice
+
     // Used by all
     protected $casts = [
         'value' => 'json',
