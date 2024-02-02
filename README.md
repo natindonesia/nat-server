@@ -13,6 +13,7 @@
 - Open `.env`
 - `DEVICES_NAME` is the name of the device
 - `DEVICES_SENSORS` is the list of sensors
+- `DEVICES_BATTERY_SENSORS` is the list of sensors that will be displayed as battery
 - Entity must be prefixed by `sensor.`
 
 Example if you have 3 entities:

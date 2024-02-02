@@ -23,21 +23,23 @@
                     <div class="card-body p-3">
                         <div class="row">
                             <div class="col-5 text-center">
-                                @if(isset($device['state']['batterydevice']))
-                                    @php
-                                        // Green
-                                        $valueBattery = $device['state']['batterydevice']['value'];
-                                        $valueBattery = intval($valueBattery);
-                                        $color = '#30C873';
-                                        if($valueBattery < 20){
-                                            $color = '#FF0000';
-                                        }else if($valueBattery < 50){
-                                            $color = '#DAA520';
-                                        }
+                                @foreach(\App\Models\AppSettings::$batterySensors as $sensor)
+                                    @if(isset($device['state'][$sensor]))
+                                        @php
+                                            // Green
+                                            $valueBattery = $device['state'][$sensor]['value'];
+                                            $valueBattery = intval($valueBattery);
+                                            $color = '#30C873';
+                                            if($valueBattery < 20){
+                                                $color = '#FF0000';
+                                            }else if($valueBattery < 50){
+                                                $color = '#DAA520';
+                                            }
 
-                                    @endphp
-                                    <span class="text-sm my-4" style="color: {{$color}};">Battery: {{$device['state']['batterydevice']['value']}}%</span>
-                                @endif
+                                        @endphp
+                                        <span class="text-sm my-4" style="color: {{$color}};">Battery: {{$device['state'][$sensor]['value']}}%</span>
+                                    @endif
+                                @endforeach
                                 <div class="chart">
                                     <canvas id="chart-consumption" cslass="chart-canvas" height="197"></canvas>
                                 </div>

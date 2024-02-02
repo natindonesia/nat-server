@@ -13,8 +13,9 @@ class AppSettings extends Model
     use HasFactory;
 
     public static $natwaveDevices = [
-        'natwave01',
-        'natwave_02_02'
+        'natwave_01_1',
+        'natwave_02_1',
+        'natwave_02_2_2',
     ];
     protected $fillable = [
         'key',
@@ -29,7 +30,15 @@ class AppSettings extends Model
         'humid', // Salt
         'ec', // Conductivity
         'temp', // Temperature
+        'cl',
+        'salt',
         'batterydevice', // Battery
+        'battery'
+    ];
+
+    public static $batterySensors = [
+        'batterydevice',
+        'battery'
     ];
 
     // ph orp tds humid ec temp batterydevice
