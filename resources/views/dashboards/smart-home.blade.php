@@ -9,7 +9,7 @@
                 <div class="card m-2">
                     <div class="card-header pb-0 p-3">
                         <div class="d-flex align-items-center">
-                            <h6 class="mb-0">Consumption by {{$device['display_name']}}</h6>
+                            <h6 class="mb-0">{{$device['display_name']}}</h6>
 
                             <button type="button"
                                     class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex
