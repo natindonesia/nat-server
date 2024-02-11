@@ -85,11 +85,19 @@
                                     <table class="table align-items-center mb-0">
                                         <tbody>
                                         @foreach($device['state'] as $sensor => $state)
+                                            @php
+                                                $shouldSkip = false;
+                                            @endphp
                                             @foreach(\App\Models\AppSettings::$batterySensors as $batterySensor)
                                                 @if($sensor == $batterySensor)
-                                                    @continue
+                                                    @php
+                                                        $shouldSkip = true;
+                                                    @endphp
                                                 @endif
                                             @endforeach
+                                            @if($shouldSkip)
+                                                @continue
+                                            @endif
                                             <td>
                                                 <div class="d-flex px-2 py-0">
 
