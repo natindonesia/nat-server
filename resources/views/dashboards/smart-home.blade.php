@@ -89,6 +89,7 @@
                                                 @if($sensor == $batterySensor)
                                                     @continue
                                                 @endif
+                                            @endforeach
                                             <td>
                                                 <div class="d-flex px-2 py-0">
 
