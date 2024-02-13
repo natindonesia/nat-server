@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', function () {
-        return redirect('dashboard-smart-home');
+        return redirect('main-dashboard');
     });
     Route::view('/analytics', 'applications/analytics');
     Route::view('/calendar', 'applications/calendar');
@@ -59,17 +59,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::view('/authentication-verification-cover', 'authentication/verification/cover');
     Route::view('/authentication-verification-illustration', 'authentication/verification/illustration');
 
-    Route::redirect('/dashboard-default', '/dashboard-smart-home');
+    Route::redirect('/dashboard-default', '/main-dashboard');
     Route::view('/dashboard-automative', 'dashboards/automotive');
     Route::view('/dashboard-crm', 'dashboards/crm');
-    Route::view('/dashboard-smart-home', 'dashboards/smart-home');
+    Route::view('/main-dashboard', 'dashboards/smart-home');
 
     // Route::get('/get-access-token', [WaterpoolController::class, 'getAccessToken']);
 
-    Route::get('/dashboard-detailed-dashboard', [SensorDataController::class, 'index'])->name('dashboard-detailed-dashboard');
-    Route::get('/dashboard-smart-home', [StatusController::class, 'index']);
+    Route::get('/detail', [SensorDataController::class, 'index'])->name('detail');
+    Route::get('/main-dashboard', [StatusController::class, 'index']);
     Route::get('/fetch-latest-data', [SensorDataController::class, 'fetchLatestData'])->name('fetch.latest.data');
-    // Route::get('/dashboard-detailed-dashboard', 'dashboards/detailed-dashboard');
+    // Route::get('/detail', 'dashboards/detailed-dashboard');
 
     Route::view('/dashboard-virtual-default', 'dashboards/vr/vr-default');
     Route::view('/dashboard-virtual-info', 'dashboards/vr/vr-info');
@@ -214,7 +214,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/settings-parameter', [\App\Http\Controllers\ParameterController::class, 'index'])->name('settings.parameter');
     Route::post('/settings-parameter', [\App\Http\Controllers\ParameterController::class, 'store'])->name('settings.parameter');
     Route::get('/settings-parameter-livewire', \App\Livewire\SettingsParameter::class)->name('settings.parameter.livewire');
-    Route::get('/dashboard-detailed-dashboard/export', [SensorDataController::class, 'export'])->name('detailed-dashboard.export');
+    Route::get('/detail/export', [SensorDataController::class, 'export'])->name('detailed-dashboard.export');
 
 });
 

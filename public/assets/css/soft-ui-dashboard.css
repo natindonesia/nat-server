@@ -5990,6 +5990,7 @@ fieldset:disabled .btn {
 }
 
 .badge {
+  width: 100px;
   display: inline-block;
   padding: 0.55em 0.9em;
   font-size: 0.75em;
@@ -21374,7 +21375,8 @@ hr.horizontal.gray-light {
 .navbar-vertical.navbar-expand-xs .navbar-nav .nav-link .sidenav-mini-icon,
 .navbar-vertical.navbar-expand-xs .navbar-nav .nav-link .sidenav-normal,
 .navbar-vertical.navbar-expand-xs .navbar-nav .nav-link i {
-  pointer-events: none;
+  pointer-events: none !important;
+  list-style: none !important;
 }
 
 .navbar-vertical.navbar-expand-xs .navbar-nav .nav-item {
@@ -21473,7 +21475,8 @@ hr.horizontal.gray-light {
   .navbar-vertical.navbar-expand-sm .navbar-nav .nav-link .sidenav-mini-icon,
   .navbar-vertical.navbar-expand-sm .navbar-nav .nav-link .sidenav-normal,
   .navbar-vertical.navbar-expand-sm .navbar-nav .nav-link i {
-    pointer-events: none;
+    pointer-events: none !important;
+    list-style: none !important;
   }
 
   .navbar-vertical.navbar-expand-sm .navbar-nav .nav-item {
@@ -21573,7 +21576,8 @@ hr.horizontal.gray-light {
   .navbar-vertical.navbar-expand-md .navbar-nav .nav-link .sidenav-mini-icon,
   .navbar-vertical.navbar-expand-md .navbar-nav .nav-link .sidenav-normal,
   .navbar-vertical.navbar-expand-md .navbar-nav .nav-link i {
-    pointer-events: none;
+    pointer-events: none !important;
+    list-style: none !important;
   }
 
   .navbar-vertical.navbar-expand-md .navbar-nav .nav-item {
@@ -21673,7 +21677,8 @@ hr.horizontal.gray-light {
   .navbar-vertical.navbar-expand-lg .navbar-nav .nav-link .sidenav-mini-icon,
   .navbar-vertical.navbar-expand-lg .navbar-nav .nav-link .sidenav-normal,
   .navbar-vertical.navbar-expand-lg .navbar-nav .nav-link i {
-    pointer-events: none;
+    pointer-events: none !important;
+    list-style: none !important;
   }
 
   .navbar-vertical.navbar-expand-lg .navbar-nav .nav-item {
@@ -21773,7 +21778,8 @@ hr.horizontal.gray-light {
   .navbar-vertical.navbar-expand-xl .navbar-nav .nav-link .sidenav-mini-icon,
   .navbar-vertical.navbar-expand-xl .navbar-nav .nav-link .sidenav-normal,
   .navbar-vertical.navbar-expand-xl .navbar-nav .nav-link i {
-    pointer-events: none;
+    pointer-events: none !important;
+    list-style: none !important;
   }
 
   .navbar-vertical.navbar-expand-xl .navbar-nav .nav-item {
@@ -21873,7 +21879,8 @@ hr.horizontal.gray-light {
   .navbar-vertical.navbar-expand-xxl .navbar-nav .nav-link .sidenav-mini-icon,
   .navbar-vertical.navbar-expand-xxl .navbar-nav .nav-link .sidenav-normal,
   .navbar-vertical.navbar-expand-xxl .navbar-nav .nav-link i {
-    pointer-events: none;
+    pointer-events: none !important;
+    list-style: none !important;
   }
 
   .navbar-vertical.navbar-expand-xxl .navbar-nav .nav-item {
@@ -22128,7 +22135,7 @@ hr.horizontal.gray-light {
   background-color: transparent;
   box-shadow: none;
   color: rgba(58, 65, 111, 0.5);
-  margin-left: 1.35rem;
+  margin-left:0px;
 }
 
 .navbar-vertical .navbar-nav .nav-item .collapse .nav .nav-item .nav-link:before,
@@ -22142,6 +22149,7 @@ hr.horizontal.gray-light {
   width: 5px;
   border-radius: 1.5rem;
   background: rgba(58, 65, 111, 0.5);
+  display: none;
 }
 
 .navbar-vertical .navbar-nav .nav-item .collapse .nav .nav-item .nav-link.active,

@@ -7,10 +7,10 @@
         <div class="container">
             <div class="row d-flex flex-column justify-content-center">
                 <div class="col-lg-5 text-center mx-auto">
-                    <h1 class="text-white mb-2 mt-5">Welcome!</h1>
-                    <p class="text-lead text-white">Use these awesome forms to login or create new account in your project for free.</p>
+                    <h1 class="text-white mb-2 mt-5">Welcome to NATwave</h1>
+                    {{-- <p class="text-lead text-white">Use these awesome forms to login or create new account in your project for free.</p> --}}
                 </div>
-                <div class="col-lg-5 text-center mx-auto">
+                {{-- <div class="col-lg-5 text-center mx-auto">
                     <h5 class="text-white"><strong>You can login with these 3 user types:</strong></h5>
                     <ol class="text-white">
                         <li>Username <b>admin@softui.com</b> and Password <b>secret</b>
@@ -22,7 +22,7 @@
                             <b>member@softui.com</b> and Password <b>secret</b>
                         </li>
                     </ol>
-                </div>
+                </div> --}}
             </div>
         </div>
         </div>
@@ -51,7 +51,7 @@
                 <div class="card-header text-center pt-4">
                 <h5>Sign in</h5>
                 </div>
-                <div class="row px-xl-5 px-sm-4 px-3">
+                {{-- <div class="row px-xl-5 px-sm-4 px-3">
                 <div class="col-3 ms-auto px-1">
                     <a class="btn btn-outline-light w-100" href="javascript:;">
                     <svg width="24px" height="32px" viewBox="0 0 64 64" version="1.1">
@@ -89,18 +89,18 @@
                     </svg>
                     </a>
                 </div>
-                </div>
+                </div> --}}
                 <div class="card-body">
                 <form role="form" class="text-start" action="/session" method="POST">
                     @csrf
                     <div class="mb-3">
-                    <input type="email" class="form-control" placeholder="Email" aria-label="Email" value="admin@softui.com" name="email" id="email" value="{{ old('email') }}" required>
+                    <input type="email" class="form-control" placeholder="Email" aria-label="Email"  name="email" id="email" value="{{ old('email') }}" required>
                     @error('email')
                         <p class="text-danger text-xs mt-2 mb-2">{{ $message }}</p>
                     @enderror
                     </div>
                     <div class="mb-3">
-                    <input type="password" class="form-control" placeholder="Password" aria-label="Password" value="secret" name="password" id="password" required>
+                    <input type="password" class="form-control" placeholder="Password" aria-label="Password"  name="password" id="password" required>
                     @error('password')
                         <p class="text-danger text-xs mt-2 mb-2">{{ $message }}</p>
                     @enderror

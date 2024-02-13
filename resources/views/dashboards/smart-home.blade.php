@@ -114,11 +114,11 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="align-right text-end text-sm">
+                                            {{-- <td class="align-right text-end text-sm">
                                                 <span
                                                     class="text-xs font-weight-bold">{{ $state['value'] }} {{ $state['unit'] }}</span>
-                                            </td>
-                                            <tr/>
+                                            </td> --}}
+                                           
                                         @endforeach
                                         </tbody>
                                     </table>

@@ -1,4 +1,4 @@
-@extends('user_type.auth', ['parentFolder' => 'dashboards', 'childFolder' => 'none'])
+@extends('user_type.auth', ['parentFolder' => 'waterpool', 'childFolder' => 'items'])
 
 @section('content')
     <div class="row">
@@ -10,9 +10,6 @@
                             <div class="row">
                                 <div class="col-8 my-auto">
                                     <div class="numbers">
-                                        <p class="text-white text-sm mb-0 text-capitalize font-weight-bold opacity-7">
-                                            Detail
-                                        </p>
                                         <h5 class="text-white font-weight-bolder mb-0">
                                             {{ \App\Models\AppSettings::translateDeviceName($deviceName) }}
                                         </h5>
