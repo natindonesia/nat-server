@@ -20969,6 +20969,7 @@ hr.horizontal.gray-light {
   width: 5px;
   border-radius: 1.5rem;
   background: rgba(58, 65, 111, 0.5);
+  display: none !important;
 }
 .navbar-vertical .navbar-nav .nav-item .collapse .nav .nav-item .nav-link.active,
 .navbar-vertical .navbar-nav .nav-item .collapsing .nav .nav-item .nav-link.active {

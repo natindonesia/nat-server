@@ -1,10 +1,26 @@
 <style>
+
+/* CSS untuk ponsel */
+@media only screen and (max-width: 767px) {
+    .sidenav {
+        margin-top: 100px !important; Menambah margin-top 50px
+    }
+}
+
+
+.sidenav{
+    width: 300px !important;
+}
  #sidenav-collapse-main .nav > .nav-item > .nav-link {
     padding-left: 0; /* Jika perlu, hilangkan padding untuk menghapus spasi di sebelah kiri */
 }
 .sidebar-icon{
     width: 24px;
     height: 24px;
+}
+.navbar-vertical .navbar-nav .nav-item .collapse .nav .nav-item .nav-link:before,
+.navbar-vertical .navbar-nav .nav-item .collapsing .nav .nav-item .nav-link:before {
+  display: none !important;
 }
 </style>
 <aside
@@ -141,3 +157,14 @@
         </ul>
     </div>
 </aside>
+
+<script>
+    $(document).ready(function() {
+    // Menghitung tinggi #navbarBlur
+    var navbarHeight = $('#navbarBlur').outerHeight();
+
+    // Menambahkan margin-top untuk .sidenav sesuai dengan tinggi #navbarBlur
+    $('.sidenav').css('margin-top', navbarHeight + 'px');
+});
+
+</script>

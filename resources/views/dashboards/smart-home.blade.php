@@ -1,3 +1,4 @@
+
 @extends('user_type.auth', ['parentFolder' => 'dashboards', 'childFolder' => 'none'])
 
 @section('content')
@@ -10,20 +11,35 @@
                     <div class="card-header pb-0 p-3">
                         <div class="d-flex align-items-center">
                             <h6 class="mb-0">{{$device['display_name']}}</h6>
-
-                            <button type="button"
-                                    class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex
-                            align-items-center justify-content-center ms-auto"
-
-                                    data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                    title="{{date('d M Y H:00:00', isset($device["😎"]['timestamp']) ? $device["😎"]['timestamp'] : 0)}}"/>
-                            <i class="fas fa-info"></i></button>
+                            <div class="ms-auto"> <!-- Menempatkan elemen-elemen di sebelah kanan -->
+                                @foreach(\App\Models\AppSettings::$batterySensors as $sensor)
+                                    @if(isset($device['state'][$sensor]))
+                                        @php
+                                            // Ambil nilai persentase baterai dan tentukan warna berdasarkan kondisi
+                                            $valueBattery = intval($device['state'][$sensor]['value']);
+                                            $color = '#30C873'; // Warna default: hijau
+                                            if($valueBattery < 20){
+                                                $color = '#FF0000'; // Warna: merah jika baterai kurang dari 20%
+                                            } else if($valueBattery < 50){
+                                                $color = '#DAA520'; // Warna: kuning jika baterai kurang dari 50%
+                                            }
+                                        @endphp
+                                        <span class="text-sm mb-0 ms-2" style="color: {{$color}};">
+                                            <i class="fas fa-battery-{{ $valueBattery < 20 ? 'empty' : ($valueBattery < 50 ? 'quarter' : 'full') }}"></i> {{$device['state'][$sensor]['value']}}%
+                                        </span>
+                                    @endif
+                                @endforeach
+                            </div>
+                            <button type="button" class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{date('d M Y H:00:00', isset($device["ðŸ˜Ž"]['timestamp']) ? $device["ðŸ˜Ž"]['timestamp'] : 0)}}">
+                                <i class="fas fa-info"></i>
+                            </button>
                         </div>
+
                     </div>
                     <div class="card-body p-3">
                         <div class="row">
                             <div class="col-5 text-center">
-                                @foreach(\App\Models\AppSettings::$batterySensors as $sensor)
+                                {{-- @foreach(\App\Models\AppSettings::$batterySensors as $sensor)
                                     @if(isset($device['state'][$sensor]))
                                         @php
                                             // Green
@@ -37,9 +53,11 @@
                                             }
 
                                         @endphp
-                                        <span class="text-sm my-4" style="color: {{$color}};">Battery: {{$device['state'][$sensor]['value']}}%</span>
+                                        <span class="text-sm my-4" style="color: {{$color}};">
+                                            <i class="fas fa-battery-{{ $valueBattery < 20 ? 'empty' : ($valueBattery < 50 ? 'quarter' : 'full') }}"></i> {{$device['state'][$sensor]['value']}}%
+                                        </span>
                                     @endif
-                                @endforeach
+                                @endforeach --}}
                                 <div class="chart">
                                     <canvas id="chart-consumption" cslass="chart-canvas" height="197"></canvas>
                                 </div>
@@ -52,7 +70,7 @@
                                         <h6 class="d-block text-sm">
                                     <span class="highlight-background"
                                           style="background-color: #d2fcd2; display: inline-block; padding: 5px; border-radius: 5px;">
-                                        <span class="text-sm bold" style="color: #30C873;">Good</span>
+                                        <span class="text-sm bold" style="color: #30C873;">Good {{ intval($device['final_score'] * 100) }}%</span>
                                     </span>
                                         </h6>
                                     @elseif($device['final_score'] > $finalScoreDisplay['yellow'])
@@ -62,7 +80,7 @@
                                         <h6 class="d-block text-sm">
                                     <span class="highlight-background"
                                           style="background-color: #FFFF00; display: inline-block; padding: 5px; border-radius: 5px;">
-                                        <span class="text-sm" style="color: #DAA520;">Caution</span>
+                                        <span class="text-sm" style="color: #DAA520;">Caution {{ intval($device['final_score'] * 100) }}%</span>
                                     </span>
                                         </h6>
                                     @else
@@ -71,12 +89,12 @@
                                         <h6 class="d-block text-sm">
                                     <span class="highlight-background"
                                           style="background-color: #ffa1a1; display: inline-block; padding: 5px; border-radius: 5px;">
-                                        <span class="text-sm" style="color: #FF0000;">Bad</span>
+                                        <span class="text-sm" style="color: #FF0000;">Bad {{ intval($device['final_score'] * 100) }}%</span>
                                     </span>
                                         </h6>
                                     @endif
 
-                                    {{ intval($device['final_score'] * 100) }}%
+                                    {{-- {{ intval($device['final_score'] * 100) }}% --}}
 
                                 </h4>
                             </div>
@@ -84,46 +102,65 @@
                                 <div class="table-responsive">
                                     <table class="table align-items-center mb-0">
                                         <tbody>
+                                        @php
+                                            $dataPerColumn = array_fill(0, 3, []); // Inisialisasi array untuk setiap kolom
+                                            $columnCounter = 0;
+                                        @endphp
+                                        
                                         @foreach($device['state'] as $sensor => $state)
                                             @php
-                                                $shouldSkip = false;
+                                                // Periksa apakah sensor saat ini adalah bagian dari sensor baterai
+                                                if (in_array($sensor, \App\Models\AppSettings::$batterySensors)) {
+                                                    continue; // Lewati sensor baterai
+                                                }
+                                                
+                                                // Menambahkan data ke dalam array sementara untuk setiap kolom
+                                                $dataPerColumn[$columnCounter][] = [
+                                                    'sensor' => $sensor,
+                                                    'state' => $state,
+                                                ];
+                                
+                                                // Pindah ke kolom berikutnya setelah mencapai 3 baris
+                                                if (count($dataPerColumn[$columnCounter]) == 3) {
+                                                    $columnCounter++;
+                                                }
                                             @endphp
-                                            @foreach(\App\Models\AppSettings::$batterySensors as $batterySensor)
-                                                @if($sensor == $batterySensor)
-                                                    @php
-                                                        $shouldSkip = true;
-                                                    @endphp
-                                                @endif
-                                            @endforeach
-                                            @if($shouldSkip)
-                                                @continue
-                                            @endif
-                                            <td>
-                                                <div class="d-flex px-2 py-0">
-
-                                                    @if($device['scores'][$sensor] > $parameterThresholdDisplay['green'])
-                                                        <span class="badge bg-success me-3"> </span>
-                                                    @elseif($device['scores'][$sensor] > $parameterThresholdDisplay['yellow'])
-                                                        <span class="badge bg-warning me-3"> </span>
-                                                    @else
-                                                        <span class="badge bg-danger me-3"> </span>
-                                                    @endif
-
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">{{ $state['label'] }}</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-right text-end text-sm">
-                                                {{-- <span
-                                                    class="text-xs font-weight-bold">{{ $state['value'] }} {{ $state['unit'] }}</span> --}}
-                                            </td>
-                                           
                                         @endforeach
+                                
+                                        @for ($row = 0; $row < 3; $row++)
+                                            <tr>
+                                                @foreach($dataPerColumn as $column)
+                                                    @if(isset($column[$row]))
+                                                        <td>
+                                                            <div class="d-flex px-2 py-0">
+                                                                @php
+                                                                    $sensor = $column[$row]['sensor'];
+                                                                    $state = $column[$row]['state'];
+                                                                @endphp
+                                                                @if($device['scores'][$sensor] > $parameterThresholdDisplay['green'])
+                                                                    <span class="badge bg-success me-3"> </span>
+                                                                @elseif($device['scores'][$sensor] > $parameterThresholdDisplay['yellow'])
+                                                                    <span class="badge bg-warning me-3"> </span>
+                                                                @else
+                                                                    <span class="badge bg-danger me-3"> </span>
+                                                                @endif
+                                                                <div class="d-flex flex-column justify-content-center">
+                                                                    <h6 class="mb-0 text-sm">{{ $state['label'] }}</h6>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    @else
+                                                        <td></td> <!-- Jika tidak ada data, tambahkan sel kosong -->
+                                                    @endif
+                                                @endforeach
+                                            </tr>
+                                        @endfor
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
+
+
                         </div>
                     </div>
                 </div>

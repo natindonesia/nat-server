@@ -115,6 +115,10 @@ class SensorDataController extends Controller
 
         return $sensors;
     }
+    public static $parameterThresholdDisplay = [
+        'green' => 0.7, // above 70%
+        'yellow' => 0.4, // above 60%
+    ];
 
     public function index()
     {
@@ -166,6 +170,8 @@ class SensorDataController extends Controller
             'max' => date('Y-m-d', $max_date),
             'min' => date('Y-m-d', $min_date),
         ];
+        
+        $data['parameterThresholdDisplay'] = self::$parameterThresholdDisplay;
 
 
 

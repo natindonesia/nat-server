@@ -27,17 +27,17 @@ class AppSettings extends Model
         'ph', // PH
         'orp', // Sanitation (ORP)
         'tds', // TDS
-        'humid', // Salt
+        // 'humid', // Salt
         'ec', // Conductivity
         'temp', // Temperature
         'cl',
-        'salt',
-        'batterydevice', // Battery
+        // 'salt',
+        // 'batterydevice', // Battery
         'battery'
     ];
 
     public static $batterySensors = [
-        'batterydevice',
+        // 'batterydevice',
         'battery'
     ];
 
@@ -97,7 +97,7 @@ class AppSettings extends Model
         $translation = self::where('key', 'translation')->first();
         $default = [
             'ec' => 'Conductivity',
-            'humid' => 'Salt',
+            // 'humid' => 'Salt',
             'orp' => 'Sanitation (ORP)',
             'ph' => 'PH',
             'tds' => 'TDS',

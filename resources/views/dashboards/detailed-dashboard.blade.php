@@ -4,43 +4,50 @@
     <div class="row">
         <div class="col-xl-12  mt-xl-0 mt-4">
             <div class="row">
-                <div class="col-12">
-                    <div class="card bg-gradient-primary">
-                        <div class="card-body p-3">
-                            <div class="row">
-                                <div class="col-8 my-auto">
-                                    <div class="numbers">
-                                        <h5 class="text-white font-weight-bolder mb-0">
-                                            {{ \App\Models\AppSettings::translateDeviceName($deviceName) }}
-                                        </h5>
-
-                                        <div class="col-8 md-3 ml-auto">
-                                            <h5 class="text-white font-weight-bolder mb-0">
-                                                @if(isset($formatted_state['timestamp']))
-                                                    <span>{{ $formatted_state['timestamp'] }}</span>
-                                                @endif
-                                            </h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+    <div class="col-12">
+        <div class="card bg-gradient-primary">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-8 my-auto">
+                        <div class="numbers d-flex align-items-center justify-content-between">
+                            <h5 class="text-white font-weight-bolder mb-0">
+                                {{ \App\Models\AppSettings::translateDeviceName($deviceName) }}
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="col-4"> <!-- Menambahkan div dengan col-4 untuk h6 -->
+                        <div class="d-flex justify-content-end">
+                            <h6 class="text-white font-weight-bolder mb-0">
+                                @if(isset($formatted_state['timestamp']))
+                                    <span>{{ date('Y-m-d', strtotime($formatted_state['timestamp'])) }}</span>
+                                @endif
+                            </h6>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row mt-4">
+        </div>
+    </div>
+</div>
+
+            <div class="row mt-0">
 
                 @php
                     unset($formatted_state['timestamp']);
                 @endphp
                 @foreach($formatted_state as $key => $state)
 
-                <div class="col-md-2 mt-md-0 mt-4 ">
+
+                <div class="col-md-4 col-6 mt-4 ">
                     <div class="card">
                         <div class="card-body text-center">
                             <h1 class="text-gradient text-primary">
                                 <span id="{{$key}}_state">
-                                    {{ $state['value'] }}
+                                    @if($state['value'] == 'unknown')
+                                         - 
+                                    @else
+                                        {{ $state['value'] }}
+                                    @endif
                                 </span>
 
                                 <span class="text-lg ms-n2">{{$state['unit']}}</span>
