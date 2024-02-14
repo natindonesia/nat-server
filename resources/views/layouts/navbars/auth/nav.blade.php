@@ -40,27 +40,27 @@
 
 <style>
     @media only screen and (min-width: 768px) {
-    #navbarBlur {
-        transition: width 0.8s ease-in-out, left 0.8s ease-in-out; /* Transisi lebih lambat dan mulus */
+        #navbarBlur {
+            transition: left 0.5s ease;
+        }
+        .minimizeNav {
+            
+            width: calc(100% - 300px);
+            left: 300px;
+        }
     }
-    
-    .minimizeNav {
-        width: calc(100% - 300px);
-        left: 300px;
-    }
-}
-
 </style>
 
-    
-    <script>
-    const toggle = document.querySelector('.toggle');
-    const navbarBlur = document.getElementById('navbarBlur');
-    
-    if (window.innerWidth <= 992) {
-        toggle.addEventListener('click', function() {
-            navbarBlur.classList.toggle('minimizeNav');
-        });
-    }
-    </script>
-    
+
+<script>
+const toggle = document.querySelector('.toggle');
+const navbarBlur = document.getElementById('navbarBlur');
+
+toggle.addEventListener('click', function() {
+  if (navbarBlur.classList.contains('minimizeNav')) {
+    navbarBlur.classList.remove('minimizeNav');
+  } else {
+    navbarBlur.classList.add('minimizeNav');
+  }
+});
+</script>

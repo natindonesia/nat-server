@@ -157,14 +157,3 @@
         </ul>
     </div>
 </aside>
-
-<script>
-    $(document).ready(function() {
-    // Menghitung tinggi #navbarBlur
-    var navbarHeight = $('#navbarBlur').outerHeight();
-
-    // Menambahkan margin-top untuk .sidenav sesuai dengan tinggi #navbarBlur
-    $('.sidenav').css('margin-top', navbarHeight + 'px');
-});
-
-</script>
