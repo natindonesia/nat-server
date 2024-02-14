@@ -39,7 +39,7 @@
 <!-- End Navbar -->
 
 <style>
-    @media only screen and (min-width: 768px) {
+     @media only screen and (min-width: 768px) and (max-width: 1200px) {
         #navbarBlur {
             transition: left 0.5s ease;
         }
