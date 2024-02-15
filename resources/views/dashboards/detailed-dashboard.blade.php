@@ -1,4 +1,3 @@
-
 @extends('user_type.auth', ['parentFolder' => 'waterpool', 'childFolder' => 'items'])
 
 @section('content')
@@ -32,32 +31,77 @@
             </div>
 
             <div class="row mt-0">
+                
 
                 @php
+                
                     unset($formatted_state['timestamp']);
                 @endphp
-                @foreach($formatted_state as $key => $state)
+                {{-- @dd($device,$formatted_state); --}}
+                {{-- @dd($device['scores']['ph']); --}}
+                @foreach($device['scores'] as $sensor_name => $score)
+                @if($sensor_name !== 'battery')
+                
+                
+                <div class="col-md-4 col-12 mt-4 ">
+                    @if( $score > $parameterThresholdDisplay['green'])
+                    
+                        <div class="card bg-success">
+                            <div class="card-body text-center">
+                                
+                                <h1 class="text-white text-primary">
+                                    <span id="{{$sensor_name}}_state">
+                                        @if( $device['state'][$sensor_name]['value'] == 'unknown')
+                                            - 
+                                        @else
+                                            {{  $device['state'][$sensor_name]['value'] }}
+                                        @endif
+                                    </span>
 
+                                    <span class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
+                                </h1>
+                                <h6 class="mb-0 font-weight-bolder">{{ $device['state'][$sensor_name]['label']}}</h6>
 
-                <div class="col-md-4 col-6 mt-4 ">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <h1 class="text-gradient text-primary">
-                                <span id="{{$key}}_state">
-                                    @if($state['value'] == 'unknown')
-                                         - 
-                                    @else
-                                        {{ $state['value'] }}
-                                    @endif
-                                </span>
-
-                                <span class="text-lg ms-n2">{{$state['unit']}}</span>
-                            </h1>
-                            <h6 class="mb-0 font-weight-bolder">{{$state['label']}}</h6>
-
+                            </div>
                         </div>
-                    </div>
+                    @elseif($score > $parameterThresholdDisplay['yellow'])
+                        <div class="card bg-warning">
+                            <div class="card-body text-center">
+                                
+                                <h1 class="text-white text-primary">
+                                    <span id="{{$sensor_name}}_state">
+                                        @if( $device['state'][$sensor_name]['value'] == 'unknown')
+                                            - 
+                                        @else
+                                            {{  $device['state'][$sensor_name]['value'] }}
+                                        @endif
+                                    </span>
+                                    <span class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
+                                </h1>
+                                <h6 class="mb-0 font-weight-bolder">{{ $device['state'][$sensor_name]['label']}}</h6>
+
+                            </div>
+                        </div>
+                    @else
+                        <div class="card bg-danger">
+                            <div class="card-body text-center">
+                                 <h1 class="text-white text-primary">
+                                    <span id="{{$sensor_name}}_state">
+                                        @if( $device['state'][$sensor_name]['value'] == 'unknown')
+                                            - 
+                                        @else
+                                            {{  $device['state'][$sensor_name]['value'] }}
+                                        @endif
+                                    </span>
+                                    <span class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
+                                </h1>
+                                <h6 class="mb-0 font-weight-bolder">{{ $device['state'][$sensor_name]['label']}}</h6>
+
+                            </div>
+                        </div>
+                    @endif
                 </div>
+                @endif
                 @endforeach
 
             </div>
@@ -257,112 +301,121 @@
         }
 
 
+    
+
         //chart line per 8 jam sehari
 
+       
+
         @foreach($stats as $key => $stat)
-    var ctx2 = document.getElementById("{{$key}}").getContext("2d");
+        var ctx2 = document.getElementById("{{$key}}").getContext("2d");
 
-    var gradientStroke1 = ctx2.createLinearGradient(72, 221, 71, 50);
-    gradientStroke1.addColorStop(1, 'rgba(72, 221, 71, 100)');
-    gradientStroke1.addColorStop(0.2, 'rgba(72,221,71,0.0)');
-    gradientStroke1.addColorStop(0, 'rgba(203,12,159,0)'); //purple colors
+        var gradientStroke1 = ctx2.createLinearGradient(72, 221, 71, 50);
+        gradientStroke1.addColorStop(1, 'rgba(72, 221, 71, 100)');
+        gradientStroke1.addColorStop(0.2, 'rgba(72,221,71,0.0)');
+        gradientStroke1.addColorStop(0, 'rgba(203,12,159,0)'); //purple colors
 
-    // ...Gradient definitions for other lines...
 
-    // Menghitung data per hari
-    var dataPerDay = [];
-    var labelsPerDay = [];
-    var tempData = 0;
-    var count = 0;
-    @foreach($stat['timestamp'] as $index => $timestamp)
-        var currentDate = '{{$timestamp}}'.split(' ')[0];
-        if (!labelsPerDay.includes(currentDate)) {
-            if (count > 0) {
-                dataPerDay.push(tempData / count); // Ambil rata-rata
+        var gradientStroke2 = ctx2.createLinearGradient(0, 230, 0, 50);
+        gradientStroke2.addColorStop(1, 'rgba(215,70,192,100)');
+        gradientStroke2.addColorStop(0.2, 'rgba(215,70,192,0.0)');
+        gradientStroke2.addColorStop(0, 'rgba(20,23,39,0)'); //purple colors
+
+        var gradientStroke3 = ctx2.createLinearGradient(0, 230, 0, 50);
+        gradientStroke2.addColorStop(1, 'rgba(101,140,216,100)');
+        gradientStroke2.addColorStop(0.2, 'rgba(101,140,216,0.0)');
+        gradientStroke2.addColorStop(0, 'rgba(101,140,216,0)'); //purple colors
+
+        var gradientStroke4 = ctx2.createLinearGradient(0, 230, 0, 50);
+        gradientStroke2.addColorStop(1, 'rgba(248,219,71,100)');
+        gradientStroke2.addColorStop(0.2, 'rgba(248,219,71, 0.0)');
+        gradientStroke2.addColorStop(0, 'rgba(248,219,71,0)');
+
+        var gradientStroke5 = ctx2.createLinearGradient(0, 230, 0, 50);
+        gradientStroke2.addColorStop(1, 'rgba(255,69,69,100)');
+        gradientStroke2.addColorStop(0.2, 'rgba(255,69,69,0.0)');
+        gradientStroke2.addColorStop(0, 'rgba(255,69,69,0)'); //purple colors
+
+        
+
+        new Chart(ctx2, {
+    type: "line",
+    data: {
+        // labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        labels: @json(array_map(function($timestamp) {
+            return date('H:i', strtotime($timestamp)); // Ubah format timestamp menjadi jam:menit
+        }, $stat['timestamp'])),
+        datasets: [{
+            label: "{{$stat['format']['label']}}",
+            tension: 0.4,
+            borderColor: "#48DD47",
+            borderWidth: 3,
+            backgroundColor: gradientStroke1,
+
+            data: @json($stat['data']),
+            maxBarThickness: 6,
+        }],
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
             }
-            tempData = 0;
-            count = 0;
-            labelsPerDay.push(currentDate);
-        }
-        tempData += {{$stat['data'][$index]}};
-        count++;
-    @endforeach
-    dataPerDay.push(tempData / count); // Ambil rata-rata untuk hari terakhir
-
-    new Chart(ctx2, {
-        type: "line",
-        data: {
-            labels: labelsPerDay,
-            datasets: [{
-                label: "{{$stat['format']['label']}}",
-                tension: 0.4,
-                borderColor: "#48DD47",
-                borderWidth: 3,
-                backgroundColor: gradientStroke1,
-                data: dataPerDay,
-                maxBarThickness: 6,
-            }],
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
+        interaction: {
+            intersect: false,
+            mode: 'index',
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    drawBorder: false,
+                    display: true,
+                    drawOnChartArea: true,
+                    drawTicks: false,
+                    borderDash: [5, 5]
+                },
+                ticks: {
+                    precision: 2,
+                    display: true,
+                    padding: 10,
+                    color: '#b2b9bf',
+                    font: {
+                        size: 11,
+                        family: "Open Sans",
+                        style: 'normal',
+                        lineHeight: 2
+                    },
                 }
             },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5]
-                    },
-                    ticks: {
-                        precision: 2,
-                        display: true,
-                        padding: 10,
-                        color: '#b2b9bf',
-                        font: {
-                            size: 11,
-                            family: "Open Sans",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
+            x: {
+                grid: {
+                    drawBorder: false,
+                    display: false,
+                    drawOnChartArea: false,
+                    drawTicks: false,
+                    borderDash: [5, 5]
                 },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [5, 5]
+                ticks: {
+                    display: true,
+                    color: '#b2b9bf',
+                    padding: 20,
+                    font: {
+                        size: 11,
+                        family: "Open Sans",
+                        style: 'normal',
+                        lineHeight: 2
                     },
-                    ticks: {
-                        display: true,
-                        color: '#b2b9bf',
-                        padding: 20,
-                        font: {
-                            size: 11,
-                            family: "Open Sans",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
+                }
             },
         },
-    })
-@endforeach
+    },
+})
 
+        @endforeach
 
     </script>
 @endpush

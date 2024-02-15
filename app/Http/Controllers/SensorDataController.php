@@ -8,6 +8,7 @@ use App\Models\SensorData;
 use App\Models\State;
 use App\Models\StateMeta;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Psr\Container\ContainerExceptionInterface;
@@ -25,7 +26,7 @@ class SensorDataController extends Controller
      * @param int $interval interval in seconds
      * @return array<string, array<string, array<int, mixed>>>
      */
-    public static function getStats(string $deviceName, int $limit = 15, $startTimestamp = null, $endTimestamp = null, $interval = 60 * 30): array
+    public static function getStats(string $deviceName, int $limit = 15, $startTimestamp = null, $endTimestamp = null, $interval = 60 * 60): array
     {
         $metadata = StateMeta::getMetadata($deviceName);
 
@@ -115,18 +116,135 @@ class SensorDataController extends Controller
 
         return $sensors;
     }
+    
+
+
+    // Threshold for each parameter
+    // Example sensor 1
+    // if range of 28< or >20 get score 1
+    // else if range of 30< or >19 get score 0.7
+    // else 0.5
+
+    // Evaluated from top to bottom
+    public static $parametersThresholdInternational = [
+        [
+            'sensor' => 'temp',
+            'min' => 22,
+            'max' => 26,
+            'score' => 1.0
+        ],
+        [
+            'sensor' => 'temp',
+            'min' => 18,
+            'max' => 29,
+            'score' => 0.55
+        ],
+        [
+            'sensor' => 'ph',
+            'min' => 7.2,
+            'max' => 8.0,
+            'score' => 1.0
+        ],
+        [
+            'sensor' => 'ph',
+            'min' => 6.5,
+            'max' => 8.6,
+            'score' => 0.4
+        ],
+        [
+            'sensor' => 'orp',
+            'min' => 700,
+            'max' => 750,
+            'score' => 1.0
+        ],
+        [
+            'sensor' => 'orp',
+            'min' => 650,
+            'max' => 700,
+            'score' => 0.58
+        ],
+        [
+            'sensor' => 'humid',
+            'min' => 0,
+            'max' => 60,
+            'score' => 1.0
+        ],
+        [
+            'sensor' => 'humid',
+            'min' => 0,
+            'max' => 120,
+            'score' => 0.7
+        ],
+        [
+            'sensor' => 'humid',
+            'min' => 0,
+            'max' => 150,
+            'score' => 0.5
+        ],
+        [
+            'sensor' => 'ec',
+            'min' => 2.5,
+            'max' => 3.0,
+            'score' => 1.0
+        ],
+        [
+            'sensor' => 'ec',
+            'min' => 2.0,
+            'max' => 2.5,
+            'score' => 0.7
+        ],
+        [
+            'sensor' => 'tds',
+            'min' => 0,
+            'max' => 500,
+            'score' => 1.0
+        ],
+        [
+            'sensor' => 'tds',
+            'min' => 0,
+            'max' => 600,
+            'score' => 0.7
+        ],
+        [
+            'sensor' => 'tds',
+            'min' => 0,
+            'max' => 750,
+            'score' => 0.5
+        ],
+
+    ];
+
+
     public static $parameterThresholdDisplay = [
         'green' => 0.7, // above 70%
         'yellow' => 0.4, // above 60%
     ];
+    public static $finalScoreDisplay = [
+        'green' => 0.7,
+        'yellow' => 0.5,
+    ];
+
+
+
+
+
+
+
+
+
 
     public function index()
     {
+    
+
+
+
         $deviceName = request()->get('device', AppSettings::$natwaveDevices[0]);
         //yes this is duplicate query, have problem ?
         $states = WaterpoolController::getStates($deviceName, 30);
         $stats = SensorDataController::getStats($deviceName, 30);
 
+        
 
         $data = [
             'formatted_states' => WaterpoolController::formatStates($states),
@@ -173,9 +291,60 @@ class SensorDataController extends Controller
         
         $data['parameterThresholdDisplay'] = self::$parameterThresholdDisplay;
 
+      
 
+
+        
+        $device = [
+            'name' => $deviceName,
+            'display_name' => __('devices_name_'.$deviceName),
+            'state' => $this->getState($deviceName),
+        ];
+
+
+        $device['scores'] = $this->calculateScore($device['state'], $deviceName);
+
+        $device['final_score'] = $this->calculateFinalScore($device['scores'], $deviceName);
+        $states = WaterpoolController::getStates($deviceName, 1);
+        if (count($states) != 0) {
+            $device['😎'] = $states[0];
+        }
+        $data['device'] = $device;
 
         return view('dashboards/detailed-dashboard', $data);
+    }
+    protected static function getState($deviceName)
+    {
+        $data = SensorDataController::getStats($deviceName, 1);
+        $result = [];
+
+        foreach ($data as $key => $value) {
+            $sensorName = AppSettings::entityToSensorName($key);
+            $result[$sensorName] = $value['format'];
+
+        }
+        return $result;
+    }
+
+    /**
+     * Calculate final score from all parameters
+     * @param array $scores
+     * @return float
+     */
+    public static function calculateFinalScore(array $scores, string $deviceName): float
+    {
+        $finalScore = 0;
+        $scoreMultipliers = AppSettings::getSensorsScoreMultiplier()[$deviceName];
+        $totalMultiplier = 0;
+
+        foreach ($scores as $sensor => $score) {
+            $scoreMultiplier = $scoreMultipliers[$sensor] ?? 1.0;
+            $totalMultiplier += $scoreMultiplier;
+            $finalScore += $score * $scoreMultiplier;
+        }
+        if ($totalMultiplier == 0) return 0.0;
+        $finalScore = $finalScore / $totalMultiplier;
+        return $finalScore;
     }
 
 
@@ -272,4 +441,43 @@ class SensorDataController extends Controller
 
         return $formattedChartDataWeekly;
     }
+
+
+    public static function calculateScore(array $state, string $deviceName): array
+    {
+        $scores = [];
+        foreach ($state as $sensor => $value) {
+            $value = floatval($value['value'] ?? 0);
+            $scores[$sensor] = self::calculateScoreFor($sensor, $value, $deviceName);
+        }
+
+        return $scores;
+    }
+
+    public static function calculateScoreFor(string $sensor, float $value, string $deviceName): float
+    {
+        $score = 0.0;
+        $found = false;
+        $parameterName = AppSettings::getPoolProfileParameter()[$deviceName];
+        $parameterThreshold = AppSettings::getParameterProfile()[$parameterName];
+
+        foreach ($parameterThreshold as $parameterThreshold) {
+            if ($parameterThreshold['sensor'] !== $sensor) continue;
+            $found = true;
+            if ($value >= $parameterThreshold['min'] && $value <= $parameterThreshold['max']) {
+
+                $score = $parameterThreshold['score'];
+                break;
+            }
+        }
+        if (!$found) {
+            Log::warning("Sensor $sensor not found with parameter $parameterName");
+            $score = 1;
+        }
+        return $score;
+    }
+
+
+
+
 }
