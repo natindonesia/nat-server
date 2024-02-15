@@ -72,6 +72,9 @@
     scroll-behavior: smooth;
   }
 }
+.bg-color{
+  background-color: #344767 !important;
+}
 
 body {
   margin: 0;
@@ -19306,8 +19309,8 @@ fieldset:disabled .btn {
 
 .btn-primary:hover,
 .btn.bg-gradient-primary:hover {
-  background-color: #cb0c9f;
-  border-color: #cb0c9f;
+  background-color: #343267;
+  border-color: #343267;
 }
 
 .btn-primary .btn.bg-outline-primary,
@@ -20511,7 +20514,7 @@ label,
 }
 
 .bg-gradient-primary {
-  background-image: linear-gradient(310deg, #7928CA 0%, #FF0080 100%);
+  background-color: #344767;
 }
 
 .bg-gradient-secondary {
@@ -30467,12 +30470,12 @@ Github: https://github.com/fiduswriter/Simple-DataTables
 }
 
 .dataTable-wrapper .dataTable-bottom .dataTable-pagination .dataTable-pagination-list li a:hover {
-  background: #e9ecef;
+  background: #343267;
 }
 
 .dataTable-wrapper .dataTable-bottom .dataTable-pagination .dataTable-pagination-list .active a {
   background: transparent;
-  background-image: linear-gradient(310deg, #7928CA 0%, #FF0080 100%);
+  background-color:   #344767;
   box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.09), 0 2px 3px -1px rgba(0, 0, 0, 0.07);
   color: #fff;
   border: none;
@@ -30480,8 +30483,7 @@ Github: https://github.com/fiduswriter/Simple-DataTables
 }
 
 .dataTable-wrapper .dataTable-bottom .dataTable-pagination .dataTable-pagination-list .active a:hover {
-  background-image: linear-gradient(310deg, #7928CA 0%, #FF0080 100%);
-}
+  background-color:#343267;
 
 .dataTable-wrapper.no-footer .dataTable-container {
   border-bottom: 0;

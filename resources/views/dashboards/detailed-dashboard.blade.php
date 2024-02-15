@@ -5,7 +5,7 @@
         <div class="col-xl-12  mt-xl-0 mt-4">
             <div class="row">
                 <div class="col-12">
-                    <div class="card bg-gradient-primary">
+                    <div class="card bg-color">
                         <div class="card-body p-3">
                             <div class="row">
                                 <div class="col-8 my-auto">
@@ -19,7 +19,7 @@
                                     <div class="d-flex justify-content-end">
                                         <h6 class="text-white font-weight-bolder mb-0">
                                             @if(isset($formatted_state['timestamp']))
-                                                <span>{{ date('d M Y', strtotime($formatted_state['timestamp'])) }}</span>
+                                                <span>{{ date('d M y', strtotime($formatted_state['timestamp'])) }}</span>
                                             @endif
                                         </h6>
                                     </div>
