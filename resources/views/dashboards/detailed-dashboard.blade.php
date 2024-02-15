@@ -1,3 +1,8 @@
+<style>
+    .bg-color{
+  background-color: #344767 !important;
+}
+</style>
 @extends('user_type.auth', ['parentFolder' => 'waterpool', 'childFolder' => 'items'])
 
 @section('content')
