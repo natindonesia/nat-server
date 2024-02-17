@@ -62,8 +62,14 @@
                                             {{  $device['state'][$sensor_name]['value'] }}
                                         @endif
                                     </span>
-
-                                    <span class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
+                                    @if ($sensor_name == 'cl')
+                                        <span class="text-lg ms-n2"> mg/L</span>
+                                    @else
+                                        <span class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
+                                    
+                                        
+                                    @endif
+                                    
                                 </h1>
                                 <h6 class="mb-0 font-weight-bolder">{{ $device['state'][$sensor_name]['label']}}</h6>
 
@@ -81,7 +87,12 @@
                                             {{  $device['state'][$sensor_name]['value'] }}
                                         @endif
                                     </span>
-                                    <span class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
+                                    @if ($sensor_name == 'cl')
+                                        <span class="text-lg ms-n2"> mg/L</span>
+                                    @else
+                                        <span class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
+                                    
+                                    @endif
                                 </h1>
                                 <h6 class="mb-0 font-weight-bolder">{{ $device['state'][$sensor_name]['label']}}</h6>
 
@@ -98,7 +109,12 @@
                                             {{  $device['state'][$sensor_name]['value'] }}
                                         @endif
                                     </span>
-                                    <span class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
+                                    @if ($sensor_name == 'cl')
+                                        <span class="text-lg ms-n2"> mg/L</span>
+                                    @else
+                                        <span class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
+                                    
+                                    @endif
                                 </h1>
                                 <h6 class="mb-0 font-weight-bolder">{{ $device['state'][$sensor_name]['label']}}</h6>
 
@@ -131,23 +147,21 @@
     </div>
 
     <div class="card mt-4 p-4">
-        <div class="d-flex align-items-center justify-content-between">
-            <h5 class="mb-0">
-                {{ \App\Models\AppSettings::translateDeviceName($deviceName) }} Analytic
-            </h5>
-        
-            <div class="col-md-2 mt-md-0 mt-4">
+        <div class="d-md-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
+            <h5 class="mb-0">{{ \App\Models\AppSettings::translateDeviceName($deviceName) }} Analytic</h5>
+            {{-- <div class="col-md-2 mt-md-0 mt-4 ml-md-auto mt-sm-0">
                 <div class="text-center">
                     <form method="GET">
-                        <input style="border: 0px" type="date" name="date" id="date" class="form-control"
+                        <input style="border: 1px solid rgba(0,0,0,0.2);" type="date" name="date" id="date" class="form-control"
                                value="{{ isset($_GET['date']) ? $_GET['date'] : '' }}"
                                max="{{ $date_filter['max'] }}" min="{{ $date_filter['min'] }}"
                                onchange="this.form.submit()"
                         />
                     </form>
                 </div>
-            </div>
+            </div> --}}
         </div>
+        
         
 
     
@@ -155,12 +169,18 @@
     <div class="row mt-4">
         <div class="col-lg-12">
             <div style="border: 1px solid rgba(0, 0, 0, 0.1)" class="card z-index-2">
-                <div class="card-header pb-0">
-                    <h6>{{\App\Models\AppSettings::translateSensorKey($key)}}</h6>
-                    <p class="text">
-                        {{ $stat['timestamp'][0]}}
-                    </p>
+                <div class="card-header pb-0 d-md-flex justify-content-between align-items-center">
+                    <div>
+                        <h6>{{\App\Models\AppSettings::translateSensorKey($key)}}</h6>
+                    </div>
+                    <div>
+                        <p class="text mb-0">
+                            {{ date('d M | H:i', strtotime($stat['timestamp'][0])) }}
+                        </p>
+                    </div>
                 </div>
+                
+
                 <div class="card-body p-3">
                     <div class="chart-week">
                         <canvas id="{{$key}}" class="chart-canvas" height="450" width="1389"
@@ -348,7 +368,7 @@
     data: {
         // labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         labels: @json(array_map(function($timestamp) {
-            return date('H:i', strtotime($timestamp)); // Ubah format timestamp menjadi jam:menit
+            return date('d M', strtotime($timestamp)); // Ubah format timestamp menjadi jam:menit
         }, $stat['timestamp'])),
         datasets: [{
             label: "{{$stat['format']['label']}}",

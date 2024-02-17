@@ -24,7 +24,7 @@
 }
 </style>
 <aside
-    class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 {{ \Request::is('pages-rtl') ? 'fixed-end me-3 rotate-caret' : 'fixed-start ms-3' }}"
+    class="bg-white sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 {{ \Request::is('pages-rtl') ? 'fixed-end me-3 rotate-caret' : 'fixed-start ms-3' }}"
     id="sidenav-main">
     
     <div class="sidenav-header">
@@ -46,7 +46,7 @@
                     
                     {{-- href="{{ url('dashboard-smart-home') }}"> --}}
                     href="{{ url('main-dashboard') }}">
-                    <span class="sidebar-icon mr-10">
+                    <span class=" nav-link-text sidebar-icon mr-10">
                         @include('layouts.navbars.auth.icon.dashboard')
                     </span>
                     <span class="nav-link-text ms-1">Main Dashboard</span>

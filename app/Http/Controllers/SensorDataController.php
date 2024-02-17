@@ -26,7 +26,7 @@ class SensorDataController extends Controller
      * @param int $interval interval in seconds
      * @return array<string, array<string, array<int, mixed>>>
      */
-    public static function getStats(string $deviceName, int $limit = 15, $startTimestamp = null, $endTimestamp = null, $interval = 60 * 60): array
+    public static function getStats(string $deviceName, int $limit = 15, $startTimestamp = null, $endTimestamp = null, $interval = 60 * 1440): array
     {
         $metadata = StateMeta::getMetadata($deviceName);
 
@@ -95,7 +95,7 @@ class SensorDataController extends Controller
                 $state = $state->groupBy(DB::raw('FLOOR(last_updated_ts / ' . $interval . ')'));
             }
 
-            $state = $state->orderBy('formatted_timestamp', 'desc')
+            $state = $state->orderBy('formatted_timestamp', 'asc')
                 ->take($limit);
             $state = $state->get();
             if (empty($state)) continue;
@@ -116,6 +116,8 @@ class SensorDataController extends Controller
 
         return $sensors;
     }
+
+    
     
 
 

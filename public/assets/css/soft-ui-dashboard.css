@@ -22064,8 +22064,8 @@ hr.horizontal.gray-light {
 }
 
 .navbar-vertical .navbar-nav>.nav-item .nav-link.active {
-  color: #344767;
-  background-color: #fff;
+  color: #fff ;
+  background-color: #344767;
 }
 
 .navbar-vertical .navbar-nav>.nav-item .nav-link.active .icon {
