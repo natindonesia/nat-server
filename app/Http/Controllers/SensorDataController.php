@@ -253,6 +253,7 @@ class SensorDataController extends Controller
             'stats' => $stats,
             'deviceName' => $deviceName,
         ];
+        // @dd($data['formatted_states']);
         if (count($data['formatted_states']) !== 0)
         $data['formatted_state'] = $data['formatted_states'][0];
         else $data['formatted_state'] = [];

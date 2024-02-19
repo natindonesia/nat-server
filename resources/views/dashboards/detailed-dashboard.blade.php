@@ -23,9 +23,15 @@
                                 <div class="col-4"> <!-- Menambahkan div dengan col-4 untuk h6 -->
                                     <div class="d-flex justify-content-end">
                                         <h6 class="text-white font-weight-bolder mb-0">
-                                            @if(isset($formatted_state['timestamp']))
-                                                <span>{{ date('d M y', strtotime($formatted_state['timestamp'])) }}</span>
-                                            @endif
+                                            @foreach($stats as $key => $stat)
+                                                <span>{{ date('d M | H:i', strtotime($stat['timestamp'][count($stat['timestamp']) - 1])) }}</span>
+                                                @break
+                                            @endforeach
+                                            {{-- @dd($formatted_state['timestamp']); --}}
+                                            {{-- @if(isset($formatted_state['timestamp'])) --}}
+                                                {{-- <span>{{ date('d M | H:i', strtotime($stats['timestamp'][count($stats['timestamp']) - 1])) }}</span> --}}
+                                                {{-- <span>{{ date('d M y', strtotime($formatted_state['timestamp'])) }}</span> --}}
+                                            {{-- @endif --}}
                                         </h6>
                                     </div>
                                 </div>
@@ -175,7 +181,7 @@
                     </div>
                     <div>
                         <p class="text mb-0">
-                            {{ date('d M | H:i', strtotime($stat['timestamp'][0])) }}
+                            {{ date('d M | H:i', strtotime($stat['timestamp'][count($stat['timestamp']) - 1])) }}
                         </p>
                     </div>
                 </div>
