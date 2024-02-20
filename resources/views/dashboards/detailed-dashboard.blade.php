@@ -24,10 +24,9 @@
                                 <div class="col-4"> <!-- Menambahkan div dengan col-4 untuk h6 -->
                                     <div class="d-flex justify-content-end">
                                         <h6 class="text-white font-weight-bolder mb-0">
-                                            @foreach($stats as $key => $stat)
-                                                <span>{{ date('d M | H:i', strtotime($stat['timestamp'][count($stat['timestamp']) - 1])) }}</span>
-                                                @break
-                                            @endforeach
+                                            @if (isset($device['😎']['timestamp']))
+                                                <span>{{ date('d M | H:i', strtotime($device['😎']['timestamp'])) }}</span>
+                                            @endif
                                         </h6>
                                     </div>
                                 </div>
@@ -41,7 +40,6 @@
 
 
                 @php
-
                     unset($formatted_state['timestamp']);
                 @endphp
                 {{-- @dd($device,$formatted_state); --}}
@@ -76,13 +74,9 @@
                                             {{  $device['state'][$sensor_name]['value'] }}
                                         @endif
                                     </span>
-                                        @if ($sensor_name == 'cl')
-                                            <span class="text-lg ms-n2"> mg/L</span>
-                                        @else
-                                            <span
-                                                class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
+                                        <span
+                                            class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
 
-                                        @endif
 
                                     </h1>
                                     <h6 class="mb-0 font-weight-bolder">{{ $device['state'][$sensor_name]['label']}}</h6>
