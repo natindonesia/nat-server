@@ -26,7 +26,7 @@ class SensorDataController extends Controller
      * @param int $interval interval in seconds
      * @return array<string, array<string, array<int, mixed>>>
      */
-    public static function getStats(string $deviceName, int $limit = 30, $startTimestamp = null, $endTimestamp = null, $interval = 60 * 60*24): array
+    public static function getStats(string $deviceName, int $limit = 15, $startTimestamp = null, $endTimestamp = null, $interval = 1): array
     {
         $metadata = StateMeta::getMetadata($deviceName);
 
@@ -48,7 +48,7 @@ class SensorDataController extends Controller
             try {
                 $date = request()->get('date');
 
-                $startTimestamp = strtotime($date . ' -7 day');
+                $startTimestamp = strtotime($date);
                 $endTimestamp = strtotime($date . ' +1 day');
             } catch (NotFoundExceptionInterface $e) {
             } catch (ContainerExceptionInterface $e) {
@@ -116,6 +116,116 @@ class SensorDataController extends Controller
 
         return $sensors;
     }
+
+
+
+
+
+
+
+
+
+
+    public static function getStats2(string $deviceName, int $limit = 7, $startTimestamp = null, $endTimestamp = null, $interval = 60 * 60*24): array
+    {
+        $metadata = StateMeta::getMetadata($deviceName);
+
+
+        $metadataIds = $metadata['metadataIds'];
+
+
+        // Get stats for each metadata
+        $sensors = [
+            /**
+             * sensor_1 => [
+             *  data => [...]
+             *  timestamp => [...]
+             */
+        ];
+
+
+        if (request()->has('date')) {
+            try {
+                $date = request()->get('date');
+
+                $startTimestamp = strtotime($date. ' -7 day');
+                $endTimestamp = strtotime($date . ' +1 day');
+            } catch (NotFoundExceptionInterface $e) {
+            } catch (ContainerExceptionInterface $e) {
+            }
+        }
+        if (request()->has('interval')) {
+            try {
+                $interval = request()->get('interval');
+                $interval = intval($interval);
+                $interval = $interval > 0 ? $interval : 60 * 30;
+
+            } catch (NotFoundExceptionInterface $e) {
+            } catch (ContainerExceptionInterface $e) {
+            }
+        }
+        // Laravel mad, we do one by one
+
+
+
+        foreach ($metadataIds as $metadataId) {
+            // Get latest state
+            /**
+             * SELECT
+             * FROM_UNIXTIME(last_updated_ts) AS formatted_timestamp,
+             * state
+             * FROM
+             * states
+             * GROUP BY
+             * FLOOR(last_updated_ts / (30 * 60))
+             * ORDER BY
+             * formatted_timestamp;
+             */
+            DB::statement("SET sql_mode = ''");
+            $state = State::selectRaw('metadata_id, state, FROM_UNIXTIME(last_updated_ts) AS formatted_timestamp, last_updated_ts')
+                ->where('metadata_id', $metadataId);
+
+            if ($startTimestamp !== null) {
+                $state = $state->where('last_updated_ts', '>=', $startTimestamp);
+                $state = $state->where('last_updated_ts', '<', $endTimestamp);
+            }
+            $state->where('state', '!=', 'unavailable');
+
+            if ($interval !== null) {
+                $state = $state->groupBy(DB::raw('FLOOR(last_updated_ts / ' . $interval . ')'));
+            }
+
+            $state = $state->orderBy('formatted_timestamp', 'desc')
+                ->take($limit);
+            $state = $state->get();
+            if (empty($state)) continue;
+            $data = [];
+            $timestamp = [];
+            foreach ($state as $item) {
+                $data[] = $item->state;
+                $timestamp[] = date('Y-m-d H:i:s', $item->last_updated_ts);
+            }
+            $stateValue = $data[0] ?? 0.0;
+            $sensors[$state->first()->metadata->entity_id] = [
+                'data' => $data,
+                'timestamp' => $timestamp,
+                'format' => WaterpoolController::formatSensor($state->first()->metadata->entity_id, $stateValue),
+            ];
+        }
+
+
+        return $sensors;
+    }
+
+
+
+
+
+
+
+
+
+    
 
     
     
@@ -245,15 +355,16 @@ class SensorDataController extends Controller
         //yes this is duplicate query, have problem ?
         $states = WaterpoolController::getStates($deviceName, 30);
         $stats = SensorDataController::getStats($deviceName, 30);
+        $stats2 = SensorDataController::getStats2($deviceName, 30);
 
         
 
         $data = [
             'formatted_states' => WaterpoolController::formatStates($states),
             'stats' => $stats,
+            'stats2' => $stats2,
             'deviceName' => $deviceName,
         ];
-
         if (count($data['formatted_states']) !== 0)
         $data['formatted_state'] = $data['formatted_states'][0];
         else $data['formatted_state'] = [];
@@ -301,7 +412,7 @@ class SensorDataController extends Controller
         $device = [
             'name' => $deviceName,
             'display_name' => __('devices_name_'.$deviceName),
-            'state' => $this->getState($deviceName, interval: 1),
+            'state' => $this->getState($deviceName),
         ];
 
 
@@ -316,9 +427,9 @@ class SensorDataController extends Controller
 
         return view('dashboards/detailed-dashboard', $data);
     }
-    protected static function getState($deviceName, $startTimestamp = null, $endTimestamp = null, $interval = null)
+    protected static function getState($deviceName)
     {
-        $data = SensorDataController::getStats($deviceName, 1, $startTimestamp, $endTimestamp, $interval);
+        $data = SensorDataController::getStats($deviceName, 1);
         $result = [];
 
         foreach ($data as $key => $value) {

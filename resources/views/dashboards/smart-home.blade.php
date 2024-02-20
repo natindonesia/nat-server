@@ -169,6 +169,18 @@
 @endsection
 
 @push('js')
+
+<script>
+    // Fungsi untuk memuat ulang halaman setiap menit (60 * 1000 milidetik)
+    function autoReload() {
+        setTimeout(function() {
+            location.reload();
+        }, 30 * 60 * 1000); // 1 menit
+    }
+    
+    // Panggil fungsi autoReload saat halaman dimuat
+    window.onload = autoReload;
+    </script>
     <script src="{{ URL::asset('assets/js/plugins/choices.min.js') }}"></script>
     <script src="{{ URL::asset('assets/js/plugins/countup.min.js') }}"></script>
     <script src="{{ URL::asset('assets/js/plugins/chartjs.min.js') }}"></script>

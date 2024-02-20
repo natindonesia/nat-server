@@ -30,7 +30,7 @@
                                             {{-- @dd($formatted_state['timestamp']); --}}
 
 
-                                            
+
                                             @if(isset($formatted_state['timestamp']))
                                                 <span>{{ date('d M | H:i', strtotime($formatted_state['timestamp'])) }}</span>
                                             @endif
@@ -175,7 +175,7 @@
         
 
     
-    @foreach($stats as $key => $stat)
+    @foreach(($stats) as $key => $stat)
     <div class="row mt-4">
         <div class="col-lg-12">
             <div style="border: 1px solid rgba(0, 0, 0, 0.1)" class="card z-index-2">
@@ -185,7 +185,7 @@
                     </div>
                     <div>
                         <p class="text mb-0">
-                            {{ date('d M | H:i', strtotime($stat['timestamp'][0])) }}
+                            {{ date('d M Y', strtotime($stat['timestamp'][0])) }}
                         </p>
                     </div>
                 </div>
@@ -217,6 +217,19 @@
 @endsection
 
 @push('js')
+
+
+<script>
+    // Fungsi untuk memuat ulang halaman setiap menit (60 * 1000 milidetik)
+    function autoReload() {
+        setTimeout(function() {
+            location.reload();
+        }, 30 * 60 * 1000); // 1 menit
+    }
+    
+    // Panggil fungsi autoReload saat halaman dimuat
+    window.onload = autoReload;
+    </script>
 
 
 
@@ -341,8 +354,8 @@
         //chart line per 8 jam sehari
 
        
-
-        @foreach($stats as $key => $stat)
+       
+        @foreach($stats2 as $key => $stat)
         var ctx2 = document.getElementById("{{$key}}").getContext("2d");
 
         var gradientStroke1 = ctx2.createLinearGradient(72, 221, 71, 50);
@@ -379,7 +392,8 @@
         // labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         labels: @json(array_map(function($timestamp) {
             return date('d M', strtotime($timestamp)); // Ubah format timestamp menjadi jam:menit
-        }, $stat['timestamp'])),
+        
+        }, array_reverse($stat['timestamp']))), // Balik array timestamp
         datasets: [{
             label: "{{$stat['format']['label']}}",
             tension: 0.4,
@@ -387,7 +401,7 @@
             borderWidth: 3,
             backgroundColor: gradientStroke1,
 
-            data: @json($stat['data']),
+            data: @json(array_reverse($stat['data'])), // Balik array data
             maxBarThickness: 6,
         }],
     },
