@@ -63,17 +63,17 @@
                                 </div>
 
                                 <h4 class="font-weight-bold mt-n10">
-                                    
+
                                     {{-- @dd($device['scores']['ph']); --}}
-                                    @if ($device['scores']['ph'] > $parameterThresholdDisplay['green'] && $device['scores']['orp'] > $parameterThresholdDisplay['green'])
+                                    @if($device['final_score'] > $finalScoreDisplay['green'])
                                     <img src="{{ asset('images/green.png') }}" alt="baik" style="width: 70px; height: 70px; border-radius: 50%;">
                                     <h6 class="d-block text-sm">
                                         <span class="highlight-background" style="background-color: #d2fcd2; display: inline-block; padding: 5px; border-radius: 5px;">
                                             <span class="text-sm bold" style="color: #30C873;">Good {{ intval($device['final_score'] * 100) }}%</span>
                                         </span>
                                     </h6>
-                                    
-                                @elseif ($device['scores']['ph'] > $parameterThresholdDisplay['yellow'] || $device['scores']['orp'] > $parameterThresholdDisplay['yellow'])
+
+                                    @elseif($device['final_score'] > $finalScoreDisplay['yellow'])
                                     <img src="{{ asset('images/yellow.png') }}" alt="waspada" style="width: 70px; height: 70px; border-radius: 50%;">
                                     <h6 class="d-block text-sm">
                                         <span class="highlight-background" style="background-color: #FFFF00; display: inline-block; padding: 5px; border-radius: 5px;">
@@ -88,7 +88,7 @@
                                         </span>
                                     </h6>
                                 @endif
-                                
+
 
                                     {{-- {{ intval($device['final_score'] * 100) }}% --}}
 
@@ -102,27 +102,27 @@
                                             $dataPerColumn = array_fill(0, 3, []); // Inisialisasi array untuk setiap kolom
                                             $columnCounter = 0;
                                         @endphp
-                                        
+
                                         @foreach($device['state'] as $sensor => $state)
                                             @php
                                                 // Periksa apakah sensor saat ini adalah bagian dari sensor baterai
                                                 if (in_array($sensor, \App\Models\AppSettings::$batterySensors)) {
                                                     continue; // Lewati sensor baterai
                                                 }
-                                                
+
                                                 // Menambahkan data ke dalam array sementara untuk setiap kolom
                                                 $dataPerColumn[$columnCounter][] = [
                                                     'sensor' => $sensor,
                                                     'state' => $state,
                                                 ];
-                                
+
                                                 // Pindah ke kolom berikutnya setelah mencapai 3 baris
                                                 if (count($dataPerColumn[$columnCounter]) == 3) {
                                                     $columnCounter++;
                                                 }
                                             @endphp
                                         @endforeach
-                                
+
                                         @for ($row = 0; $row < 3; $row++)
                                             <tr>
                                                 @foreach($dataPerColumn as $column)
