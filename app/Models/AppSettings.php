@@ -37,7 +37,7 @@ class AppSettings extends Model
     ];
 
     public static $batterySensors = [
-        // 'batterydevice',
+        'batterydevice',
         'battery'
     ];
 
