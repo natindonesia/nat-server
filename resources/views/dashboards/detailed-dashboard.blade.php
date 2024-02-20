@@ -23,15 +23,17 @@
                                 <div class="col-4"> <!-- Menambahkan div dengan col-4 untuk h6 -->
                                     <div class="d-flex justify-content-end">
                                         <h6 class="text-white font-weight-bolder mb-0">
-                                            @foreach($stats as $key => $stat)
-                                                <span>{{ date('d M | H:i', strtotime($stat['timestamp'][count($stat['timestamp']) - 1])) }}</span>
-                                                @break
-                                            @endforeach
+                                            <!--@foreach($stats as $key => $stat)-->
+                                            <!--    <span>{{ date('d M | H:i', strtotime($stat['timestamp'][0])) }}</span>-->
+                                            <!--    @break-->
+                                            <!--@endforeach-->
                                             {{-- @dd($formatted_state['timestamp']); --}}
-                                            {{-- @if(isset($formatted_state['timestamp'])) --}}
-                                                {{-- <span>{{ date('d M | H:i', strtotime($stats['timestamp'][count($stats['timestamp']) - 1])) }}</span> --}}
-                                                {{-- <span>{{ date('d M y', strtotime($formatted_state['timestamp'])) }}</span> --}}
-                                            {{-- @endif --}}
+
+
+                                            
+                                            @if(isset($formatted_state['timestamp']))
+                                                <span>{{ date('d M | H:i', strtotime($formatted_state['timestamp'])) }}</span>
+                                            @endif
                                         </h6>
                                     </div>
                                 </div>
@@ -139,6 +141,7 @@
                     
                         <div class="card text-center">
                             <form method="GET">
+                                
                                 <input type="date" name="date" id="date" class="form-control"
                                        value="{{isset($_GET['date']) ? $_GET['date'] : ''}}"
                                        max="{{$date_filter['max']}}" min="{{$date_filter['min']}}"
@@ -155,9 +158,10 @@
     <div class="card mt-4 p-4">
         <div class="d-md-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
             <h5 class="mb-0">{{ \App\Models\AppSettings::translateDeviceName($deviceName) }} Analytic</h5>
-            {{-- <div class="col-md-2 mt-md-0 mt-4 ml-md-auto mt-sm-0">
+             <div class="col-md-2 mt-md-0 mt-4 ml-md-auto mt-sm-0">
                 <div class="text-center">
                     <form method="GET">
+                        <input type="hidden" name="device" value="{{ $deviceName }}">
                         <input style="border: 1px solid rgba(0,0,0,0.2);" type="date" name="date" id="date" class="form-control"
                                value="{{ isset($_GET['date']) ? $_GET['date'] : '' }}"
                                max="{{ $date_filter['max'] }}" min="{{ $date_filter['min'] }}"
@@ -165,7 +169,7 @@
                         />
                     </form>
                 </div>
-            </div> --}}
+            </div>
         </div>
         
         
@@ -181,7 +185,7 @@
                     </div>
                     <div>
                         <p class="text mb-0">
-                            {{ date('d M | H:i', strtotime($stat['timestamp'][count($stat['timestamp']) - 1])) }}
+                            {{ date('d M | H:i', strtotime($stat['timestamp'][0])) }}
                         </p>
                     </div>
                 </div>

@@ -26,7 +26,7 @@ class SensorDataController extends Controller
      * @param int $interval interval in seconds
      * @return array<string, array<string, array<int, mixed>>>
      */
-    public static function getStats(string $deviceName, int $limit = 15, $startTimestamp = null, $endTimestamp = null, $interval = 60 * 1440): array
+    public static function getStats(string $deviceName, int $limit = 30, $startTimestamp = null, $endTimestamp = null, $interval = 60 * 60*24): array
     {
         $metadata = StateMeta::getMetadata($deviceName);
 
@@ -48,7 +48,7 @@ class SensorDataController extends Controller
             try {
                 $date = request()->get('date');
 
-                $startTimestamp = strtotime($date);
+                $startTimestamp = strtotime($date . ' -7 day');
                 $endTimestamp = strtotime($date . ' +1 day');
             } catch (NotFoundExceptionInterface $e) {
             } catch (ContainerExceptionInterface $e) {
@@ -95,7 +95,7 @@ class SensorDataController extends Controller
                 $state = $state->groupBy(DB::raw('FLOOR(last_updated_ts / ' . $interval . ')'));
             }
 
-            $state = $state->orderBy('formatted_timestamp', 'asc')
+            $state = $state->orderBy('formatted_timestamp', 'desc')
                 ->take($limit);
             $state = $state->get();
             if (empty($state)) continue;
@@ -253,7 +253,7 @@ class SensorDataController extends Controller
             'stats' => $stats,
             'deviceName' => $deviceName,
         ];
-        // @dd($data['formatted_states']);
+
         if (count($data['formatted_states']) !== 0)
         $data['formatted_state'] = $data['formatted_states'][0];
         else $data['formatted_state'] = [];
@@ -301,7 +301,7 @@ class SensorDataController extends Controller
         $device = [
             'name' => $deviceName,
             'display_name' => __('devices_name_'.$deviceName),
-            'state' => $this->getState($deviceName),
+            'state' => $this->getState($deviceName, interval: 1),
         ];
 
 
@@ -310,15 +310,15 @@ class SensorDataController extends Controller
         $device['final_score'] = $this->calculateFinalScore($device['scores'], $deviceName);
         $states = WaterpoolController::getStates($deviceName, 1);
         if (count($states) != 0) {
-            $device['😎'] = $states[0];
+            $device['ðŸ˜Ž'] = $states[0];
         }
         $data['device'] = $device;
 
         return view('dashboards/detailed-dashboard', $data);
     }
-    protected static function getState($deviceName)
+    protected static function getState($deviceName, $startTimestamp = null, $endTimestamp = null, $interval = null)
     {
-        $data = SensorDataController::getStats($deviceName, 1);
+        $data = SensorDataController::getStats($deviceName, 1, $startTimestamp, $endTimestamp, $interval);
         $result = [];
 
         foreach ($data as $key => $value) {
