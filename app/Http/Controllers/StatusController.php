@@ -237,6 +237,23 @@ class StatusController extends Controller
         ];
     }
 
+    public static function formatChlorine($value)
+    {
+        return [
+            'value' => $value,
+            'unit' => 'mg/l',
+            'label' => __('translation.ch'),
+        ];
+    }
+
+    public static function formatBattery($value)
+    {
+        return [
+            'value' => $value,
+            'unit' => '%',
+            'label' => __('translation.battery'),
+        ];
+    }
     /**
      * Calculate final score from all parameters
      * @param array $scores
