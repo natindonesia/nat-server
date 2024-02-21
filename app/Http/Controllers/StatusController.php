@@ -55,24 +55,6 @@ class StatusController extends Controller
             'score' => 0.58
         ],
         [
-            'sensor' => 'humid',
-            'min' => 0,
-            'max' => 60,
-            'score' => 1.0
-        ],
-        [
-            'sensor' => 'humid',
-            'min' => 0,
-            'max' => 120,
-            'score' => 0.7
-        ],
-        [
-            'sensor' => 'humid',
-            'min' => 0,
-            'max' => 150,
-            'score' => 0.5
-        ],
-        [
             'sensor' => 'ec',
             'min' => 2.5,
             'max' => 3.0,

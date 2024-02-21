@@ -108,7 +108,8 @@ class AppSettings extends Model
             'ph' => 'PH',
             'tds' => 'TDS',
             'temp' => 'Temperature',
-            'timestamp' => 'Timestamp'
+            'timestamp' => 'Timestamp',
+            "latestTimestamp" => "Latest Timestamp",
         ];
         foreach (self::$sensors as $sensor) {
             if (!isset($default[$sensor])) $default[$sensor] = Str::upper($sensor);

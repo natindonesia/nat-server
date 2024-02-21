@@ -59,7 +59,7 @@
                     @foreach ($status as $data)
                         <tr>
                             @foreach($data as $key => $value)
-                                @if($key == 'timestamp')
+                                @if($key == 'timestamp' || $key == 'latestTimestamp' || $key == 'created_at' || $key == 'updated_at')
                                     @php
                                         $value = date('Y-m-d H:i:s', $value);
                                     @endphp

@@ -389,7 +389,10 @@
             data: {
                 // labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
                 labels: @json(array_map(function($timestamp) {
-            return date('m:h d M', strtotime($timestamp)); // Ubah format timestamp menjadi jam:menit
+            return date(
+                config('app.env') == 'local' ? 'm:h d M' : 'd M'
+                ,
+            strtotime($timestamp)); // Ubah format timestamp menjadi jam:menit
 
         }, array_reverse($stat['timestamp']))), // Balik array timestamp
                 datasets: [{
