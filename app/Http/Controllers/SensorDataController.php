@@ -97,7 +97,7 @@ class SensorDataController extends Controller
             $state = $state->orderBy('formatted_timestamp', 'desc')
                 ->take($limit);
             $state = $state->get();
-            if (empty($state)) continue;
+            if (empty($state?->first())) continue;
             $data = [];
             $timestamp = [];
             foreach ($state as $item) {
@@ -106,6 +106,7 @@ class SensorDataController extends Controller
             }
 
             $stateValue = $data[0] ?? 0.0;
+
             $sensors[$state->first()->metadata->entity_id] = [
                 'data' => $data,
                 'timestamp' => $timestamp,
