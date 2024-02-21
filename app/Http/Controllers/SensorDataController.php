@@ -231,116 +231,9 @@ class SensorDataController extends Controller
 
 
 
-    // Threshold for each parameter
-    // Example sensor 1
-    // if range of 28< or >20 get score 1
-    // else if range of 30< or >19 get score 0.7
-    // else 0.5
-
-    // Evaluated from top to bottom
-    public static $parametersThresholdInternational = [
-        [
-            'sensor' => 'temp',
-            'min' => 22,
-            'max' => 26,
-            'score' => 1.0
-        ],
-        [
-            'sensor' => 'temp',
-            'min' => 18,
-            'max' => 29,
-            'score' => 0.55
-        ],
-        [
-            'sensor' => 'ph',
-            'min' => 7.2,
-            'max' => 8.0,
-            'score' => 1.0
-        ],
-        [
-            'sensor' => 'ph',
-            'min' => 6.5,
-            'max' => 8.6,
-            'score' => 0.4
-        ],
-        [
-            'sensor' => 'orp',
-            'min' => 700,
-            'max' => 750,
-            'score' => 1.0
-        ],
-        [
-            'sensor' => 'orp',
-            'min' => 650,
-            'max' => 700,
-            'score' => 0.58
-        ],
-        [
-            'sensor' => 'humid',
-            'min' => 0,
-            'max' => 60,
-            'score' => 1.0
-        ],
-        [
-            'sensor' => 'humid',
-            'min' => 0,
-            'max' => 120,
-            'score' => 0.7
-        ],
-        [
-            'sensor' => 'humid',
-            'min' => 0,
-            'max' => 150,
-            'score' => 0.5
-        ],
-        [
-            'sensor' => 'ec',
-            'min' => 2.5,
-            'max' => 3.0,
-            'score' => 1.0
-        ],
-        [
-            'sensor' => 'ec',
-            'min' => 2.0,
-            'max' => 2.5,
-            'score' => 0.7
-        ],
-        [
-            'sensor' => 'tds',
-            'min' => 0,
-            'max' => 500,
-            'score' => 1.0
-        ],
-        [
-            'sensor' => 'tds',
-            'min' => 0,
-            'max' => 600,
-            'score' => 0.7
-        ],
-        [
-            'sensor' => 'tds',
-            'min' => 0,
-            'max' => 750,
-            'score' => 0.5
-        ],
-
-    ];
-
 
     public static $parameterThresholdDisplay = [
-        'green' => 0.7, // above 70%
-        'yellow' => 0.4, // above 60%
     ];
-    public static $finalScoreDisplay = [
-        'green' => 0.7,
-        'yellow' => 0.5,
-    ];
-
-
-
-
-
-
 
 
 
@@ -519,6 +412,7 @@ class SensorDataController extends Controller
         $parameterName = AppSettings::getPoolProfileParameter()[$deviceName];
         $parameterThresholds = AppSettings::getParameterProfile()[$parameterName];
 
+
         foreach ($parameterThresholds as $parameterThreshold) {
             if ($parameterThreshold['sensor'] !== $sensor) continue;
             $found = true;
@@ -538,3 +432,6 @@ class SensorDataController extends Controller
 
 
 }
+
+SensorDataController::$parameterThresholdDisplay['green'] = AppSettings::$greenScoreMin;
+SensorDataController::$parameterThresholdDisplay['yellow'] = AppSettings::$yellowScoreMin;

@@ -28,3 +28,23 @@ the resulting `.env` will be:
 DEVICES_NAME="natwave01 natwave02 natwave03"
 DEVICES_SENSORS="td ph"
 ```
+
+## Final Score Matrix
+
+| PH\ORP | 🟩 | 🟨 | 🟥 |
+|--------|----|----|----|
+| 🟩     | 🟩 | 🟨 | 🟥 |
+| 🟨     | 🟨 | 🟥 | 🟥 |
+| 🟥     | 🟥 | 🟥 | 🟥 |
+
+- 🟩 = 1 - 0.7
+- 🟨 = 0.7 - 0.4
+- 🟥 = 0.4 - 0
+
+Mathematical formula:
+
+```
+orpScore *
+```
+
+

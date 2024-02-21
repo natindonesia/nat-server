@@ -22,6 +22,11 @@ class AppSettings extends Model
         'key',
         'value',
     ];
+
+    public static $greenScoreMax = 1.0;
+    public static $greenScoreMin = 0.7;
+    public static $yellowScoreMax = 0.69;
+    public static $yellowScoreMin = 0.4;
     public static $ignoreSensors = [
         'timestamp',
         'latestTimestamp',
@@ -180,6 +185,17 @@ class AppSettings extends Model
         }
         $value = $parameterProfile->value;
         $value['Internasional'] = $default['Internasional']; // don't change this lol
+
+        // convert integer score to float based on green and yellow
+        foreach ($value as $profile => $parameters) {
+            foreach ($parameters as $i => $parameter) {
+                if ($parameter['score'] == 2) {
+                    $value[$profile][$i]['score'] = self::$yellowScoreMax;
+                } else if ($parameter['score'] == 3) {
+                    $value[$profile][$i]['score'] = self::$greenScoreMax;
+                }
+            }
+        }
         return $value;
     }
 
