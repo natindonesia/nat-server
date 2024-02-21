@@ -131,16 +131,9 @@ class StatusController extends Controller
         }
 
 
-        // add state to data
-        foreach ($data['devices'] as $device) {
-            foreach ($device['state'] as $sensor => $value) {
-                $data[$sensor] = $value;
-            }
-        }
 
         $data['parameterThresholdDisplay'] = self::$parameterThresholdDisplay;
         $data['finalScoreDisplay'] = self::$finalScoreDisplay;
-
         return view('dashboards.smart-home', $data);
     }
 
@@ -222,7 +215,7 @@ class StatusController extends Controller
         return [
             'value' => $value,
             'unit' => 'mg/l',
-            'label' => __('translation.ch'),
+            'label' => __('translation.cl'),
         ];
     }
 

@@ -63,7 +63,9 @@ class WaterpoolController extends Controller
             return date('Y-m-d H:i:s', $value);
         if (in_array($sensor, AppSettings::$ignoreSensors)) return $value;
 
+
         $sensor_name = AppSettings::entityToSensorName($sensor);
+
 
         switch ($sensor_name) {
             case 'ec':
@@ -78,7 +80,7 @@ class WaterpoolController extends Controller
                 return StatusController::formatTDS($value);
             case 'temp':
                 return StatusController::formatTemperature(floatval($value));
-            case 'ch':
+            case 'cl':
                 return StatusController::formatChlorine($value);
             case 'battery':
                 return StatusController::formatBattery($value);

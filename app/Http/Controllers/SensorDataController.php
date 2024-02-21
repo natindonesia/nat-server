@@ -67,7 +67,6 @@ class SensorDataController extends Controller
         // Laravel mad, we do one by one
 
 
-
         foreach ($metadataIds as $metadataId) {
             // Get latest state
             /**
