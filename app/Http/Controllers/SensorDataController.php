@@ -474,8 +474,8 @@ class SensorDataController extends Controller
         }
         $range = ScoreSimulationController::extractSensorRangeFromProfile($parameterThresholds);
         // add 0 score to both end
-        $points[] = [$range[$sensor]['min'] - ($range[$sensor]['step'] * 2), 0];
-        $points[] = [$range[$sensor]['max'] + ($range[$sensor]['step'] * 2), 0];
+        $points[] = [$range[$sensor]['min'] - ($range[$sensor]['step'] * 4), 0];
+        $points[] = [$range[$sensor]['max'] + ($range[$sensor]['step'] * 4), 0];
 
         $score = self::interpolate($points, $value);
         // limit to 0.0 - 1.0
