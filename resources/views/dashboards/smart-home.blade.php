@@ -114,6 +114,7 @@
                                                 $dataPerColumn[$columnCounter][] = [
                                                     'sensor' => $sensor,
                                                     'state' => $state,
+
                                                 ];
 
                                                 // Pindah ke kolom berikutnya setelah mencapai 3 baris
@@ -142,6 +143,10 @@
                                                                 @endif
                                                                 <div class="d-flex flex-column justify-content-center">
                                                                     <h6 class="mb-0 text-sm">{{ $state['label'] }}</h6>
+                                                                    @if(config('app.env') != 'production')
+                                                                        <span
+                                                                            class="text-xs text-secondary">{{ $state['value'] }} {{ $state['unit'] }} {{ intval($device['scores'][$sensor] * 100) }}%</span>
+                                                                    @endif
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -177,7 +182,7 @@
             location.reload();
         }, 30 * 60 * 1000); // 1 menit
     }
-    
+
     // Panggil fungsi autoReload saat halaman dimuat
     window.onload = autoReload;
     </script>
