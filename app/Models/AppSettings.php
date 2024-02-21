@@ -166,7 +166,7 @@ class AppSettings extends Model
         return $value;
     }
 
-    // each profile has different parameter
+    // Profile Parameter e.g Internasional
     public static function getParameterProfile(): array
     {
         $parameterProfile = self::where('key', 'parameter_profile')->first();

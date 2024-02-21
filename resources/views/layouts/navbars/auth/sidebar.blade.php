@@ -140,6 +140,14 @@
                             Parameter
                         </x-nav-item>
                     </ul>
+                    @if(config('app.env') != 'production')
+
+                        <ul class="nav ms-4 ps-3">
+                            <x-nav-item href="{{ route('score-simulation') }}">
+                                Score Simulation
+                            </x-nav-item>
+                        </ul>
+                    @endif
                 </div>
             </li>
 

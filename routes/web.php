@@ -52,7 +52,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/settings-parameter', [\App\Http\Controllers\ParameterController::class, 'store'])->name('settings.parameter');
     Route::get('/settings-parameter-livewire', \App\Livewire\SettingsParameter::class)->name('settings.parameter.livewire');
     Route::get('/detail/export', [SensorDataController::class, 'export'])->name('detailed-dashboard.export');
-
+    Route::get('/score-simulation', [\App\Http\Controllers\ScoreSimulationController::class, 'index'])->name('score-simulation');
 });
 
 Route::group(['middleware' => 'guest'], function () {

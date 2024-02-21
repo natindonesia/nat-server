@@ -407,11 +407,21 @@ class SensorDataController extends Controller
 
     public static function calculateScoreFor(string $sensor, float $value, string $deviceName): float
     {
-        $score = 0.0;
-        $found = false;
+
         $parameterName = AppSettings::getPoolProfileParameter()[$deviceName];
         $parameterThresholds = AppSettings::getParameterProfile()[$parameterName];
+        $result = self::calculateScoreWithParameter($sensor, $value, $parameterThresholds);
+        if (!$result) {
+            Log::warning("Sensor $sensor not found with parameter $parameterName");
+            $result = 0.0;
+        }
+        return $result;
+    }
 
+    public static function calculateScoreWithParameter(string $sensor, float $value, array $parameterThresholds)
+    {
+        $score = 0.0;
+        $found = false;
 
         foreach ($parameterThresholds as $parameterThreshold) {
             if ($parameterThreshold['sensor'] !== $sensor) continue;
@@ -423,12 +433,10 @@ class SensorDataController extends Controller
             }
         }
         if (!$found) {
-            Log::warning("Sensor $sensor not found with parameter $parameterName");
+            return null;
         }
         return $score;
     }
-
-
 
 
 }
