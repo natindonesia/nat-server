@@ -7,9 +7,8 @@ use App\Models\AppSettings;
 use App\Models\SensorData;
 use App\Models\State;
 use App\Models\StateMeta;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -355,15 +354,14 @@ class SensorDataController extends Controller
         $deviceName = request()->get('device', AppSettings::$natwaveDevices[0]);
         //yes this is duplicate query, have problem ?
         $states = WaterpoolController::getStates($deviceName, 30);
-        $stats = SensorDataController::getStats($deviceName, 30);
+        # $stats = SensorDataController::getStats($deviceName, 30);
         $stats2 = SensorDataController::getStats2($deviceName, 30);
 
 
 
         $data = [
             'formatted_states' => WaterpoolController::formatStates($states),
-            'stats' => $stats,
-            'stats2' => $stats2,
+            'stats' => $stats2,
             'deviceName' => $deviceName,
         ];
         if (count($data['formatted_states']) !== 0)
@@ -416,7 +414,6 @@ class SensorDataController extends Controller
         ];
 
         $states = WaterpoolController::getStates($deviceName, 1);
-
         $states = WaterpoolController::formatStates($states);
         if (!empty($states)) {
             $device['state'] = $states[0];
@@ -426,8 +423,8 @@ class SensorDataController extends Controller
 
 
         $device['scores'] = $this->calculateScore($device['state'], $deviceName);
-
         $data['device'] = $device;
+
         return view('dashboards/detailed-dashboard', $data);
     }
 
