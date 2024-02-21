@@ -10,6 +10,7 @@ use App\Models\StateMeta;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use MathPHP\NumericalAnalysis\Interpolation\LagrangePolynomial;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -418,23 +419,67 @@ class SensorDataController extends Controller
         return $result;
     }
 
+
+    /**
+     * @param array $points // [ [x, y], [x, y] ]
+     * @param float $x X value to interpolate
+     * @return float
+     */
+    public static function interpolate(array $points, float $x): float
+    {
+        // Sort by x
+        $flattenedX = array_column($points, 0);
+        sort($flattenedX);
+        $rebuildPoints = [];
+        $alreadyAdded = [];
+        foreach ($flattenedX as $fX) {
+            foreach ($points as $point) {
+                if ($point[0] === $fX) {
+                    if (in_array($fX, $alreadyAdded)) continue;
+                    $rebuildPoints[] = $point;
+                    $alreadyAdded[] = $fX;
+                }
+            }
+        }
+        $points = $rebuildPoints;
+        try {
+            $p = LagrangePolynomial::interpolate($points);
+            return $p($x);
+        } catch (\Exception $e) {
+            dd($e, $points);
+            return 0.0;
+        }
+    }
+
+
     public static function calculateScoreWithParameter(string $sensor, float $value, array $parameterThresholds)
     {
-        $score = 0.0;
+
         $found = false;
+
+        $points = [];
 
         foreach ($parameterThresholds as $parameterThreshold) {
             if ($parameterThreshold['sensor'] !== $sensor) continue;
             $found = true;
-            if ($value >= $parameterThreshold['min'] && $value <= $parameterThreshold['max']) {
+            $min = $parameterThreshold['min'];
+            $max = $parameterThreshold['max'];
+            $score = $parameterThreshold['score'];
 
-                $score = $parameterThreshold['score'];
-                break;
-            }
+            $points[] = [$min, $score];
+            $points[] = [$max, $score];
         }
         if (!$found) {
             return null;
         }
+        $range = ScoreSimulationController::extractSensorRangeFromProfile($parameterThresholds);
+        // add 0 score to both end
+        $points[] = [$range[$sensor]['min'] - ($range[$sensor]['step'] * 2), 0];
+        $points[] = [$range[$sensor]['max'] + ($range[$sensor]['step'] * 2), 0];
+
+        $score = self::interpolate($points, $value);
+        // limit to 0.0 - 1.0
+        $score = max(0.0, min(1.0, $score));
         return $score;
     }
 

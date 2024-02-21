@@ -46,7 +46,7 @@ class ScoreSimulationController extends Controller
         $results = [];
 
         $sensorsRange = self::extractSensorRangeFromProfile($parameterThreshold, $maxStep);
-        $offsetStep = intval($maxStep * 0.2);
+        $offsetStep = intval($maxStep * 0.6);
         foreach ($sensorsRange as $sensor => $range) {
             $labels = [];
             $values = [];
