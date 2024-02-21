@@ -7,9 +7,8 @@ use App\Models\AppSettings;
 use App\Models\SensorData;
 use App\Models\State;
 use App\Models\StateMeta;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -91,11 +90,11 @@ class SensorDataController extends Controller
             }
             $state->where('state', '!=', 'unavailable');
 
-            if ($interval !== null) {
+            if ($interval !== null && $limit > 1) {
                 $state = $state->groupBy(DB::raw('FLOOR(last_updated_ts / ' . $interval . ')'));
             }
 
-            $state = $state->orderBy('formatted_timestamp', 'asc')
+            $state = $state->orderBy('formatted_timestamp', 'desc')
                 ->take($limit);
             $state = $state->get();
             if (empty($state)) continue;
@@ -105,6 +104,7 @@ class SensorDataController extends Controller
                 $data[] = $item->state;
                 $timestamp[] = date('Y-m-d H:i:s', $item->last_updated_ts);
             }
+
             $stateValue = $data[0] ?? 0.0;
             $sensors[$state->first()->metadata->entity_id] = [
                 'data' => $data,
@@ -117,8 +117,8 @@ class SensorDataController extends Controller
         return $sensors;
     }
 
-    
-    
+
+
 
 
     // Threshold for each parameter
@@ -237,7 +237,7 @@ class SensorDataController extends Controller
 
     public function index()
     {
-    
+
 
 
 
@@ -246,7 +246,7 @@ class SensorDataController extends Controller
         $states = WaterpoolController::getStates($deviceName, 30);
         $stats = SensorDataController::getStats($deviceName, 30);
 
-        
+
 
         $data = [
             'formatted_states' => WaterpoolController::formatStates($states),
@@ -291,32 +291,35 @@ class SensorDataController extends Controller
             'max' => date('Y-m-d', $max_date),
             'min' => date('Y-m-d', $min_date),
         ];
-        
+
         $data['parameterThresholdDisplay'] = self::$parameterThresholdDisplay;
 
-      
 
 
-        
+
+
         $device = [
             'name' => $deviceName,
             'display_name' => __('devices_name_'.$deviceName),
-            'state' => $this->getState($deviceName),
         ];
+
+        $states = WaterpoolController::getStates($deviceName, 1);
+
+        $states = WaterpoolController::formatStates($states);
+        if (!empty($states)) {
+            $device['state'] = $states[0];
+        } else {
+            $device['state'] = [];
+        }
 
 
         $device['scores'] = $this->calculateScore($device['state'], $deviceName);
 
-        $device['final_score'] = $this->calculateFinalScore($device['scores'], $deviceName);
-        $states = WaterpoolController::getStates($deviceName, 1);
-        if (count($states) != 0) {
-            $device['😎'] = $states[0];
-        }
         $data['device'] = $device;
-
         return view('dashboards/detailed-dashboard', $data);
     }
-    protected static function getState($deviceName)
+
+    protected static function getState($deviceName, $startTimestamp = null, $endTimestamp = null, $interval = 60 * 1440)
     {
         $data = SensorDataController::getStats($deviceName, 1);
         $result = [];
@@ -381,75 +384,18 @@ class SensorDataController extends Controller
         return number_format($decimalValue, 2, '.', '');
     }
 
-    private function getChartData()
-    {
-        $now = Carbon::now();
-        $interval = 8; // Jam
 
-        // Hitung waktu mulai untuk interval terakhir
-        $lastIntervalStart = $now->copy()->subHours($interval);
-
-        // dd($lastIntervalStart);
-        $chartData = DB::table('sensor_data')
-            ->select('created_at', 'temp_current', 'ph_current', 'tds_current', 'ec_current', 'salinity_current')
-            ->whereBetween('created_at', [$lastIntervalStart, $now])
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get()
-            ->reverse();
-
-
-        // Debugging statements
-        // dd($chartData);
-        $formattedChartData = [
-            'labels' => $chartData->pluck('created_at')->map(function ($timestamp) {
-                return Carbon::parse($timestamp)->format('H:i');
-            }),
-            'temp' => $chartData->pluck('temp_current'),
-            'ph' => $chartData->pluck('ph_current'),
-            'tds' => $chartData->pluck('tds_current'),
-            'ec' => $chartData->pluck('ec_current'),
-            'salinity' => $chartData->pluck('salinity_current'),
-        ];
-
-        return $formattedChartData;
-    }
-
-    private function getWeeklyChartData()
-    {
-        $now = Carbon::now();
-        $lastSevenDays = $now->subDays(7);
-
-
-        $chartDataWeekly = DB::table('sensor_data')
-            ->selectRaw('DATE(created_at) as date, AVG(temp_current) as temp_avg, AVG(ph_current) as ph_avg, AVG(tds_current) as tds_avg, AVG(ec_current) as ec_avg, AVG(salinity_current) as salinity_avg')
-            ->where('created_at', '>=', $lastSevenDays)
-            ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->get();
-
-        // dd($chartDataWeekly);
-
-
-        $formattedChartDataWeekly = [
-            'labels' => $chartDataWeekly->pluck('date')->map(function ($date) {
-                return Carbon::parse($date)->format('D, M d');
-            }),
-            'temp' => $chartDataWeekly->pluck('temp_avg'),
-            'ph' => $chartDataWeekly->pluck('ph_avg'),
-            'tds' => $chartDataWeekly->pluck('tds_avg'),
-            'ec' => $chartDataWeekly->pluck('ec_avg'),
-            'salinity' => $chartDataWeekly->pluck('salinity_avg'),
-        ];
-
-        return $formattedChartDataWeekly;
-    }
-
-
+    /**
+     * @param array $state // e.g ['ph' => ['value' => 7.0, 'unit' => 'pH']]
+     * @param string $deviceName
+     * @return array
+     */
     public static function calculateScore(array $state, string $deviceName): array
     {
         $scores = [];
+
         foreach ($state as $sensor => $value) {
+            if (in_array($sensor, AppSettings::$ignoreSensors)) continue;
             $value = floatval($value['value'] ?? 0);
             $scores[$sensor] = self::calculateScoreFor($sensor, $value, $deviceName);
         }
@@ -462,9 +408,9 @@ class SensorDataController extends Controller
         $score = 0.0;
         $found = false;
         $parameterName = AppSettings::getPoolProfileParameter()[$deviceName];
-        $parameterThreshold = AppSettings::getParameterProfile()[$parameterName];
+        $parameterThresholds = AppSettings::getParameterProfile()[$parameterName];
 
-        foreach ($parameterThreshold as $parameterThreshold) {
+        foreach ($parameterThresholds as $parameterThreshold) {
             if ($parameterThreshold['sensor'] !== $sensor) continue;
             $found = true;
             if ($value >= $parameterThreshold['min'] && $value <= $parameterThreshold['max']) {
@@ -475,7 +421,6 @@ class SensorDataController extends Controller
         }
         if (!$found) {
             Log::warning("Sensor $sensor not found with parameter $parameterName");
-            $score = 1;
         }
         return $score;
     }

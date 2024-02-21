@@ -24,8 +24,8 @@
                                 <div class="col-4"> <!-- Menambahkan div dengan col-4 untuk h6 -->
                                     <div class="d-flex justify-content-end">
                                         <h6 class="text-white font-weight-bolder mb-0">
-                                            @if (isset($device['😎']['timestamp']))
-                                                <span>{{ date('d M | H:i', strtotime($device['😎']['timestamp'])) }}</span>
+                                            @if (isset($device['state']['timestamp']))
+                                                <span>{{ date('d M | H:i', strtotime($device['state']['latestTimestamp'])) }}</span>
                                             @endif
                                         </h6>
                                     </div>
@@ -41,10 +41,12 @@
 
                 @php
                     unset($formatted_state['timestamp']);
+
                 @endphp
                 {{-- @dd($device,$formatted_state); --}}
                 {{-- @dd($device['scores']['ph']); --}}
                 @foreach($device['scores'] as $sensor_name => $score)
+                    {{-- Dont add battery sensor to the dashboard --}}
                     @php
                         $shouldContinue = false;
                     @endphp

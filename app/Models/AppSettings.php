@@ -17,11 +17,17 @@ class AppSettings extends Model
         'nat_02_1',
         'nat02_2_2',
     ];
+
     protected $fillable = [
         'key',
         'value',
     ];
-
+    public static $ignoreSensors = [
+        'timestamp',
+        'latestTimestamp',
+        'batterydevice',
+        'battery'
+    ];
     public static $sensors = [
         //'cf', // Chlorophyll
         'ph', // PH

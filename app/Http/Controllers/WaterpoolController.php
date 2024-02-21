@@ -14,10 +14,12 @@ class WaterpoolController extends Controller
     {
         if ($deviceName == null) $deviceName = AppSettings::$natwaveDevices[0];
         $datas = SensorDataController::getStats($deviceName, $limit);
+
         $sensors = [];
         for ($i = 0; $i < $limit; $i++) {
             $state = [];
             $averageTimestamp = 0;
+            $latestTimestamp = 0;
 
             foreach ($datas as $sensor => $data) {
                 if (!isset($data['data'][$i])) {
@@ -25,14 +27,17 @@ class WaterpoolController extends Controller
                 } else {
                     $state[$sensor] = $data['data'][$i];
                 }
-
                 $averageTimestamp += isset($data['timestamp'][$i]) ? strtotime($data['timestamp'][$i]) : 0;
+                $latestTimestamp = max($latestTimestamp, isset($data['timestamp'][$i]) ? strtotime($data['timestamp'][$i]) : 0);
             }
+
             if (count($datas) == 0) continue;
             $averageTimestamp /= count($datas);
             $state['timestamp'] = $averageTimestamp;
+            $state['latestTimestamp'] = $latestTimestamp; // in here as not to fuck the array
             $sensors[] = $state;
         }
+
 
         return $sensors;
     }
@@ -42,7 +47,8 @@ class WaterpoolController extends Controller
         $formattedStates = [];
         foreach ($states as $state) {
             $formattedState = [];
-            foreach ($state as $sensor => $value) {
+            foreach ($state as $sensorOrEntityName => $value) {
+                $sensor = AppSettings::entityToSensorName($sensorOrEntityName);
                 $formattedState[$sensor] = self::formatSensor($sensor, $value);
             }
             $formattedStates[] = $formattedState;
@@ -53,7 +59,9 @@ class WaterpoolController extends Controller
 
     public static function formatSensor(string $sensor, $value)
     {
-        if ($sensor == 'timestamp') return date('Y-m-d H:i:s', $value);
+        if ($sensor == 'timestamp' || $sensor == 'latestTimestamp')
+            return date('Y-m-d H:i:s', $value);
+        if (in_array($sensor, AppSettings::$ignoreSensors)) return $value;
 
         $sensor_name = AppSettings::entityToSensorName($sensor);
 
@@ -70,6 +78,10 @@ class WaterpoolController extends Controller
                 return StatusController::formatTDS($value);
             case 'temp':
                 return StatusController::formatTemperature(floatval($value));
+            case 'ch':
+                return StatusController::formatChlorine($value);
+            case 'battery':
+                return StatusController::formatBattery($value);
             default:
                 //throw new \Exception("Unknown sensor: {$sensor_name}");
                 Log::warning("Unknown sensor: {$sensor_name}");
