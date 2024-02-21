@@ -7,6 +7,7 @@ use App\Models\AppSettings;
 use App\Models\SensorData;
 use App\Models\State;
 use App\Models\StateMeta;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
@@ -44,6 +45,7 @@ class SensorDataController extends Controller
         ];
 
 
+
         if (request()->has('date')) {
             try {
                 $date = request()->get('date');
@@ -64,6 +66,14 @@ class SensorDataController extends Controller
             } catch (ContainerExceptionInterface $e) {
             }
         }
+
+        $hashQuery = hash('sha256', $deviceName . $limit . $startTimestamp . $endTimestamp . $interval);
+        $cacheKey = "getStats_{$hashQuery}";
+
+        if (Cache::has($cacheKey)) {
+            return Cache::get($cacheKey);
+        }
+
         // Laravel mad, we do one by one
 
 
@@ -115,6 +125,7 @@ class SensorDataController extends Controller
         }
 
 
+        Cache::put($cacheKey, $sensors, 60 * 15);
         return $sensors;
     }
 
@@ -129,93 +140,16 @@ class SensorDataController extends Controller
 
     public static function getStats2(string $deviceName, int $limit = 7, $startTimestamp = null, $endTimestamp = null, $interval = 60 * 60*24): array
     {
-        $metadata = StateMeta::getMetadata($deviceName);
-
-
-        $metadataIds = $metadata['metadataIds'];
-
-
-        // Get stats for each metadata
-        $sensors = [
-            /**
-             * sensor_1 => [
-             *  data => [...]
-             *  timestamp => [...]
-             */
-        ];
-
-
         if (request()->has('date')) {
             try {
                 $date = request()->get('date');
 
                 $startTimestamp = strtotime($date. ' -7 day');
                 $endTimestamp = strtotime($date . ' +1 day');
-            } catch (NotFoundExceptionInterface $e) {
-            } catch (ContainerExceptionInterface $e) {
+            } catch (Exception $e) {
             }
         }
-        if (request()->has('interval')) {
-            try {
-                $interval = request()->get('interval');
-                $interval = intval($interval);
-                $interval = $interval > 0 ? $interval : 60 * 30;
-
-            } catch (NotFoundExceptionInterface $e) {
-            } catch (ContainerExceptionInterface $e) {
-            }
-        }
-        // Laravel mad, we do one by one
-
-
-
-        foreach ($metadataIds as $metadataId) {
-            // Get latest state
-            /**
-             * SELECT
-             * FROM_UNIXTIME(last_updated_ts) AS formatted_timestamp,
-             * state
-             * FROM
-             * states
-             * GROUP BY
-             * FLOOR(last_updated_ts / (30 * 60))
-             * ORDER BY
-             * formatted_timestamp;
-             */
-            DB::statement("SET sql_mode = ''");
-            $state = State::selectRaw('metadata_id, state, FROM_UNIXTIME(last_updated_ts) AS formatted_timestamp, last_updated_ts')
-                ->where('metadata_id', $metadataId);
-
-            if ($startTimestamp !== null) {
-                $state = $state->where('last_updated_ts', '>=', $startTimestamp);
-                $state = $state->where('last_updated_ts', '<', $endTimestamp);
-            }
-            $state->where('state', '!=', 'unavailable');
-
-            if ($interval !== null) {
-                $state = $state->groupBy(DB::raw('FLOOR(last_updated_ts / ' . $interval . ')'));
-            }
-
-            $state = $state->orderBy('formatted_timestamp', 'desc')
-                ->take($limit);
-            $state = $state->get();
-            if (empty($state)) continue;
-            $data = [];
-            $timestamp = [];
-            foreach ($state as $item) {
-                $data[] = $item->state;
-                $timestamp[] = date('Y-m-d H:i:s', $item->last_updated_ts);
-            }
-            $stateValue = $data[0] ?? 0.0;
-            $sensors[$state->first()->metadata->entity_id] = [
-                'data' => $data,
-                'timestamp' => $timestamp,
-                'format' => WaterpoolController::formatSensor($state->first()->metadata->entity_id, $stateValue),
-            ];
-        }
-
-
-        return $sensors;
+        return self::getStats($deviceName, $limit, $startTimestamp, $endTimestamp, $interval);
     }
 
 

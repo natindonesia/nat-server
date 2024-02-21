@@ -14,10 +14,14 @@ class StateMeta extends Model
         return $this->belongsTo(State::class, 'metadata_id', 'metadata_id');
     }
 
+    protected static $metadataCache = [];
     public static function getMetadata($deviceName)
     {
         if ($deviceName == null) {
             $deviceName = AppSettings::$natwaveDevices[0];
+        }
+        if (isset(self::$metadataCache[$deviceName])) {
+            return self::$metadataCache[$deviceName];
         }
         $sensors = AppSettings::$sensors;
         // Required for converting entity_id to attributes_id
@@ -37,7 +41,7 @@ class StateMeta extends Model
             $metadataToEntityIds[$metadata['metadata_id']] = $metadata['entity_id'];
             $metadataIds[] = $metadata['metadata_id'];
         }
-        return [
+        return self::$metadataCache[$deviceName] = [
             'metadataToEntityIds' => $metadataToEntityIds,
             'metadataIds' => $metadataIds
         ];
