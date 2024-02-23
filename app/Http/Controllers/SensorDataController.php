@@ -70,7 +70,7 @@ class SensorDataController extends Controller
         $hashQuery = hash('sha256', $deviceName . $limit . $startTimestamp . $endTimestamp . $interval);
         $cacheKey = "getStats_{$hashQuery}";
 
-        if (Cache::has($cacheKey)) {
+        if (Cache::has($cacheKey) && !config('app.no_cache')) {
             return Cache::get($cacheKey);
         }
 
@@ -125,6 +125,20 @@ class SensorDataController extends Controller
         }
 
 
+        // Calculate TDS by EC
+        foreach ($sensors as $sensor => $data) {
+            $sensorName = AppSettings::entityToSensorName($sensor);
+            if ($sensorName !== 'ec') continue;
+            $entityName = 'sensor.' . $deviceName . '_tds';
+            $sensors[$entityName] = [
+                'data' => $data['data'],
+                'timestamp' => $data['timestamp'],
+                'format' => WaterpoolController::formatSensor('tds', WaterpoolController::calculateTDS(count($data['data']) > 0 ? $data['data'][0] : 0)),
+            ];
+            foreach ($data['data'] as $i => $value) {
+                $sensors[$entityName]['data'][$i] = WaterpoolController::calculateTDS($value);
+            }
+        }
         Cache::put($cacheKey, $sensors, 60 * 15);
         return $sensors;
     }

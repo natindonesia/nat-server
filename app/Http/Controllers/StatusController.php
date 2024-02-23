@@ -204,7 +204,7 @@ class StatusController extends Controller
     public static function formatTDS($value)
     {
         return [
-            'value' => $value,
+            'value' => intval($value),
             'unit' => 'ppm',
             'label' => __('translation.tds'),
         ];

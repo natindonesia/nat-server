@@ -45,6 +45,7 @@ class WaterpoolController extends Controller
     public static function formatStates(array $states): array
     {
         $formattedStates = [];
+
         foreach ($states as $state) {
             $formattedState = [];
             foreach ($state as $sensorOrEntityName => $value) {
@@ -93,6 +94,11 @@ class WaterpoolController extends Controller
                     'label' => __('translation.' . $sensor_name),
                 ];
         }
+    }
+
+    public static function calculateTDS(float $ec)
+    {
+        return $ec * 0.5;
     }
 
     public function index()
