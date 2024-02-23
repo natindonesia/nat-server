@@ -96,8 +96,9 @@ class WaterpoolController extends Controller
         }
     }
 
-    public static function calculateTDS(float $ec)
+    public static function calculateTDS(mixed $ec)
     {
+        $ec = floatval($ec);
         return $ec * 0.5;
     }
 
