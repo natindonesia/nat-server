@@ -18,6 +18,10 @@ use Psr\Container\NotFoundExceptionInterface;
 class SensorDataController extends Controller
 {
 
+
+    // Lifetime cache
+    protected static $memCache = [];
+
     /**
      * Guarantee to return same length for each sensor
      * @param string $deviceName based on AppSettings::$natwaveDevices
@@ -70,6 +74,9 @@ class SensorDataController extends Controller
         $hashQuery = hash('sha256', $deviceName . $limit . $startTimestamp . $endTimestamp . $interval);
         $cacheKey = "getStats_{$hashQuery}";
 
+        if (isset(self::$memCache[$cacheKey])) {
+            return self::$memCache[$cacheKey];
+        }
         if (Cache::has($cacheKey) && !config('app.no_cache')) {
             return Cache::get($cacheKey);
         }
@@ -140,6 +147,8 @@ class SensorDataController extends Controller
             }
         }
         Cache::put($cacheKey, $sensors, 60 * 15);
+        // always cache
+        if (config('app.no_cache')) self::$memCache[$cacheKey] = $sensors;
         return $sensors;
     }
 
