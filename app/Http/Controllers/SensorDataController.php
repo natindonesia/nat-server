@@ -146,7 +146,7 @@ class SensorDataController extends Controller
                 $sensors[$entityName]['data'][$i] = WaterpoolController::calculateTDS($value);
             }
         }
-        Cache::put($cacheKey, $sensors, 60 * 15);
+        Cache::put($cacheKey, $sensors, config('cache.time'));
         // always cache
         if (config('app.no_cache')) self::$memCache[$cacheKey] = $sensors;
         return $sensors;
