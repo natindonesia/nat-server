@@ -74,7 +74,7 @@ class AppSettings extends Model
 
     public static function getDevicesName()
     {
-        $devicesName = self::where('key', 'devices_name')->first();
+        $devicesName = self::get('devices_name');
         $default = [];
         foreach (self::$natwaveDevices as $id) {
             $default[$id] = $id;
@@ -105,7 +105,7 @@ class AppSettings extends Model
 
     public static function getTranslation()
     {
-        $translation = self::where('key', 'translation')->first();
+        $translation = self::get('translation');
         $default = [
             'ec' => 'Conductivity',
             // 'humid' => 'Salt',
@@ -169,7 +169,7 @@ class AppSettings extends Model
     // Profile Parameter e.g Internasional
     public static function getParameterProfile(): array
     {
-        $parameterProfile = self::where('key', 'parameter_profile')->first();
+        $parameterProfile = self::get('parameter_profile');
         $default = [
             'Internasional' => StatusController::$parametersThresholdInternational
         ];
@@ -199,10 +199,30 @@ class AppSettings extends Model
         return $value;
     }
 
+    protected static $memCache = [];
+
+    protected static function boot()
+    {
+        parent::boot();
+        self::saved(function (AppSettings $model) {
+            self::$memCache[$model->key] = $model;
+        });
+    }
+
+    public static function get(string $key): \Illuminate\Database\Eloquent\Collection|array|AppSettings
+    {
+        if (isset(self::$memCache[$key])) {
+            return self::$memCache[$key];
+        }
+        $result = self::where('key', $key)->first();
+        self::$memCache[$key] = $result;
+        return $result;
+    }
+
     // each pool has different profile
     public static function getPoolProfileParameter(): array
     {
-        $poolProfileParameter = self::where('key', 'pool_profile_parameter')->first();
+        $poolProfileParameter = self::get('pool_profile_parameter');
         $default = [
 
         ];

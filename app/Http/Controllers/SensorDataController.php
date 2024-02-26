@@ -266,6 +266,7 @@ class SensorDataController extends Controller
 
         $states = WaterpoolController::getStates($deviceName, 1);
         $states = WaterpoolController::formatStates($states);
+
         if (!empty($states)) {
             $device['state'] = $states[0];
         } else {
@@ -279,18 +280,6 @@ class SensorDataController extends Controller
         return view('dashboards/detailed-dashboard', $data);
     }
 
-    protected static function getState($deviceName, $startTimestamp = null, $endTimestamp = null, $interval = 60 * 1440)
-    {
-        $data = SensorDataController::getStats($deviceName, 1);
-        $result = [];
-
-        foreach ($data as $key => $value) {
-            $sensorName = AppSettings::entityToSensorName($key);
-            $result[$sensorName] = $value['format'];
-
-        }
-        return $result;
-    }
 
     /**
      * Calculate final score from all parameters
