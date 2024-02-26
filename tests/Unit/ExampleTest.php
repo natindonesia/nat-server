@@ -2,20 +2,44 @@
 
 namespace Tests\Unit;
 
+use App\Http\Controllers\SensorDataController;
 use App\Livewire\SettingsParameter;
 use PHPUnit\Framework\TestCase;
 
 class ExampleTest extends TestCase
 {
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
+
+    public function test_interpolation()
+    {
+        $testCase = [[
+            'input' => [
+                [1.0, 10],
+                [2.0, 20],
+                [3.0, 30]
+            ],
+            'output' => [
+                [1.0, 10],
+                [1.5, 15],
+                [2.0, 20],
+                [2.5, 25],
+                [3.0, 30]
+            ]
+        ]
+        ];
+
+        foreach ($testCase as $test) {
+            foreach ($test['output'] as $i => $output) {
+                $result = SensorDataController::interpolate($test['input'], $output[0]);
+                $this->assertEquals($output[1], $result);
+            }
+        }
+    }
+
     public function test_example()
     {
         $this->assertTrue(true);
     }
+
 
     public function test_array_to_kv()
     {

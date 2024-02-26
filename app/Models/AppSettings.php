@@ -17,11 +17,22 @@ class AppSettings extends Model
         'nat_02_1',
         'nat02_2_2',
     ];
+
     protected $fillable = [
         'key',
         'value',
     ];
 
+    public static $greenScoreMax = 1.0;
+    public static $greenScoreMin = 0.7;
+    public static $yellowScoreMax = 0.69;
+    public static $yellowScoreMin = 0.4;
+    public static $ignoreSensors = [
+        'timestamp',
+        'latestTimestamp',
+        'batterydevice',
+        'battery'
+    ];
     public static $sensors = [
         //'cf', // Chlorophyll
         'ph', // PH
@@ -37,7 +48,7 @@ class AppSettings extends Model
     ];
 
     public static $batterySensors = [
-        // 'batterydevice',
+        'batterydevice',
         'battery'
     ];
 
@@ -102,7 +113,8 @@ class AppSettings extends Model
             'ph' => 'PH',
             'tds' => 'TDS',
             'temp' => 'Temperature',
-            'timestamp' => 'Timestamp'
+            'timestamp' => 'Timestamp',
+            "latestTimestamp" => "Latest Timestamp",
         ];
         foreach (self::$sensors as $sensor) {
             if (!isset($default[$sensor])) $default[$sensor] = Str::upper($sensor);
@@ -154,7 +166,7 @@ class AppSettings extends Model
         return $value;
     }
 
-    // each profile has different parameter
+    // Profile Parameter e.g Internasional
     public static function getParameterProfile(): array
     {
         $parameterProfile = self::where('key', 'parameter_profile')->first();
@@ -173,6 +185,17 @@ class AppSettings extends Model
         }
         $value = $parameterProfile->value;
         $value['Internasional'] = $default['Internasional']; // don't change this lol
+
+        // convert integer score to float based on green and yellow
+        foreach ($value as $profile => $parameters) {
+            foreach ($parameters as $i => $parameter) {
+                if ($parameter['score'] == 2) {
+                    $value[$profile][$i]['score'] = self::$yellowScoreMax;
+                } else if ($parameter['score'] == 3) {
+                    $value[$profile][$i]['score'] = self::$greenScoreMax;
+                }
+            }
+        }
         return $value;
     }
 

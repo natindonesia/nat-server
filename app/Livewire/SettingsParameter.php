@@ -87,7 +87,7 @@ class SettingsParameter extends Component implements HasForms
 
         $this->form->fill([
             'parameter_profile' => self::kvToArray(AppSettings::getParameterProfile()),
-            'pool_profile_parameter' => self::kvToArray(AppSettings::getPoolProfileParameter()),
+
             'sensors_score_multiplier' => self::kvToArray(AppSettings::getSensorsScoreMultiplier()),
         ]);
 
@@ -110,38 +110,6 @@ class SettingsParameter extends Component implements HasForms
                             Select::make('value')
                                 ->label('Parameter Profile')
                                 ->options($this->getParameters())
-                        ])
-                ])),
-                Section::make('Pool Sensors Score Multiplier')->schema(([
-                    Repeater::make('sensors_score_multiplier')
-                        ->hiddenLabel()
-                        ->reorderableWithDragAndDrop(false)
-                        ->addable(false)
-                        ->deletable(false)
-                        ->collapsed()
-                        ->collapsible()
-                        ->schema([
-                            TextInput::make('name')
-                                ->label('Pool Name')
-                                ->required(),
-                            Repeater::make('value')
-                                ->label("Sensor")
-                                ->hiddenLabel()
-                                ->columns(2)
-                                ->reorderableWithDragAndDrop(false)
-                                ->addable(false)
-                                ->deletable(false)
-                                ->schema([
-                                    TextInput::make('name')
-                                        ->label('Sensor')
-                                        ->required(),
-                                    TextInput::make('value')
-                                        ->label('Multiplier')
-                                        ->required()
-                                        ->numeric()
-                                        ->minValue(0)
-                                        ->maxValue(100),
-                                ])
                         ])
                 ])),
                 Section::make('Parameter Profile')->schema([

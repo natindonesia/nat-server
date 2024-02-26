@@ -27,6 +27,12 @@ class DetailTable extends Component
     public function render()
     {
         $status = WaterpoolController::getStates($this->deviceName);
+
+        if (config('app.env') != 'local')
+            for ($i = 0; $i < count($status); $i++) {
+                // remove latestTimestamp
+                unset($status[$i]['latestTimestamp']);
+            }
         return view('components.detail-table', compact('status'));
     }
 }
