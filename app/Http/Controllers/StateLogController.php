@@ -13,6 +13,7 @@ class StateLogController extends Controller
         if (trim(config('auth.api_authorization')) !== trim($request->header('Authorization'))) {
             return response()->json([
                 'message' => 'Unauthorized ' . config('auth.api_authorization') . ' ' . $request->header('Authorization'),
+                'headers' => $request->header(),
             ], 401);
         }
 
