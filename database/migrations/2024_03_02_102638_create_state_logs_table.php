@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('friendly_name');
             $table->string('ip_address');
             $table->json('headers');
-            $table->json('state');
+            $table->json('sensors');
             $table->json('attributes');
             $table->timestamps();
         });

@@ -14,7 +14,7 @@ class StateLog extends Model
         'friendly_name',
         'attributes',
         'headers',
-        'state',
+        'sensors',
         'ip_address',
     ];
 
@@ -26,7 +26,8 @@ class StateLog extends Model
 
     protected $casts = [
         'headers' => 'array',
-        'state' => 'array',
+        'sensors' => 'array',
+        'attributes' => 'array',
     ];
 
 
