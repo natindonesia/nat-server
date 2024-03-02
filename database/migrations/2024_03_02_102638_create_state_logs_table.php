@@ -12,10 +12,12 @@ return new class extends Migration {
     {
         Schema::create('state_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('device_name');
+            $table->string('device');
+            $table->string('friendly_name');
             $table->string('ip_address');
             $table->json('headers');
             $table->json('state');
+            $table->json('attributes');
             $table->timestamps();
         });
     }

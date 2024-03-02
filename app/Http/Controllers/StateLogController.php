@@ -20,18 +20,19 @@ class StateLogController extends Controller
 
         // sensors must be an associative array with
         // device should be string
-        $validate = $request->validate([
+        $data = $request->validate([
             'device' => 'required|string',
+            'friendly_name' => 'required|string',
             'sensors' => 'required|array',
+            'attributes' => 'required|array',
         ]);
 
-
-        $stateLog = StateLog::create([
-            'device_name' => $validate['device'],
+        $data = array_merge($data, [
             'ip_address' => $request->ip(),
             'headers' => $request->header(),
-            'state' => $validate['sensors'],
         ]);
+
+        $stateLog = StateLog::create($data);
 
         return response()->json([
             'message' => 'State log created',
