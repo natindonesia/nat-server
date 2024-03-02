@@ -10,13 +10,7 @@ class StateLogController extends Controller
 
     public function store(Request $request)
     {
-        $authHeader = $request->header('Authorization') || $request->header('real');
-        if ($authHeader) {
-            return response()->json([
-                'message' => 'Unauthorized',
-            ], 401);
-        }
-
+        $authHeader = $request->header('Authorization') ?? $request->header('real');
         $authHeader = trim($authHeader);
         if (trim(config('auth.api_authorization')) !== $authHeader) {
             return response()->json([
