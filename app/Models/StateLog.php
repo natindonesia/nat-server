@@ -10,7 +10,9 @@ class StateLog extends Model
     use HasFactory;
 
     protected $fillable = [
-        'device_name',
+        'device',
+        'friendly_name',
+        'attributes',
         'headers',
         'state',
         'ip_address',
