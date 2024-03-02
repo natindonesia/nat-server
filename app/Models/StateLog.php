@@ -11,10 +11,19 @@ class StateLog extends Model
 
     protected $fillable = [
         'device_name',
+        'ip_address',
+        'headers',
         'state',
     ];
 
+    protected $hidden = [
+        'id',
+        'headers',
+        'updated_at',
+    ];
+
     protected $casts = [
+        'headers' => 'array',
         'state' => 'array',
     ];
 

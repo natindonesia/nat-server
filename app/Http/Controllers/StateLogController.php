@@ -23,8 +23,11 @@ class StateLogController extends Controller
             'sensors' => 'required|array',
         ]);
 
+
         $stateLog = StateLog::create([
             'device_name' => $validate['device'],
+            'ip_address' => $request->ip(),
+            'headers' => $request->header(),
             'state' => $validate['sensors'],
         ]);
 

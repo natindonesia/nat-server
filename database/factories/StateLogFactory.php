@@ -19,6 +19,11 @@ class StateLogFactory extends Factory
     {
         return [
             'device_name' => $this->faker->randomElement(AppSettings::getDevicesName()),
+            'ip_address' => $this->faker->ipv4,
+            'headers' => [
+                'user_agent' => $this->faker->userAgent,
+                'accept_language' => $this->faker->languageCode,
+            ],
             'state' => [
                 'temperature' => $this->faker->randomFloat(2, 0, 100),
                 'ph' => $this->faker->randomFloat(2, 0, 14),
