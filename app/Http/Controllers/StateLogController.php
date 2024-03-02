@@ -32,7 +32,7 @@ class StateLogController extends Controller
             'headers' => $request->header(),
         ]);
 
-        $stateLog = StateLog::create($data);
+        StateLog::create($data);
 
         return response()->json([
             'message' => 'State log created',
