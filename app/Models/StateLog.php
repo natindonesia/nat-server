@@ -11,9 +11,9 @@ class StateLog extends Model
 
     protected $fillable = [
         'device_name',
-        'ip_address',
         'headers',
         'state',
+        'ip_address',
     ];
 
     protected $hidden = [
