@@ -22,8 +22,6 @@ class StateLogFactory extends Factory
             'state' => [
                 'temperature' => $this->faker->randomFloat(2, 0, 100),
                 'ph' => $this->faker->randomFloat(2, 0, 14),
-
-
             ],
         ];
     }
