@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('state_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('device')->index();
+            $table->string('device', 32)->comment('Max 32 characters for indexing');
             $table->string('friendly_name');
             $table->string('ip_address');
             $table->json('headers');
