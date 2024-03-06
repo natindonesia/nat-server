@@ -59,7 +59,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/register', [RegisterController::class, 'create']);
     Route::post('/register', [RegisterController::class, 'store']);
     Route::get('/login', [SessionController::class, 'create'])->name('login');
-    Route::post('/session', [SessionController::class, 'store']);
+    Route::post('/login', [SessionController::class, 'store']);
     Route::get('/login/forgot-password', [ChangePasswordController::class, 'create']);
     Route::post('/forgot-password', [ChangePasswordController::class, 'sendEmail']);
     Route::get('/reset-password/{token}', [ChangePasswordController::class, 'resetPass'])->name('password.reset');

@@ -91,7 +91,7 @@
                 </div>
                 </div> --}}
                 <div class="card-body">
-                <form role="form" class="text-start" action="/session" method="POST">
+                    <form role="form" class="text-start" method="POST">
                     @csrf
                     <div class="mb-3">
                     <input type="email" class="form-control" placeholder="Email" aria-label="Email"  name="email" id="email" value="{{ old('email') }}" required>
