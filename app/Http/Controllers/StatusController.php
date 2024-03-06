@@ -221,6 +221,7 @@ class StatusController extends Controller
 
     public static function formatBattery($value)
     {
+
         return [
             'value' => $value,
             'unit' => '%',

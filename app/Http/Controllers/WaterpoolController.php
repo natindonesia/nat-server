@@ -60,9 +60,8 @@ class WaterpoolController extends Controller
 
     public static function formatSensor(string $sensor, $value)
     {
-        if ($sensor == 'timestamp' || $sensor == 'latestTimestamp')
-            return date('Y-m-d H:i:s', $value);
-        if (in_array($sensor, AppSettings::$ignoreSensors)) return $value;
+        //if ($sensor == 'timestamp' || $sensor == 'latestTimestamp') return date('Y-m-d H:i:s', $value);
+        //if (in_array($sensor, AppSettings::$ignoreSensors)) return $value;
 
 
         $sensor_name = AppSettings::entityToSensorName($sensor);
@@ -89,6 +88,7 @@ class WaterpoolController extends Controller
                 //throw new \Exception("Unknown sensor: {$sensor_name}");
                 Log::warning("Unknown sensor: {$sensor_name}");
                 // if(config('app.debug')) throw new \Exception("Unknown sensor: {$sensor_name}");
+
                 return [
                     'value' => $value,
                     'unit' => '',

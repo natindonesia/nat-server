@@ -46,26 +46,21 @@
                 @if (is_array($status) && count($status) > 0)
                     <thead class="thead-light">
                     <tr>
-                        @foreach($status[0] as $key => $value)
-                            @php
-                                $name = \App\Models\AppSettings::translateSensorKey($key)
-                            @endphp
-                            <th class="text-sm">{{ $name }}</th>
+                        @foreach($status[0]['formatted_sensors'] as $key => $data)
+                            <th class="text-sm">{{ $data['label'] }}</th>
                         @endforeach
+                        <th class="text-sm"> Timestamp</th>
+
                     </tr>
                     </thead>
                     <tbody>
 
-                    @foreach ($status as $data)
+                    @foreach ($status as $stat)
                         <tr>
-                            @foreach($data as $key => $value)
-                                @if($key == 'timestamp' || $key == 'latestTimestamp' || $key == 'created_at' || $key == 'updated_at')
-                                    @php
-                                        $value = date('Y-m-d H:i:s', $value);
-                                    @endphp
-                                @endif
-                                <td class="text-sm">{{ $value }}</td>
+                            @foreach($stat['formatted_sensors'] as $key => $data)
+                                <td class="text-sm">{{ $data['value'] }}</td>
                             @endforeach
+                            <td class="text-sm">{{ date('Y-m-d H:i:s', strtotime($stat['created_at'])) }}</td>
                         </tr>
                     @endforeach
                     </tbody>

@@ -1,11 +1,8 @@
 <?php
 
 use App\Http\Controllers\ChangePasswordController;
-use App\Http\Controllers\DataApiController;
 use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\SensorDataController;
 use App\Http\Controllers\SessionController;
-use App\Http\Controllers\WaterpoolController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,36 +17,37 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => 'auth'], function () {
+
+    // Redirect
     Route::get('/', function () {
         return redirect('main-dashboard');
     });
-
     Route::redirect('/dashboard-default', '/main-dashboard');
 
-    Route::get('/detail', [SensorDataController::class, 'index'])->name('detail');
+
+    // Main Dashboard
     Route::get('/main-dashboard', [\App\Http\Controllers\Pool\MainDashboardController::class, 'index']);
-    Route::get('/fetch-latest-data', [SensorDataController::class, 'fetchLatestData'])->name('fetch.latest.data');
 
 
+    Route::get('/detail', [\App\Http\Controllers\Pool\DetailedController::class, 'index'])->name('detail');
+    Route::get('/detail/export', [\App\Http\Controllers\Pool\DetailedController::class, 'export'])->name('detailed-dashboard.export');
+
+
+    // Auth
     Route::get('/logout', [SessionController::class, 'destroy']);
-    Route::view('/login', 'dashboards/default')->name('sign-up');
 
 
-    // show data kolam from db all
-    Route::get('/sensor-data', [SensorDataController::class, 'index'])->name('sensor-data');
-
-    // fetch api insert to db
-    Route::get('/data-pool', [DataApiController::class, 'index']);
-
-    Route::get('/tabel-data', [WaterpoolController::class, 'index'])->name('waterpool-index');
-
+    // Settings
     Route::get('/app-settings', [\App\Http\Controllers\AppSettingsController::class, 'index'])->name('app-settings');
     Route::post('/app-settings', [\App\Http\Controllers\AppSettingsController::class, 'store'])->name('app-settings');
 
+    // Settings Parameter
     Route::get('/settings-parameter', [\App\Http\Controllers\ParameterController::class, 'index'])->name('settings.parameter');
     Route::post('/settings-parameter', [\App\Http\Controllers\ParameterController::class, 'store'])->name('settings.parameter');
     Route::get('/settings-parameter-livewire', \App\Livewire\SettingsParameter::class)->name('settings.parameter.livewire');
-    Route::get('/detail/export', [SensorDataController::class, 'export'])->name('detailed-dashboard.export');
+
+
+    // Advanced Settings
     Route::get('/score-simulation', [\App\Http\Controllers\ScoreSimulationController::class, 'index'])->name('score-simulation');
 });
 

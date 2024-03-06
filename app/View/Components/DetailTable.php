@@ -2,7 +2,7 @@
 
 namespace App\View\Components;
 
-use App\Http\Controllers\WaterpoolController;
+use App\Models\Pool\StateLog;
 use Illuminate\View\Component;
 
 class DetailTable extends Component
@@ -26,13 +26,10 @@ class DetailTable extends Component
      */
     public function render()
     {
-        $status = WaterpoolController::getStates($this->deviceName);
-
-        if (config('app.env') != 'local')
-            for ($i = 0; $i < count($status); $i++) {
-                // remove latestTimestamp
-                unset($status[$i]['latestTimestamp']);
-            }
+        $status = StateLog::where('device', $this->deviceName)->orderBy('created_at', 'desc')
+            ->limit(15)
+            ->get()
+            ->toArray();
         return view('components.detail-table', compact('status'));
     }
 }

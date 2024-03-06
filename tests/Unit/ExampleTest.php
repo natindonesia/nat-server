@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Http\Controllers\SensorDataController;
+use App\Http\Controllers\WaterpoolController;
 use App\Livewire\SettingsParameter;
 use PHPUnit\Framework\TestCase;
 
@@ -255,5 +256,10 @@ class ExampleTest extends TestCase
         foreach ($testCases as $testCase) {
             $this->assertEquals($testCase['output'], SettingsParameter::kvToArray($testCase['input']));
         }
+    }
+
+    public function test_format()
+    {
+        WaterpoolController::formatSensor('battery', 22);
     }
 }

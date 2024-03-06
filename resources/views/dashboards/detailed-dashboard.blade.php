@@ -24,8 +24,8 @@
                                 <div class="col-4"> <!-- Menambahkan div dengan col-4 untuk h6 -->
                                     <div class="d-flex justify-content-end">
                                         <h6 class="text-white font-weight-bolder mb-0">
-                                            @if (isset($device['state']['timestamp']))
-                                                <span>{{ date('d M | H:i', strtotime($device['state']['latestTimestamp'])) }}</span>
+                                            @if (isset($latestState['created_at']))
+                                                <span>{{ date('d M | H:i', strtotime($latestState['created_at'])) }}</span>
                                             @endif
                                         </h6>
                                     </div>
@@ -40,12 +40,11 @@
 
 
                 @php
-                    unset($formatted_state['timestamp']);
-
+                    unset($latestState['timestamp']);
                 @endphp
                 {{-- @dd($device,$formatted_state); --}}
                 {{-- @dd($device['scores']['ph']); --}}
-                @foreach($device['scores'] as $sensor_name => $score)
+                @foreach($latestState['scores'] as $sensor_name => $score)
                     {{-- Dont add battery sensor to the dashboard --}}
                     @php
                         $shouldContinue = false;
@@ -63,77 +62,34 @@
 
 
                     <div class="col-md-4 col-12 mt-4 ">
-                        @if( $score > $parameterThresholdDisplay['green'])
-
+                        @if( $score > \App\Http\Controllers\SensorDataController::$parameterThresholdDisplay['green'])
                             <div class="card bg-success">
+                                @elseif($score > \App\Http\Controllers\SensorDataController::$parameterThresholdDisplay['yellow'])
+                            <div class="card bg-warning">
+                        @else
+                            <div class="card bg-danger">
+                                @endif
                                 <div class="card-body text-center">
 
                                     <h1 class="text-white text-primary">
                                     <span id="{{$sensor_name}}_state">
-                                        @if( $device['state'][$sensor_name]['value'] == 'unknown')
+                                        @if( $latestState['formatted_sensors'][$sensor_name] == 'unknown')
                                             -
                                         @else
-                                            {{  $device['state'][$sensor_name]['value'] }}
+                                            {{  $latestState['formatted_sensors'][$sensor_name]['value'] }}
                                         @endif
                                     </span>
                                         <span
-                                            class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
+                                            class="text-lg ms-n2">{{ $latestState['formatted_sensors'][$sensor_name]['unit']}}</span>
 
 
                                     </h1>
-                                    <h6 class="mb-0 font-weight-bolder">{{ $device['state'][$sensor_name]['label']}}</h6>
+                                    <h6 class="mb-0 font-weight-bolder">{{ $latestState['formatted_sensors'][$sensor_name]['label']}}</h6>
 
                                 </div>
                             </div>
-                        @elseif($score > $parameterThresholdDisplay['yellow'])
-                            <div class="card bg-warning">
-                                <div class="card-body text-center">
 
-                                    <h1 class="text-white text-primary">
-                                    <span id="{{$sensor_name}}_state">
-                                        @if( $device['state'][$sensor_name]['value'] == 'unknown')
-                                            -
-                                        @else
-                                            {{  $device['state'][$sensor_name]['value'] }}
-                                        @endif
-                                    </span>
-                                        @if ($sensor_name == 'cl')
-                                            <span class="text-lg ms-n2"> mg/L</span>
-                                        @else
-                                            <span
-                                                class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
-
-                                        @endif
-                                    </h1>
-                                    <h6 class="mb-0 font-weight-bolder">{{ $device['state'][$sensor_name]['label']}}</h6>
-
-                                </div>
                             </div>
-                        @else
-                            <div class="card bg-danger">
-                                <div class="card-body text-center">
-                                    <h1 class="text-white text-primary">
-                                    <span id="{{$sensor_name}}_state">
-                                        @if( $device['state'][$sensor_name]['value'] == 'unknown')
-                                            -
-                                        @else
-                                            {{  $device['state'][$sensor_name]['value'] }}
-                                        @endif
-                                    </span>
-                                        @if ($sensor_name == 'cl')
-                                            <span class="text-lg ms-n2"> mg/L</span>
-                                        @else
-                                            <span
-                                                class="text-lg ms-n2">{{ $device['state'][$sensor_name]['unit']}}</span>
-
-                                        @endif
-                                    </h1>
-                                    <h6 class="mb-0 font-weight-bolder">{{ $device['state'][$sensor_name]['label']}}</h6>
-
-                                </div>
-                            </div>
-                        @endif
-                    </div>
 
                 @endforeach
 
@@ -168,7 +124,8 @@
                         <input style="border: 1px solid rgba(0,0,0,0.2);" type="date" name="date" id="date"
                                class="form-control"
                                value="{{ isset($_GET['date']) ? $_GET['date'] : '' }}"
-                               max="{{ $date_filter['max'] }}" min="{{ $date_filter['min'] }}"
+                               max="{{ date('Y-m-d', $date_filter['max']) }}"
+                               min="{{ date('Y-m-d', $date_filter['min']) }}"
                                onchange="this.form.submit()"
                         />
                     </form>
@@ -181,9 +138,9 @@
             <div class="row mt-4">
                 <div class="col-lg-12">
                     <x-chart-stats :title='AppSettings::translateSensorKey($key)'
-                                   :labels="array_map(fn ($timestamp) => date(config('app.env') == 'local' ? 'm:h d M' : 'd M', strtotime($timestamp)), array_reverse($stat['timestamp']))"
-                                   :values="array_reverse($stat['data'])"
-                                   :info="date('d M Y', strtotime($stat['timestamp'][0]))"
+                                   :labels="$stat['timestamp']"
+                                   :values="$stat['data']"
+                                   :info="date('d M Y', strtotime($stat['timestamp'][count($stat['timestamp']) - 1]))"
 
                     ></x-chart-stats>
                 </div>

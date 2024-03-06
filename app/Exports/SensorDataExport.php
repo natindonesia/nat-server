@@ -2,19 +2,21 @@
 
 namespace App\Exports;
 
-use App\Http\Controllers\WaterpoolController;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
+use App\Models\AppSettings;
+use App\Models\Pool\StateLog;
 use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 
-class SensorDataExport implements FromCollection, ShouldAutoSize, WithEvents
+class SensorDataExport implements FromQuery, ShouldAutoSize, WithEvents, WithMapping, WithHeadings
 {
 
     use Exportable, RegistersEventListeners;
@@ -26,44 +28,6 @@ class SensorDataExport implements FromCollection, ShouldAutoSize, WithEvents
         $this->deviceName = $deviceName;
     }
 
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-    public function collection()
-    {
-        $states = Cache::remember(SensorDataExport::class . 'states2', 60 * 15, function () {
-            return WaterpoolController::getStates($this->deviceName, 200);
-        });
-        $collection = new Collection();
-        if (empty($states)) return $collection;
-        $state = [$states[0]];
-        $state = WaterpoolController::formatStates($state)[0];
-        $row = [];
-        foreach ($state as $key => $value) {
-            if ($key === 'timestamp') continue;
-            $row[] = $value['label'];
-        }
-        $row[] = 'Timestamp';
-        $collection->push($row);
-
-
-        foreach ($states as $state) {
-            $values = [];
-            foreach ($state as $key => $value) {
-                if ($value === 'unavailable') {
-                    $value = '?';
-                }
-                if ($key === 'timestamp') {
-                    $value = date('Y-m-d H:i:s', $value);
-                    $values[] = $value;
-                    continue;
-                }
-                $values[] = $value;
-            }
-            $collection->push($values);
-        }
-        return $collection;
-    }
 
 
     public static function afterSheet(AfterSheet $event)
@@ -71,5 +35,37 @@ class SensorDataExport implements FromCollection, ShouldAutoSize, WithEvents
 
         $event->getSheet()->getDelegate()->getStyle('A1:Z1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $event->getSheet()->getDelegate()->getStyle('A1:Z1')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+    }
+
+    public function query()
+    {
+        return StateLog::orderBy('created_at', 'desc')->where('device', $this->deviceName);
+    }
+
+
+    /**
+     * @param StateLog $row
+     */
+    public function map($row): array
+    {
+        $data = [];
+        foreach ($row->formatted_sensors as $sensor => $value) {
+            $data[] = $value['value'];
+        }
+        $data[] = Date::dateTimeToExcel($row->created_at);
+        return $data;
+    }
+
+    public function headings(): array
+    {
+        $sample = StateLog::where('device', $this->deviceName)->orderBy('created_at', 'desc')->first();
+        $sensors = $sample->formatted_sensors ?? [];
+        $sensors = array_keys($sensors);
+        $translated = [];
+        foreach ($sensors as $sensor) {
+            $translated[] = AppSettings::translateSensorKey($sensor);
+        }
+        $translated[] = 'Timestamp';
+        return $translated;
     }
 }

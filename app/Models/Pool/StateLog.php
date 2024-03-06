@@ -53,10 +53,14 @@ class StateLog extends Model
     }
 
     // return [device => friendly_name, ...]
+    protected static array $cache = [];
     public static function getDevices(): array
     {
-        return StateLog::withoutAppends()->distinct('device', 'friendly_name')
-            ->pluck('friendly_name', 'device')->toArray();
+        if (empty(self::$cache)) {
+            self::$cache = StateLog::withoutAppends()->distinct('device', 'friendly_name')
+                ->pluck('friendly_name', 'device')->toArray();
+        }
+        return self::$cache;
     }
 
     public function getScoresAttribute()
@@ -82,10 +86,18 @@ class StateLog extends Model
 
     public function getFormattedSensorsAttribute()
     {
+        // calculate TDS from EC if not exist
+        if (!isset($this->sensors['tds']) && isset($this->sensors['ec'])) {
+            $this->sensors = array_merge($this->sensors, ['tds' => WaterpoolController::calculateTDS($this->sensors['ec'])]);
+        }
+
+        //
         $formattedSensors = [];
         foreach ($this->sensors as $sensor => $value) {
             $formattedSensors[$sensor] = WaterpoolController::formatSensor($sensor, $value);
+            if (!is_array($formattedSensors[$sensor])) throw new \Exception('formatSensor must return array for sensor: ' . $sensor . ' value: ' . $value);
         }
+
         return $formattedSensors;
     }
 }
