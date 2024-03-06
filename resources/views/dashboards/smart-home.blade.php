@@ -131,19 +131,29 @@
                                                                 @php
                                                                     $sensor = $column[$row]['sensor'];
                                                                     $state = $column[$row]['state'];
+                                                                    $bg = '';
+                                                                    if(isset($data['scores'][$sensor])){
+                                                                        if($data['scores'][$sensor] > \App\Http\Controllers\StatusController::$parameterThresholdDisplay['green']){
+                                                                            $bg = 'bg-success';
+                                                                        } elseif($data['scores'][$sensor] > \App\Http\Controllers\StatusController::$parameterThresholdDisplay['yellow']){
+                                                                            $bg = 'bg-warning';
+                                                                        } else {
+                                                                            $bg = 'bg-danger';
+                                                                        }
+                                                                    }
                                                                 @endphp
-                                                                @if($data['scores'][$sensor] > \App\Http\Controllers\StatusController::$parameterThresholdDisplay['green'])
-                                                                    <span class="badge bg-success me-3"> </span>
-                                                                @elseif($data['scores'][$sensor] > \App\Http\Controllers\StatusController::$parameterThresholdDisplay['yellow'])
-                                                                    <span class="badge bg-warning me-3"> </span>
-                                                                @else
-                                                                    <span class="badge bg-danger me-3"> </span>
-                                                                @endif
+                                                                <span class="badge me-3 {{ $bg }}">
+                                                                </span>
                                                                 <div class="d-flex flex-column justify-content-center">
                                                                     <h6 class="mb-0 text-sm">{{ $state['label'] }}</h6>
                                                                     @if(config('app.env') != 'production')
                                                                         <span
-                                                                            class="text-xs text-secondary">{{ $state['value'] }} {{ $state['unit'] }} {{ intval($data['scores'][$sensor] * 100) }}%</span>
+                                                                            class="text-xs text-secondary">{{ $state['value'] }} {{ $state['unit'] }}
+                                                                            @if(isset($data['scores'][$sensor]))
+                                                                                ({{ intval($data['scores'][$sensor] * 100) }}
+                                                                                %)
+                                                                            @endif
+                                                                        </span>
                                                                     @endif
                                                                 </div>
                                                             </div>
