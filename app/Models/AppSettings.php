@@ -274,6 +274,7 @@ class AppSettings extends Model
         foreach ($value as $id => $sensorsMultiplier) {
             $value[$id] = self::syncWithDefault($sensorsMultiplierDefault, $sensorsMultiplier);
         }
+
         return $value;
     }
 }

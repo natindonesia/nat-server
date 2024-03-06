@@ -87,8 +87,7 @@ class SettingsParameter extends Component implements HasForms
 
         $this->form->fill([
             'parameter_profile' => self::kvToArray(AppSettings::getParameterProfile()),
-
-            'sensors_score_multiplier' => self::kvToArray(AppSettings::getSensorsScoreMultiplier()),
+            'pool_profile_parameter' => self::kvToArray(AppSettings::getPoolProfileParameter()),
         ]);
 
     }
@@ -117,6 +116,8 @@ class SettingsParameter extends Component implements HasForms
                 Repeater::make('parameter_profile')
                     ->hiddenLabel()
                     ->reorderableWithDragAndDrop(false)
+                    ->itemLabel(fn(array $state): ?string => $state['name'] ?? null)
+
                     ->schema([
                         TextInput::make('name')
                             ->required()
