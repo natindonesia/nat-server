@@ -12,6 +12,7 @@ return new class extends Migration {
     {
         Schema::table('state_logs', function (Blueprint $table) {
             $table->index('device');
+            $table->index('created_at');
         });
     }
 
@@ -22,6 +23,7 @@ return new class extends Migration {
     {
         Schema::table('state_logs', function (Blueprint $table) {
             $table->dropIndex(['device']);
+            $table->dropIndex(['created_at']);
         });
     }
 };

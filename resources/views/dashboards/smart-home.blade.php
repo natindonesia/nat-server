@@ -5,18 +5,21 @@
     <div class="row mt-4">
 
 
-        @foreach($devices as $device)
-            <div class="" id="{{$device['name']}}">
+        @foreach($devices as $deviceId => $deviceFriendlyName)
+            @php
+                $data = $datas[$deviceId];
+            @endphp
+            <div class="">
                 <div class="card m-2">
                     <div class="card-header pb-0 p-3">
                         <div class="d-flex align-items-center">
-                            <h6 class="mb-0">{{$device['display_name']}}</h6>
+                            <h6 class="mb-0">{{$deviceFriendlyName}}</h6>
                             <div class="ms-auto"> <!-- Menempatkan elemen-elemen di sebelah kanan -->
                                 @foreach(\App\Models\AppSettings::$batterySensors as $sensor)
-                                    @if(isset($device['state'][$sensor]))
+                                    @if(isset($data['sensors'][$sensor]))
                                         @php
                                             // Ambil nilai persentase baterai dan tentukan warna berdasarkan kondisi
-                                            $valueBattery = intval($device['state'][$sensor]['value']);
+                                            $valueBattery = intval($data['sensors'][$sensor]);
                                             $color = '#30C873'; // Warna default: hijau
                                             if($valueBattery < 20){
                                                 $color = '#FF0000'; // Warna: merah jika baterai kurang dari 20%
@@ -25,39 +28,34 @@
                                             }
                                         @endphp
                                         <span class="text-sm mb-0 ms-2" style="color: {{$color}};">
-                                            <i class="fas fa-battery-{{ $valueBattery < 20 ? 'empty' : ($valueBattery < 50 ? 'quarter' : 'full') }}"></i> {{$device['state'][$sensor]['value']}}%
+                                            <i class="fas fa-battery-{{ $valueBattery < 20 ? 'empty' : ($valueBattery < 50 ? 'quarter' : 'full') }}"></i> {{ $valueBattery }}%
                                         </span>
                                     @endif
                                 @endforeach
                             </div>
-                            <button type="button" class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{date('d M Y H:00:00', isset($device["ðŸ˜Ž"]['timestamp']) ? $device["ðŸ˜Ž"]['timestamp'] : 0)}}">
+                            <button
+                                id="tooltip-{{$deviceId}}"
+                                type="button"
+                                class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex align-items-center justify-content-center"
+                                data-bs-toggle="tooltip" data-bs-placement="bottom">
                                 <i class="fas fa-info"></i>
                             </button>
+                            <script>
+                                (() => {
+                                    // set tooltip title attribute as user time zone
+                                    let time = "{{$data['created_at']}}";
+                                    time = new Date(time);
+                                    // format to local date time
+                                    time = time.toLocaleString();
+                                    document.getElementById('tooltip-{{$deviceId}}').setAttribute('title', time);
+                                })();
+                            </script>
                         </div>
 
                     </div>
                     <div class="card-body p-3">
                         <div class="row">
                             <div class="col-5 text-center">
-                                {{-- @foreach(\App\Models\AppSettings::$batterySensors as $sensor)
-                                    @if(isset($device['state'][$sensor]))
-                                        @php
-                                            // Green
-                                            $valueBattery = $device['state'][$sensor]['value'];
-                                            $valueBattery = intval($valueBattery);
-                                            $color = '#30C873';
-                                            if($valueBattery < 20){
-                                                $color = '#FF0000';
-                                            }else if($valueBattery < 50){
-                                                $color = '#DAA520';
-                                            }
-
-                                        @endphp
-                                        <span class="text-sm my-4" style="color: {{$color}};">
-                                            <i class="fas fa-battery-{{ $valueBattery < 20 ? 'empty' : ($valueBattery < 50 ? 'quarter' : 'full') }}"></i> {{$device['state'][$sensor]['value']}}%
-                                        </span>
-                                    @endif
-                                @endforeach --}}
                                 <div class="chart">
                                     <canvas id="chart-consumption" cslass="chart-canvas" height="197"></canvas>
                                 </div>
@@ -65,26 +63,26 @@
                                 <h4 class="font-weight-bold mt-n10">
 
                                     {{-- @dd($device['scores']['ph']); --}}
-                                    @if($device['final_score'] > $finalScoreDisplay['green'])
+                                    @if($data['final_score'] > \App\Http\Controllers\StatusController::$finalScoreDisplay['green'])
                                     <img src="{{ asset('images/green.png') }}" alt="baik" style="width: 70px; height: 70px; border-radius: 50%;">
                                     <h6 class="d-block text-sm">
                                         <span class="highlight-background" style="background-color: #d2fcd2; display: inline-block; padding: 5px; border-radius: 5px;">
-                                            <span class="text-sm bold" style="color: #30C873;">Good {{ intval($device['final_score'] * 100) }}%</span>
+                                            <span class="text-sm bold" style="color: #30C873;">Good {{ intval($data['final_score'] * 100) }}%</span>
                                         </span>
                                     </h6>
 
-                                    @elseif($device['final_score'] > $finalScoreDisplay['yellow'])
+                                    @elseif($data['final_score'] > \App\Http\Controllers\StatusController::$finalScoreDisplay['yellow'])
                                     <img src="{{ asset('images/yellow.png') }}" alt="waspada" style="width: 70px; height: 70px; border-radius: 50%;">
                                     <h6 class="d-block text-sm">
                                         <span class="highlight-background" style="background-color: #FFFF00; display: inline-block; padding: 5px; border-radius: 5px;">
-                                            <span class="text-sm" style="color: #DAA520;">Caution {{ intval($device['final_score'] * 100) }}%</span>
+                                            <span class="text-sm" style="color: #DAA520;">Caution {{ intval($data['final_score'] * 100) }}%</span>
                                         </span>
                                     </h6>
                                 @else
                                     <img src="{{ asset('images/red.png') }}" alt="buruk" style="width: 70px; height: 70px; border-radius: 50%;">
                                     <h6 class="d-block text-sm">
                                         <span class="highlight-background" style="background-color: #ffa1a1; display: inline-block; padding: 5px; border-radius: 5px;">
-                                            <span class="text-sm" style="color: #FF0000;">Bad {{ intval($device['final_score'] * 100) }}%</span>
+                                            <span class="text-sm" style="color: #FF0000;">Bad {{ intval($data['final_score'] * 100) }}%</span>
                                         </span>
                                     </h6>
                                 @endif
@@ -103,7 +101,7 @@
                                             $columnCounter = 0;
                                         @endphp
 
-                                        @foreach($device['state'] as $sensor => $state)
+                                        @foreach($data['formatted_sensors'] as $sensor => $state)
                                             @php
                                                 // Periksa apakah sensor saat ini adalah bagian dari sensor baterai
                                                 if (in_array($sensor, \App\Models\AppSettings::$batterySensors)) {
@@ -134,9 +132,9 @@
                                                                     $sensor = $column[$row]['sensor'];
                                                                     $state = $column[$row]['state'];
                                                                 @endphp
-                                                                @if($device['scores'][$sensor] > $parameterThresholdDisplay['green'])
+                                                                @if($data['scores'][$sensor] > \App\Http\Controllers\StatusController::$parameterThresholdDisplay['green'])
                                                                     <span class="badge bg-success me-3"> </span>
-                                                                @elseif($device['scores'][$sensor] > $parameterThresholdDisplay['yellow'])
+                                                                @elseif($data['scores'][$sensor] > \App\Http\Controllers\StatusController::$parameterThresholdDisplay['yellow'])
                                                                     <span class="badge bg-warning me-3"> </span>
                                                                 @else
                                                                     <span class="badge bg-danger me-3"> </span>
@@ -145,7 +143,7 @@
                                                                     <h6 class="mb-0 text-sm">{{ $state['label'] }}</h6>
                                                                     @if(config('app.env') != 'production')
                                                                         <span
-                                                                            class="text-xs text-secondary">{{ $state['value'] }} {{ $state['unit'] }} {{ intval($device['scores'][$sensor] * 100) }}%</span>
+                                                                            class="text-xs text-secondary">{{ $state['value'] }} {{ $state['unit'] }} {{ intval($data['scores'][$sensor] * 100) }}%</span>
                                                                     @endif
                                                                 </div>
                                                             </div>

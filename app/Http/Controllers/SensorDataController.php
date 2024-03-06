@@ -9,7 +9,6 @@ use App\Models\State;
 use App\Models\StateMeta;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use MathPHP\NumericalAnalysis\Interpolation\LagrangePolynomial;
 use Psr\Container\ContainerExceptionInterface;
@@ -359,8 +358,9 @@ class SensorDataController extends Controller
         $parameterThresholds = AppSettings::getParameterProfile()[$parameterName];
         $result = self::calculateScoreWithParameter($sensor, $value, $parameterThresholds);
         if (!$result) {
-            Log::warning("Sensor $sensor not found with parameter $parameterName");
-            $result = 0.0;
+            //Log::warning("Sensor $sensor not found with parameter $parameterName");
+
+            $result = 1;
         }
         return $result;
     }

@@ -5,7 +5,6 @@ use App\Http\Controllers\DataApiController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SensorDataController;
 use App\Http\Controllers\SessionController;
-use App\Http\Controllers\StatusController;
 use App\Http\Controllers\WaterpoolController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,10 +25,9 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::redirect('/dashboard-default', '/main-dashboard');
-    Route::view('/main-dashboard', 'dashboards/smart-home');
 
     Route::get('/detail', [SensorDataController::class, 'index'])->name('detail');
-    Route::get('/main-dashboard', [StatusController::class, 'index']);
+    Route::get('/main-dashboard', [\App\Http\Controllers\Pool\MainDashboardController::class, 'index']);
     Route::get('/fetch-latest-data', [SensorDataController::class, 'fetchLatestData'])->name('fetch.latest.data');
 
 

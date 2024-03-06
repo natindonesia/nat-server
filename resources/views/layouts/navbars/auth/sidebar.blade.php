@@ -105,12 +105,12 @@
                             </a>
                         </li>
                         @endforeach --}}
-                @foreach(\App\Models\AppSettings::$natwaveDevices as $device)
+                @foreach(\App\Models\AppSettings::getDevicesName()->value as $deviceId => $device)
                 <div class="collapse show" id="waterpoolExamples">
                     <ul class="nav ms-4 ps-3">
 
-                        <x-nav-item href="{{ route('detail', ['device' => $device]) }}">
-                            {{__('devices_name.' . $device)}}
+                        <x-nav-item href="{{ route('detail', ['device' => $deviceId]) }}">
+                            {{$device}}
                         </x-nav-item>
                     </ul>
                 </div>

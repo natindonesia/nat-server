@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Controllers\StatusController;
+use App\Models\Pool\StateLog;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -76,9 +77,11 @@ class AppSettings extends Model
     {
         $devicesName = self::get('devices_name');
         $default = [];
-        foreach (self::$natwaveDevices as $id) {
-            $default[$id] = $id;
+        $devices = StateLog::getDevices();
+        foreach ($devices as $id => $name) {
+            $default[$id] = $name;
         }
+
         if (!$devicesName) {
 
             $devicesName = self::create([
@@ -88,8 +91,14 @@ class AppSettings extends Model
         }
 
         $devicesNameValue = self::syncWithDefault($default, $devicesName->value);
+
         $devicesName->value = $devicesNameValue;
         return $devicesName;
+    }
+
+    public static function getDevices(): array
+    {
+        return StateLog::getDevices();
     }
 
     public static function translateDeviceName($id)
@@ -226,7 +235,7 @@ class AppSettings extends Model
         $default = [
 
         ];
-        foreach (self::$natwaveDevices as $id) {
+        foreach (AppSettings::getDevices() as $id => $name) {
             $default[$id] = "Internasional";
         }
         if (!$poolProfileParameter) {
@@ -252,7 +261,7 @@ class AppSettings extends Model
         foreach (self::$sensors as $sensor) {
             $sensorsMultiplierDefault[$sensor] = 1;
         }
-        foreach (self::$natwaveDevices as $id) {
+        foreach (AppSettings::getDevices() as $id => $name) {
             $default[$id] = $sensorsMultiplierDefault;
         }
         if (!$poolProfileParameter) {

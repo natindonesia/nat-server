@@ -6,7 +6,7 @@ use App\Models\AppSettings;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\StateLog>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Pool\StateLog>
  */
 class StateLogFactory extends Factory
 {

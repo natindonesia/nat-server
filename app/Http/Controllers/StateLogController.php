@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StateLog;
+use App\Models\Pool\StateLog;
 use Illuminate\Http\Request;
 
 class StateLogController extends Controller
