@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => 'auth'], function () {
-
+    $cacheableMiddleware = 'cache.headers:public;no_cache;max_age=300;stale_if_error;etag';
     // Redirect
     Route::get('/', function () {
         return redirect('main-dashboard');
@@ -26,10 +26,10 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     // Main Dashboard
-    Route::get('/main-dashboard', [\App\Http\Controllers\Pool\MainDashboardController::class, 'index']);
+    Route::get('/main-dashboard', [\App\Http\Controllers\Pool\MainDashboardController::class, 'index'])->middleware([$cacheableMiddleware])->name('main-dashboard');
 
 
-    Route::get('/detail', [\App\Http\Controllers\Pool\DetailedController::class, 'index'])->name('detail');
+    Route::get('/detail', [\App\Http\Controllers\Pool\DetailedController::class, 'index'])->name('detail')->middleware([$cacheableMiddleware]);
     Route::get('/detail/export', [\App\Http\Controllers\Pool\DetailedController::class, 'export'])->name('detailed-dashboard.export');
 
 
