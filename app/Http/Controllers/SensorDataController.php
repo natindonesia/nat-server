@@ -287,18 +287,10 @@ class SensorDataController extends Controller
      */
     public static function calculateFinalScore(array $scores, string $deviceName): float
     {
-        $finalScore = 0;
-        $scoreMultipliers = AppSettings::getSensorsScoreMultiplier()[$deviceName];
-        $totalMultiplier = 0;
-
-        foreach ($scores as $sensor => $score) {
-            $scoreMultiplier = $scoreMultipliers[$sensor] ?? 1.0;
-            $totalMultiplier += $scoreMultiplier;
-            $finalScore += $score * $scoreMultiplier;
-        }
-        if ($totalMultiplier == 0) return 0.0;
-        $finalScore = $finalScore / $totalMultiplier;
-        return $finalScore;
+        // final score use TDS * PH
+        $ph = $scores['ph'] ?? 0;
+        $tds = $scores['tds'] ?? 0;
+        return $ph * $tds;
     }
 
 

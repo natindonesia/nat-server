@@ -44,7 +44,7 @@ DEVICES_SENSORS="td ph"
 Mathematical formula:
 
 ```
-orpScore *
+orpScore * phScore
 ```
 
 
