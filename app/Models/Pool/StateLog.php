@@ -66,7 +66,8 @@ class StateLog extends Model
     public function getScoresAttribute()
     {
         $scores = [];
-        foreach ($this->sensors as $sensor => $value) {
+        foreach ($this->formatted_sensors as $sensor => $state) {
+            $value = $state['value'];
             if (in_array($sensor, AppSettings::$ignoreSensors)) continue;
             // check if not float
             if (!is_numeric($value)) {
