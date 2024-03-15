@@ -45,20 +45,22 @@
                 {{-- @dd($device,$formatted_state); --}}
                 {{-- @dd($device['scores']['ph']); --}}
                 @foreach($latestState['scores'] as $sensor_name => $score)
-                    {{-- Dont add battery sensor to the dashboard --}}
-                    @php
-                        $shouldContinue = false;
-                    @endphp
-                    @foreach(AppSettings::$batterySensors as $batterySensor)
-                        @if($sensor_name === $batterySensor)
-                            @php
-                                $shouldContinue = true;
-                            @endphp
-                        @endif
-                    @endforeach
-                    @if($shouldContinue)
-                        @continue
+                {{-- Dont add battery sensor or "salt" to the dashboard --}}
+                @php
+                    $shouldContinue = false;
+                @endphp
+                @foreach(AppSettings::$batterySensors as $batterySensor)
+                    @if($sensor_name === $batterySensor || $sensor_name === 'salt')
+                        @php
+                            $shouldContinue = true;
+                        @endphp
                     @endif
+                @endforeach
+                @if($shouldContinue)
+                    @continue
+                @endif
+
+
 
 
                     <div class="col-md-4 col-12 mt-4 ">
@@ -72,13 +74,14 @@
                                 <div class="card-body text-center">
 
                                     <h1 class="text-white text-primary">
-                                    <span id="{{$sensor_name}}_state">
-                                        @if( $latestState['formatted_sensors'][$sensor_name] == 'unknown')
-                                            -
-                                        @else
-                                            {{  $latestState['formatted_sensors'][$sensor_name]['value'] }}
-                                        @endif
-                                    </span>
+                                        <span id="{{ $sensor_name }}_state">
+                                            @if($latestState['formatted_sensors'][$sensor_name]['value'] === 'unknown')
+                                                -
+                                            @else
+                                                {{ $latestState['formatted_sensors'][$sensor_name]['value'] }}
+                                            @endif
+                                        </span>
+                                        
                                         <span
                                             class="text-lg ms-n2">{{ $latestState['formatted_sensors'][$sensor_name]['unit']}}</span>
 
