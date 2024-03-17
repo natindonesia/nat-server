@@ -64,26 +64,26 @@
 
                                     {{-- @dd($device['scores']['ph']); --}}
                                     @if($data['final_score'] > \App\Http\Controllers\StatusController::$finalScoreDisplay['green'])
-                                    <img src="{{ asset('images/green.png') }}" alt="baik" style="width: 100px; height: 100px; border-radius: 50%;">
+                                    <img src="{{ asset('images/green.png') }}" alt="baik" style="width: 70px; height: 70px; border-radius: 50%;">
                                     <h6 class="d-block text-sm">
-                                        {{-- <span class="highlight-background" style="background-color: #d2fcd2; display: inline-block; padding: 5px; border-radius: 5px;">
-                                            <span class="text-sm bold" style="color: #30C873;">Good {{ intval($data['final_score'] * 100) }}%</span>
-                                        </span> --}}
+                                        <span class="highlight-background" style="background-color: #d2fcd2; display: inline-block; padding: 5px; border-radius: 5px;">
+                                            <span class="text-sm bold" style="color: #30C873;">Good</span>
+                                        </span>
                                     </h6>
 
                                     @elseif($data['final_score'] > \App\Http\Controllers\StatusController::$finalScoreDisplay['yellow'])
-                                    <img src="{{ asset('images/yellow.png') }}" alt="waspada" style="width: 100px; height: 100px; border-radius: 50%;">
+                                    <img src="{{ asset('images/yellow.png') }}" alt="waspada" style="width: 70px; height: 70px; border-radius: 50%;">
                                     <h6 class="d-block text-sm">
-                                        {{-- <span class="highlight-background" style="background-color: #FFFF00; display: inline-block; padding: 5px; border-radius: 5px;">
-                                            <span class="text-sm" style="color: #DAA520;">Caution {{ intval($data['final_score'] * 100) }}%</span>
-                                        </span> --}}
+                                        <span class="highlight-background" style="background-color: #FFFF00; display: inline-block; padding: 5px; border-radius: 5px;">
+                                            <span class="text-sm" style="color: #DAA520;">Caution</span>
+                                        </span>
                                     </h6>
                                 @else
-                                    <img src="{{ asset('images/red.png') }}" alt="buruk" style="width: 100px; height: 100px; border-radius: 50%;">
+                                    <img src="{{ asset('images/red.png') }}" alt="buruk" style="width: 70px; height: 70px; border-radius: 50%;">
                                     <h6 class="d-block text-sm">
-                                        {{-- <span class="highlight-background" style="background-color: #ffa1a1; display: inline-block; padding: 5px; border-radius: 5px;">
-                                            <span class="text-sm" style="color: #FF0000;">Bad {{ intval($data['final_score'] * 100) }}%</span>
-                                        </span> --}}
+                                        <span class="highlight-background" style="background-color: #ffa1a1; display: inline-block; padding: 5px; border-radius: 5px;">
+                                            <span class="text-sm" style="color: #FF0000;">Bad</span>
+                                        </span>
                                     </h6>
                                 @endif
 
