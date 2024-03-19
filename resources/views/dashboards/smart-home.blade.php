@@ -10,7 +10,8 @@
                 $data = $datas[$deviceId];
             @endphp
             <div class="">
-                <div class="card m-2">
+            <a href="{{ route('detail', ['device' => $deviceId]) }}">
+                <div class="card m-2">                    
                     <div class="card-header pb-0 p-3">
                         <div class="d-flex align-items-center">
                             <h6 class="mb-0">{{$deviceFriendlyName}}</h6>
@@ -174,6 +175,7 @@
                         </div>
                     </div>
                 </div>
+            </a>
             </div>
         @endforeach
 
