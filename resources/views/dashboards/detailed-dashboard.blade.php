@@ -19,6 +19,10 @@
                                         <h5 class="text-white font-weight-bolder mb-0">
                                             {{ AppSettings::translateDeviceName($deviceName) }}
                                         </h5>
+                                        {{-- @dd($stats['ec']['data'][0]); --}}
+                                        <h5 class="text-white font-weight-bolder mb-0">
+                                            {{-- {{ ($latestState['created_at']) }} --}}
+                                        </h5>
                                     </div>
                                 </div>
                                 <div class="col-4"> <!-- Menambahkan div dengan col-4 untuk h6 -->
@@ -42,8 +46,8 @@
                 @php
                     unset($latestState['timestamp']);
                 @endphp
-                {{-- @dd($device,$formatted_state); --}}
-                {{-- @dd($device['scores']['ph']); --}}
+                
+                
                 @foreach($latestState['scores'] as $sensor_name => $score)
                 {{-- Dont add battery sensor or "salt" to the dashboard --}}
                 @php

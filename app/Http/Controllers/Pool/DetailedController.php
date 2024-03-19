@@ -36,15 +36,22 @@ class DetailedController extends Controller
         $data['deviceName'] = $deviceName;
 
         // get the latest state
-        $data['latestStates'] =
-            Cache::remember('latestStates', config('cache.time') * 0.4, function () use ($deviceName) {
-                return StateLog::where('device', $deviceName)
-                    ->orderBy('created_at', 'desc')
-                    ->limit(1)
-                    ->get()
-                    ->toArray();
-            });
+        $data['latestStates'] = StateLog::where('device', $deviceName)
+                ->orderBy('created_at', 'desc')
+                ->limit(1)
+                ->get()
+                ->toArray();
+
         $data['latestState'] = $data['latestStates'][0] ?? [];
+        // $data['latestStates'] =
+        //     Cache::remember('latestStates', config('cache.time') * 0.4, function () use ($deviceName) {
+        //         return StateLog::where('device', $deviceName)
+        //             ->orderBy('created_at', 'desc')
+        //             ->limit(1)
+        //             ->get()
+        //             ->toArray();
+        //     });
+        // $data['latestState'] = $data['latestStates'][0] ?? [];
 
         // date filter
         $max_date = StateLog::max('created_at');
@@ -91,8 +98,16 @@ class DetailedController extends Controller
         }
         $data['stats'] = $stats;
 
+        // @dd($stats['ec']['data'][0]);
+        // @dd($stats);
+
         return view('dashboards/detailed-dashboard', $data);
     }
+
+
+
+
+    
 
     public function export()
     {
