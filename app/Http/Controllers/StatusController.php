@@ -101,7 +101,7 @@ class StatusController extends Controller
         [
             'sensor' => 'cl',
             'min' => 3.1,
-            'max' => 5,
+            'max' => 100,
             'score' => 0.39
         ],
 
