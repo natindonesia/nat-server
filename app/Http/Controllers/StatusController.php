@@ -76,7 +76,7 @@ class StatusController extends Controller
         ],
         [
             'sensor' => 'tds',
-            'min' => -2000,
+            'min' => 0,
             'max' => 699,
             'score' => 0.69
         ],
@@ -94,7 +94,7 @@ class StatusController extends Controller
         ],
         [
             'sensor' => 'cl',
-            'min' => -100,
+            'min' => -10,
             'max' => 0.9,
             'score' => 0.69
         ],
