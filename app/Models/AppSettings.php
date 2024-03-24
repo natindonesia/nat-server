@@ -180,7 +180,7 @@ class AppSettings extends Model
     {
         $parameterProfile = self::get('parameter_profile');
         $default = [
-            'Internasional' => StatusController::$parametersThresholdInternational
+            'Default' => StatusController::$parametersThresholdInternational
         ];
         if (!$parameterProfile) {
             $parameterProfile = self::create([
@@ -193,7 +193,7 @@ class AppSettings extends Model
             $parameterProfile->value = $default;
         }
         $value = $parameterProfile->value;
-        $value['Internasional'] = $default['Internasional']; // don't change this lol
+        $value['Default'] = $default['Default']; // don't change this lol
 
         // convert integer score to float based on green and yellow
         foreach ($value as $profile => $parameters) {
@@ -236,7 +236,7 @@ class AppSettings extends Model
 
         ];
         foreach (AppSettings::getDevices() as $id => $name) {
-            $default[$id] = "Internasional";
+            $default[$id] = "Default";
         }
         if (!$poolProfileParameter) {
             $poolProfileParameter = self::create([

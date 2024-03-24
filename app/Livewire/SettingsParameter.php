@@ -135,11 +135,14 @@ class SettingsParameter extends Component implements HasForms
                                     ->required()
                                     ->numeric()
                                     ->gte('min'), // greater than or equal
-                                TextInput::make('score')
+                                Select::make('score')
+                                ->label('Status')
                                     ->required()
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->maxValue(1),
+                                    ->options([
+                                        '1' => 'Good',
+                                        '0.69' => 'Not Good',
+                                        '0.39' => 'Bad',
+                                    ]),
                             ])
                     ])->reorderable(false)->collapsible()->collapsed()
                 ]),
