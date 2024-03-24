@@ -72,18 +72,18 @@
                                         </span>
                                     </h6>
 
-                                    @elseif($data['final_score'] > \App\Http\Controllers\StatusController::$finalScoreDisplay['yellow'])
+                                    {{-- @elseif($data['final_score'] > \App\Http\Controllers\StatusController::$finalScoreDisplay['yellow'])
                                     <img src="{{ asset('images/yellow.png') }}" alt="waspada" style="width: 70px; height: 70px; border-radius: 50%;">
                                     <h6 class="d-block text-sm">
                                         <span class="highlight-background" style="background-color: #FFFF00; display: inline-block; padding: 5px; border-radius: 5px;">
                                             <span class="text-sm" style="color: #DAA520;">Caution</span>
                                         </span>
-                                    </h6>
+                                    </h6> --}}
                                 @else
-                                    <img src="{{ asset('images/red.png') }}" alt="buruk" style="width: 70px; height: 70px; border-radius: 50%;">
+                                    <img src="{{ asset('images/yellow.png') }}" alt="waspada" style="width: 70px; height: 70px; border-radius: 50%;">
                                     <h6 class="d-block text-sm">
-                                        <span class="highlight-background" style="background-color: #ffa1a1; display: inline-block; padding: 5px; border-radius: 5px;">
-                                            <span class="text-sm" style="color: #FF0000;">Bad</span>
+                                        <span class="highlight-background" style="background-color: #FFFF00; display: inline-block; padding: 5px; border-radius: 5px;">
+                                            <span class="text-sm" style="color: #DAA520;">Caution</span>
                                         </span>
                                     </h6>
                                 @endif
@@ -137,10 +137,10 @@
                                                                     if(isset($data['scores'][$sensor])){
                                                                         if($data['scores'][$sensor] > \App\Http\Controllers\StatusController::$parameterThresholdDisplay['green']){
                                                                             $bg = 'bg-success';
-                                                                        } elseif($data['scores'][$sensor] > \App\Http\Controllers\StatusController::$parameterThresholdDisplay['yellow']){
-                                                                            $bg = 'bg-warning';
+                                                                        // } elseif($data['scores'][$sensor] > \App\Http\Controllers\StatusController::$parameterThresholdDisplay['yellow']){
+                                                                        //     $bg = 'bg-warning';
                                                                         } else {
-                                                                            $bg = 'bg-danger';
+                                                                            $bg = 'bg-warning';
                                                                         }
                                                                     }
                                                                 @endphp

@@ -70,10 +70,10 @@
                     <div class="col-md-4 col-12 mt-4 ">
                         @if( $score > \App\Http\Controllers\SensorDataController::$parameterThresholdDisplay['green'])
                             <div class="card bg-success">
-                                @elseif($score > \App\Http\Controllers\SensorDataController::$parameterThresholdDisplay['yellow'])
-                            <div class="card bg-warning">
+                                {{-- @elseif($score > \App\Http\Controllers\SensorDataController::$parameterThresholdDisplay['yellow'])
+                            <div class="card bg-warning"> --}}
                         @else
-                            <div class="card bg-danger">
+                        <div class="card bg-warning">
                                 @endif
                                 <div class="card-body text-center">
 

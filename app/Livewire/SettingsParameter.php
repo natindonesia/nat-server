@@ -140,7 +140,7 @@ class SettingsParameter extends Component implements HasForms
                                     ->required()
                                     ->options([
                                         '1' => 'Good',
-                                        '0.69' => 'Not Good',
+                                        '0.69' => 'Caution',
                                         '0.39' => 'Bad',
                                     ]),
                             ])

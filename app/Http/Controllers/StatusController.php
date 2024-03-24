@@ -26,84 +26,84 @@ class StatusController extends Controller
             'max' => 26,
             'score' => 3
         ],
-        [
-            'sensor' => 'temp',
-            'min' => 18,
-            'max' => 29,
-            'score' => 2
-        ],
+        // [
+        //     'sensor' => 'temp',
+        //     'min' => 18,
+        //     'max' => 29,
+        //     'score' => 2
+        // ],
         [
             'sensor' => 'ph',
             'min' => 7.2,
             'max' => 8.0,
             'score' => 3
         ],
-        [
-            'sensor' => 'ph',
-            'min' => 6.5,
-            'max' => 8.6,
-            'score' => 2
-        ],
+        // [
+        //     'sensor' => 'ph',
+        //     'min' => 6.5,
+        //     'max' => 8.6,
+        //     'score' => 2
+        // ],
         [
             'sensor' => 'orp',
             'min' => 700,
             'max' => 750,
             'score' => 3
         ],
-        [
-            'sensor' => 'orp',
-            'min' => 650,
-            'max' => 700,
-            'score' => 2
-        ],
+        // [
+        //     'sensor' => 'orp',
+        //     'min' => 650,
+        //     'max' => 700,
+        //     'score' => 2
+        // ],
         [
             'sensor' => 'ec',
             'min' => 2.5,
             'max' => 3.0,
             'score' => 3
         ],
-        [
-            'sensor' => 'ec',
-            'min' => 2.0,
-            'max' => 2.5,
-            'score' => 2
-        ],
+        // [
+        //     'sensor' => 'ec',
+        //     'min' => 2.0,
+        //     'max' => 2.5,
+        //     'score' => 2
+        // ],
         [
             'sensor' => 'tds',
             'min' => 700,
             'max' => 1500,
             'score' => 3
         ],
-        [
-            'sensor' => 'tds',
-            'min' => 0,
-            'max' => 700,
-            'score' => 2
-        ],
-        [
-            'sensor' => 'tds',
-            'min' => 1500,
-            'max' => 2000,
-            'score' => 1
-        ],
+        // [
+        //     'sensor' => 'tds',
+        //     'min' => 0,
+        //     'max' => 700,
+        //     'score' => 2
+        // ],
+        // [
+        //     'sensor' => 'tds',
+        //     'min' => 1500,
+        //     'max' => 2000,
+        //     'score' => 1
+        // ],
         [
             'sensor' => 'cl',
             'min' => 1,
             'max' => 3,
             'score' => 3
         ],
-        [
-            'sensor' => 'cl',
-            'min' => -10,
-            'max' => 1,
-            'score' => 2
-        ],
-        [
-            'sensor' => 'cl',
-            'min' => 3,
-            'max' => 100,
-            'score' => 1
-        ],
+        // [
+        //     'sensor' => 'cl',
+        //     'min' => -10,
+        //     'max' => 1,
+        //     'score' => 2
+        // ],
+        // [
+        //     'sensor' => 'cl',
+        //     'min' => 3,
+        //     'max' => 100,
+        //     'score' => 1
+        // ],
 
     ];
 
